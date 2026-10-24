@@ -1,0 +1,9 @@
+[
+ "PY=../../assets-pack/.venv/bin/python   # the assets-pack venv; web/node_modules, web/vendor and web/pack link to the assets-pack install",
+ "$PY scripts/look_orig.py                 # reference renders of the shipped models (palette, proportions)",
+ "$PY scripts/build.py                     # all nine ids -> work/build/<id>_lod{0,1,2}.glb + <id>.json (deterministic)",
+ "$PY scripts/look.py <id> ...             # per-model views while iterating -> work/look/<id>.jpg",
+ "$PY scripts/pack.py",
+ "$PY scripts/validate.py",
+ "$PY scripts/evidence.py                  # -> evidence.jpg"
+]

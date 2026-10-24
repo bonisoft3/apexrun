@@ -1,0 +1,317 @@
+{
+  "_generated_from": "bayt.cue (do not edit)",
+  "dockerfile": {
+    "preamble": [
+      "ENV PATH=/root/.local/bin:/root/.local/share/lazybox/bin:$PATH",
+      "ENV MISE_TRUSTED_CONFIG_PATHS=/monorepo",
+      "ENV CADDY_TLS_HOST_PORT=8443"
+    ],
+    "preambleCopyContexts": [],
+    "from": {
+      "ref": ":database",
+      "name": "apexrun-database"
+    },
+    "add": [
+      {
+        "platforms": {
+          "amd64": {
+            "url": "https://github.com/F1bonacc1/process-compose/releases/download/v1.122.0/process-compose_linux_amd64.tar.gz",
+            "checksum": "sha256:9b6dbc38324c0b0481f1cd1dd828ffdc78117129ec797678f4bf8c4023311281"
+          },
+          "arm64": {
+            "url": "https://github.com/F1bonacc1/process-compose/releases/download/v1.122.0/process-compose_linux_arm64.tar.gz",
+            "checksum": "sha256:52fa7d5a2d5e0db470faec5976204fc215ed7e3d13689e930cf522becfb63778"
+          }
+        },
+        "dest": "/usr/local/bin/process-compose",
+        "unpack": true
+      }
+    ],
+    "copy": [
+      {
+        "from": {
+          "ref": ":setup",
+          "name": "apexrun-setup"
+        },
+        "srcs": [
+          "/root/.local"
+        ],
+        "dst": "/root/.local",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
+      {
+        "from": {
+          "ref": ":setup",
+          "name": "apexrun-setup"
+        },
+        "srcs": [
+          "/monorep[o]"
+        ],
+        "dst": "/monorepo/",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      }
+    ],
+    "epilogue": [],
+    "extra_hosts": [],
+    "mounts": [],
+    "secrets": {},
+    "healthcheck": null,
+    "expose": [],
+    "entrypoint": null,
+    "incremental": false,
+    "cmd": null
+  },
+  "name": "ci-replay",
+  "project": "apexrun",
+  "dir": ".",
+  "activate": "",
+  "srcs": {
+    "globs": [
+      ".bayt/process-compose.yaml",
+      ".pronto/cluster.json",
+      "services/database/migrations/**",
+      "tests/[r]eplay.json",
+      "tests/[r]eplay/**"
+    ],
+    "exclude": []
+  },
+  "outs": {
+    "globs": [],
+    "exclude": []
+  },
+  "state": {
+    "globs": []
+  },
+  "env": {},
+  "synthetics": {
+    "bayt": {
+      "name": "ci-replay_bayt",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [
+          ".bayt/compose.ci-replay.yaml",
+          ".bayt/Dockerfile.ci-replay",
+          ".bayt/bayt.ci-replay.json",
+          ".bayt/Taskfile.yml",
+          ".bayt/Taskfile.bayt.yml",
+          ".bayt/Taskfile.ci-replay.yaml",
+          ".bayt/process-compose.yaml"
+        ],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.ci-replay.yaml",
+        "./.bayt/compose.database.yaml",
+        "./.bayt/compose.setup.yaml"
+      ]
+    },
+    "outs": {
+      "name": "ci-replay_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.ci-replay.yaml",
+        "./.bayt/compose.database.yaml",
+        "./.bayt/compose.setup.yaml"
+      ]
+    },
+    "srcs": {
+      "name": "ci-replay_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [
+          ".bayt/process-compose.yaml",
+          ".pronto/cluster.json",
+          "services/database/migrations/**",
+          "tests/[r]eplay.json",
+          "tests/[r]eplay/**",
+          "services/database/migrations/000_extensions.sql",
+          "services/database/migrations/001_roles.sql",
+          "services/database/migrations/002_grants.sql",
+          "services/database/migrations/004_types.sql",
+          "services/database/migrations/005_create_tables.sql",
+          "services/database/migrations/006_policies.sql",
+          "services/database/migrations/007_txid.sql",
+          "services/database/migrations/008_publication.sql",
+          "services/database/migrations/016_mecha_actors.sql",
+          "services/database/migrations/010_high_score_writes.sql",
+          "[m]ise.toml",
+          "[.]mise.toml",
+          "[m]ise.lock",
+          "[.]tool-versions"
+        ],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [
+        "database_srcs",
+        "setup_srcs"
+      ],
+      "transitiveCrossDeps": [
+        {
+          "project": "apexrun",
+          "name": "database_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "services/database/migrations/000_extensions.sql",
+              "services/database/migrations/001_roles.sql",
+              "services/database/migrations/002_grants.sql",
+              "services/database/migrations/004_types.sql",
+              "services/database/migrations/005_create_tables.sql",
+              "services/database/migrations/006_policies.sql",
+              "services/database/migrations/007_txid.sql",
+              "services/database/migrations/008_publication.sql",
+              "services/database/migrations/016_mecha_actors.sql",
+              "services/database/migrations/010_high_score_writes.sql"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "setup_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "[m]ise.toml",
+              "[.]mise.toml",
+              "[m]ise.lock",
+              "[.]tool-versions"
+            ],
+            "exclude": []
+          }
+        }
+      ],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.ci-replay.yaml",
+        "./.bayt/compose.database.yaml",
+        "./.bayt/compose.setup.yaml"
+      ]
+    }
+  },
+  "taskfile": {
+    "run": "once",
+    "incremental": false,
+    "preconditions": []
+  },
+  "visibility": "internal",
+  "emitsSrcs": true,
+  "deps": [
+    "database",
+    "setup"
+  ],
+  "sameProjectDeps": [
+    "database",
+    "setup"
+  ],
+  "transitiveDeps": [
+    "database",
+    "setup"
+  ],
+  "transitiveCrossDeps": [],
+  "upClosure": [
+    "./.bayt/compose.ci-replay.yaml",
+    "./.bayt/compose.database.yaml",
+    "./.bayt/compose.setup.yaml"
+  ],
+  "chainedDeps": [
+    {
+      "name": "setup",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    },
+    {
+      "name": "database",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    }
+  ],
+  "cmds": [
+    {
+      "srcs": {
+        "globs": [
+          ".bayt/process-compose.yaml",
+          ".pronto/cluster.json",
+          "services/database/migrations/**",
+          "tests/[r]eplay.json",
+          "tests/[r]eplay/**"
+        ],
+        "exclude": [],
+        "defaultGlobs": null,
+        "defaultExclude": null
+      },
+      "shell": "sh",
+      "do": "process-compose --no-server -f .bayt/process-compose.yaml run replay",
+      "name": "builtin",
+      "stop": false
+    }
+  ],
+  "cache": {
+    "full": false,
+    "similar": false
+  }
+}

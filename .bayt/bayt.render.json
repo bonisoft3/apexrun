@@ -1,0 +1,435 @@
+{
+  "_generated_from": "bayt.cue (do not edit)",
+  "compose": {
+    "up": false,
+    "manual": false,
+    "build": {
+      "additional_contexts": {
+        "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+      },
+      "secrets": [],
+      "args": {}
+    },
+    "environment": {
+      "DOOR": "http://caddy:8080",
+      "DOOR_TIMEOUT_MS": "41000",
+      "ENTRY": "/render/entry.html",
+      "ORIGIN": "${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT}}",
+      "PORT": "8090"
+    },
+    "ports": [],
+    "volumes": [],
+    "depends_on": {
+      "apexrun-caddy": {
+        "condition": "service_healthy"
+      },
+      "apexrun-crud": {
+        "condition": "service_healthy"
+      },
+      "apexrun-electric": {
+        "condition": "service_healthy"
+      },
+      "apexrun-auth": {
+        "condition": "service_started"
+      }
+    },
+    "networks": {
+      "default": {
+        "aliases": [
+          "render"
+        ]
+      }
+    },
+    "restart": "on-failure",
+    "healthcheck": {
+      "test": [
+        "CMD",
+        "httpcheck",
+        "http://127.0.0.1:8090/health"
+      ],
+      "interval": "1s",
+      "timeout": "5s",
+      "retries": 30,
+      "start_period": "120s",
+      "start_interval": "200ms"
+    },
+    "develop": {
+      "watch": [
+        {
+          "action": "sync+restart",
+          "path": "../shell/index.html",
+          "target": "/render/entry.html"
+        }
+      ]
+    }
+  },
+  "dockerfile": {
+    "preamble": [],
+    "preambleCopyContexts": [],
+    "from": {
+      "name": "denoland/deno:debian-2.9.7@sha256:fa335acdf6b72106eda2cb6a8cb5f4187e7630e357467489db4b2e7352d5e432"
+    },
+    "workdir": "/render",
+    "add": [],
+    "mounts": [],
+    "secrets": {},
+    "extra_hosts": [],
+    "copy": [
+      {
+        "from": {
+          "name": "tarampampam/microcheck:1@sha256:79c187c05bfa67518078bf4db117771942fa8fe107dc79a905861c75ddf28dfa"
+        },
+        "srcs": [
+          "/bin/httpcheck"
+        ],
+        "dst": "/usr/local/bin/httpcheck",
+        "chmod": "755",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
+      {
+        "from": {
+          "name": "plugins_omnishell-runtime-image"
+        },
+        "srcs": [
+          "/interpreter"
+        ],
+        "dst": "/render/plugins/omnishell/interpreter",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
+      {
+        "from": {
+          "name": "plugins_omnishell-runtime-image"
+        },
+        "srcs": [
+          "/server"
+        ],
+        "dst": "/render/plugins/omnishell/server",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
+      {
+        "from": {
+          "ref": ":served",
+          "name": "apexrun-served"
+        },
+        "srcs": [
+          "/served/shell/index.html"
+        ],
+        "dst": "/render/entry.html",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      }
+    ],
+    "epilogue": [
+      "RUN deno cache --frozen --config plugins/omnishell/server/deno.json plugins/omnishell/server/render.ts"
+    ],
+    "healthcheck": {
+      "test": [
+        "CMD",
+        "httpcheck",
+        "http://127.0.0.1:8090/health"
+      ],
+      "interval": "1s",
+      "timeout": "5s",
+      "retries": 30,
+      "start_period": "120s"
+    },
+    "expose": [],
+    "entrypoint": null,
+    "incremental": false,
+    "cmd": [
+      "deno",
+      "run",
+      "--frozen",
+      "--cached-only",
+      "--config",
+      "plugins/omnishell/server/deno.json",
+      "--allow-net",
+      "--allow-env",
+      "--allow-read=/render",
+      "plugins/omnishell/server/render.ts"
+    ]
+  },
+  "name": "render",
+  "project": "apexrun",
+  "dir": ".",
+  "activate": "",
+  "srcs": {
+    "globs": [
+      "shell/index.html",
+      "shell/shell.css",
+      "shell/boot.js",
+      "shell/shell.yaml",
+      "shell/shell.json",
+      "shell/design.css",
+      "shell/screens/arena.html",
+      "shell/screens/arena.css",
+      "shell/handlers/lease.js",
+      "shell/handlers/lobby.js",
+      "shell/handlers/run.js",
+      "shell/renderers/ending.js",
+      "shell/renderers/run_time.js",
+      "shell/renderers/stage.js",
+      "shell/engines/apexrun.json",
+      "shell/engines/sound.json",
+      "shell/engine/art.js",
+      "shell/engine/effects.js",
+      "shell/engine/hud.js",
+      "shell/engine/present.js",
+      "shell/engine/prng.js",
+      "shell/engine/renderer.js",
+      "shell/engine/scatter.js",
+      "shell/engine/scenery.js",
+      "shell/engine/simulation.js",
+      "shell/engine/stage_look.js"
+    ],
+    "exclude": []
+  },
+  "outs": {
+    "globs": [],
+    "exclude": []
+  },
+  "state": {
+    "globs": []
+  },
+  "env": {},
+  "synthetics": {
+    "bayt": {
+      "name": "render_bayt",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [
+          ".bayt/compose.render.yaml",
+          ".bayt/Dockerfile.render",
+          ".bayt/bayt.render.json",
+          ".bayt/Taskfile.yml",
+          ".bayt/Taskfile.bayt.yml",
+          ".bayt/process-compose.yaml"
+        ],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.render.yaml",
+        "./.bayt/compose.caddy.yaml",
+        "./.bayt/compose.crud.yaml",
+        "./.bayt/compose.database.yaml",
+        "./.bayt/compose.timer-check.yaml",
+        "./.bayt/compose.served.yaml",
+        "./.bayt/compose.electric.yaml",
+        "./.bayt/compose.auth.yaml"
+      ]
+    },
+    "outs": {
+      "name": "render_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.render.yaml",
+        "./.bayt/compose.caddy.yaml",
+        "./.bayt/compose.crud.yaml",
+        "./.bayt/compose.database.yaml",
+        "./.bayt/compose.timer-check.yaml",
+        "./.bayt/compose.served.yaml",
+        "./.bayt/compose.electric.yaml",
+        "./.bayt/compose.auth.yaml"
+      ]
+    },
+    "srcs": {
+      "name": "render_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [
+          "shell/index.html",
+          "shell/shell.css",
+          "shell/boot.js",
+          "shell/shell.yaml",
+          "shell/shell.json",
+          "shell/design.css",
+          "shell/screens/arena.html",
+          "shell/screens/arena.css",
+          "shell/handlers/lease.js",
+          "shell/handlers/lobby.js",
+          "shell/handlers/run.js",
+          "shell/renderers/ending.js",
+          "shell/renderers/run_time.js",
+          "shell/renderers/stage.js",
+          "shell/engines/apexrun.json",
+          "shell/engines/sound.json",
+          "shell/engine/art.js",
+          "shell/engine/effects.js",
+          "shell/engine/hud.js",
+          "shell/engine/present.js",
+          "shell/engine/prng.js",
+          "shell/engine/renderer.js",
+          "shell/engine/scatter.js",
+          "shell/engine/scenery.js",
+          "shell/engine/simulation.js",
+          "shell/engine/stage_look.js"
+        ],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [
+        "caddy_outs_srcs",
+        "crud_outs_srcs",
+        "electric_outs_srcs",
+        "auth_outs_srcs",
+        "served_outs_srcs"
+      ],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.render.yaml",
+        "./.bayt/compose.caddy.yaml",
+        "./.bayt/compose.crud.yaml",
+        "./.bayt/compose.database.yaml",
+        "./.bayt/compose.timer-check.yaml",
+        "./.bayt/compose.served.yaml",
+        "./.bayt/compose.electric.yaml",
+        "./.bayt/compose.auth.yaml"
+      ]
+    }
+  },
+  "visibility": "internal",
+  "emitsSrcs": true,
+  "deps": [
+    "caddy_outs",
+    "crud_outs",
+    "electric_outs",
+    "auth_outs",
+    "served_outs"
+  ],
+  "sameProjectDeps": [
+    "caddy_outs",
+    "crud_outs",
+    "electric_outs",
+    "auth_outs",
+    "served_outs"
+  ],
+  "transitiveDeps": [
+    "caddy_outs",
+    "crud_outs",
+    "electric_outs",
+    "auth_outs",
+    "served_outs"
+  ],
+  "transitiveCrossDeps": [],
+  "upClosure": [
+    "./.bayt/compose.render.yaml",
+    "./.bayt/compose.caddy.yaml",
+    "./.bayt/compose.crud.yaml",
+    "./.bayt/compose.database.yaml",
+    "./.bayt/compose.timer-check.yaml",
+    "./.bayt/compose.served.yaml",
+    "./.bayt/compose.electric.yaml",
+    "./.bayt/compose.auth.yaml"
+  ],
+  "chainedDeps": [
+    {
+      "name": "caddy_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    },
+    {
+      "name": "crud_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    },
+    {
+      "name": "electric_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    },
+    {
+      "name": "auth_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    },
+    {
+      "name": "served_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    }
+  ],
+  "cmds": [],
+  "cache": {
+    "full": false,
+    "similar": false
+  }
+}

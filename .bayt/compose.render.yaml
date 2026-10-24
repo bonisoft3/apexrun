@@ -1,0 +1,89 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-render:
+    build:
+      additional_contexts:
+        apexrun-caddy: service:apexrun-caddy
+        apexrun-crud: service:apexrun-crud
+        apexrun-electric: service:apexrun-electric
+        apexrun-auth: service:apexrun-auth
+        apexrun-served: service:apexrun-served
+        plugins_omnishell-runtime-image: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}
+      context: ..
+      dockerfile: .bayt/Dockerfile.render
+      target: render
+      tags:
+      - bayt-apexrun-render:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-render:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    depends_on:
+      apexrun-caddy:
+        condition: service_healthy
+        restart: true
+      apexrun-crud:
+        condition: service_healthy
+        restart: true
+      apexrun-electric:
+        condition: service_healthy
+        restart: true
+      apexrun-auth:
+        condition: service_started
+    develop:
+      watch:
+      - action: sync+restart
+        path: ../shell/index.html
+        target: /render/entry.html
+    environment:
+      DOOR: http://caddy:8080
+      DOOR_TIMEOUT_MS: "41000"
+      ENTRY: /render/entry.html
+      ORIGIN: ${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+      PORT: "8090"
+    healthcheck:
+      test:
+      - CMD
+      - httpcheck
+      - http://127.0.0.1:8090/health
+      interval: 1s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+      start_interval: 200ms
+    image: bayt-apexrun-render:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    networks:
+      default:
+        aliases:
+        - render
+    restart: on-failure
+  apexrun-render_bayt:
+    build:
+      additional_contexts:
+        apexrun-caddy_bayt: service:apexrun-caddy_bayt
+        apexrun-crud_bayt: service:apexrun-crud_bayt
+        apexrun-electric_bayt: service:apexrun-electric_bayt
+        apexrun-auth_bayt: service:apexrun-auth_bayt
+        apexrun-served_bayt: service:apexrun-served_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.render
+      target: render_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-render_bayt:latest
+    scale: 0
+  apexrun-render_srcs:
+    build:
+      context: ..
+      dockerfile: .bayt/Dockerfile.render
+      target: render_srcs
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-render_srcs:latest
+    scale: 0

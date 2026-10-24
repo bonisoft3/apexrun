@@ -1,0 +1,168 @@
+# generated from bayt.cue — do not edit
+secrets:
+  docker_host:
+    environment: DOCKER_HOST_TCP
+  buildx_builder:
+    environment: BUILDX_BUILDER
+  buildx_instance:
+    environment: BUILDX_INSTANCE
+  docker_config:
+    environment: DOCKER_AUTH_CONFIG
+  testcontainers_host:
+    environment: TESTCONTAINERS_HOST_OVERRIDE
+  cache_scope:
+    environment: CACHE_SCOPE
+  cache_scope_fallback:
+    environment: CACHE_SCOPE_FALLBACK
+  sayt_buildkit_syntax:
+    environment: BUILDKIT_SYNTAX
+  sayt_no_cache:
+    environment: SAYT_NO_CACHE
+  bayt_image_tag:
+    environment: BAYT_IMAGE_TAG
+  bayt_pull_policy:
+    environment: BAYT_PULL_POLICY
+  sayt_no_cache_from:
+    environment: SAYT_NO_CACHE_FROM
+  sayt_no_cache_to:
+    environment: SAYT_NO_CACHE_TO
+  depot_token:
+    environment: DEPOT_TOKEN
+  depot_project_id:
+    environment: DEPOT_PROJECT_ID
+  depot_org_id:
+    environment: DEPOT_ORG_ID
+  depot_disable_otel:
+    environment: DEPOT_DISABLE_OTEL
+  actions_results_url:
+    environment: ACTIONS_RESULTS_URL
+  actions_runtime_token:
+    environment: ACTIONS_RUNTIME_TOKEN
+  bkid_project:
+    environment: BKID_PROJECT
+services:
+  apexrun-ci-leaderboard-access:
+    build:
+      additional_contexts:
+        apexrun-check-leaderboard-access_srcs: service:apexrun-check-leaderboard-access_srcs
+        apexrun-check-leaderboard-access_bayt: service:apexrun-check-leaderboard-access_bayt
+        apexrun-database_srcs: service:apexrun-database_srcs
+        apexrun-caddy_srcs: service:apexrun-caddy_srcs
+        apexrun-assets_srcs: service:apexrun-assets_srcs
+        apexrun-served_srcs: service:apexrun-served_srcs
+        apexrun-render_srcs: service:apexrun-render_srcs
+        apexrun-setup_srcs: service:apexrun-setup_srcs
+        bayt: >-
+          ${BAYT_RUNTIME:-docker-image://bonitao/bayt-runtime:1.2.2@sha256:a2e08b0fd123349e30e28843665ab2a2fde9fe25fddf82919fe499f3f01f1b8f}
+        workspaceroot-pronto-sources_srcs: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:workspaceroot-pronto-sources_srcs}
+        libraries_mecha-airlock-image_bayt: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-airlock-image_bayt}
+        libraries_mecha-auth-image_bayt: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-auth-image_bayt}
+        libraries_mecha-clock-image_bayt: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-clock-image_bayt}
+        libraries_mecha-compute-image_bayt: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-compute-image_bayt}
+        libraries_mecha-conduit-image_bayt: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-conduit-image_bayt}
+        libraries_mecha-database-image_bayt: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image_bayt}
+        libraries_mecha-mesh-image_bayt: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-mesh-image_bayt}
+        libraries_mecha-ticker-image_bayt: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-ticker-image_bayt}
+        libraries_mecha-database-image_srcs: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image_srcs}
+        libraries_mecha-mesh-image_srcs: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-mesh-image_srcs}
+        libraries_mecha-auth-image_srcs: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-auth-image_srcs}
+        libraries_mecha-ticker-image_srcs: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-ticker-image_srcs}
+        libraries_mecha-clock-image_srcs: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-clock-image_srcs}
+        libraries_mecha-compute-image_srcs: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-compute-image_srcs}
+        libraries_mecha-airlock-image_srcs: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-airlock-image_srcs}
+        plugins_omnishell-runtime-image_srcs: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image_srcs}
+        plugins_omnishell-runtime-image_bayt: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image_bayt}
+        workspaceroot-pronto-sources_bayt: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:workspaceroot-pronto-sources_bayt}
+      context: ..
+      dockerfile: .bayt/Dockerfile.ci-leaderboard-access
+      secrets:
+      - docker_host
+      - buildx_builder
+      - buildx_instance
+      - docker_config
+      - testcontainers_host
+      - cache_scope
+      - cache_scope_fallback
+      - sayt_buildkit_syntax
+      - sayt_no_cache
+      - bayt_image_tag
+      - bayt_pull_policy
+      - sayt_no_cache_from
+      - sayt_no_cache_to
+      - depot_token
+      - depot_project_id
+      - depot_org_id
+      - depot_disable_otel
+      - actions_results_url
+      - actions_runtime_token
+      - bkid_project
+      target: ci-leaderboard-access
+      tags:
+      - bayt-apexrun-ci-leaderboard-access:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-ci-leaderboard-access:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+        MONOREPO_COMPOSE_MODE: ${MONOREPO_COMPOSE_MODE:-}
+        BAYT_RUNTIME: ${BAYT_RUNTIME:-}
+    image: bayt-apexrun-ci-leaderboard-access:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    secrets:
+    - docker_host
+    - buildx_builder
+    - buildx_instance
+    - docker_config
+    - testcontainers_host
+    - cache_scope
+    - cache_scope_fallback
+    - sayt_buildkit_syntax
+    - sayt_no_cache
+    - bayt_image_tag
+    - bayt_pull_policy
+    - sayt_no_cache_from
+    - sayt_no_cache_to
+    - depot_token
+    - depot_project_id
+    - depot_org_id
+    - depot_disable_otel
+    - actions_results_url
+    - actions_runtime_token
+    - bkid_project
+  apexrun-ci-leaderboard-access_bayt:
+    build:
+      additional_contexts:
+        apexrun-check-leaderboard-access_bayt: service:apexrun-check-leaderboard-access_bayt
+        apexrun-database_bayt: service:apexrun-database_bayt
+        apexrun-caddy_bayt: service:apexrun-caddy_bayt
+        apexrun-assets_bayt: service:apexrun-assets_bayt
+        apexrun-served_bayt: service:apexrun-served_bayt
+        apexrun-render_bayt: service:apexrun-render_bayt
+        apexrun-setup_bayt: service:apexrun-setup_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.ci-leaderboard-access
+      target: ci-leaderboard-access_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-ci-leaderboard-access_bayt:latest
+    scale: 0

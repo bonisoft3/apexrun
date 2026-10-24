@@ -1,0 +1,7 @@
+[
+ "PY=../../assets-pack/.venv/bin/python   # the assets-pack venv (uv sync there); web/node_modules, web/vendor and web/pack link to the assets-pack install",
+ "$PY scripts/plants.py",
+ "$PY scripts/pack.py",
+ "$PY scripts/validate.py",
+ "$PY scripts/evidence.py"
+]

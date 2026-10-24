@@ -1,0 +1,10 @@
+# generated from bayt.cue — do not edit
+tasks:
+  default:
+    deps:
+    - "::bayt:database"
+    - "::bayt:setup"
+    run: once
+    cmds:
+    - sh -c "process-compose --no-server -f .bayt/process-compose.yaml run replay"
+version: "3"

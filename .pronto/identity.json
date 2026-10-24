@@ -1,0 +1,937 @@
+{
+  "0x915566778899aabb": {
+    "name": "match",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "string",
+        "retired": false
+      },
+      "2": {
+        "name": "track_id",
+        "type": "string",
+        "retired": true
+      },
+      "3": {
+        "name": "status",
+        "type": "string",
+        "retired": true
+      },
+      "4": {
+        "name": "laps_total",
+        "type": "int32",
+        "retired": true
+      },
+      "5": {
+        "name": "current_lap",
+        "type": "int32",
+        "retired": true
+      },
+      "6": {
+        "name": "player_position",
+        "type": "int32",
+        "retired": true
+      },
+      "7": {
+        "name": "winner_id",
+        "type": "string",
+        "retired": true
+      },
+      "8": {
+        "name": "time_elapsed_s",
+        "type": "int32",
+        "retired": true
+      }
+    }
+  },
+  "0x9266778899aabbcc": {
+    "name": "kart",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "string",
+        "retired": false
+      },
+      "2": {
+        "name": "character",
+        "type": "string",
+        "retired": true
+      },
+      "3": {
+        "name": "is_player",
+        "type": "string",
+        "retired": true
+      },
+      "4": {
+        "name": "speed_kmh",
+        "type": "int32",
+        "retired": true
+      },
+      "5": {
+        "name": "position",
+        "type": "int32",
+        "retired": true
+      },
+      "6": {
+        "name": "current_lap",
+        "type": "int32",
+        "retired": true
+      },
+      "7": {
+        "name": "nitro_fuel",
+        "type": "int32",
+        "retired": true
+      },
+      "8": {
+        "name": "item",
+        "type": "string",
+        "retired": true
+      }
+    }
+  },
+  "0x93778899aabbccdd": {
+    "name": "lap_record",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "string",
+        "retired": false
+      },
+      "2": {
+        "name": "track_id",
+        "type": "string",
+        "retired": true
+      },
+      "3": {
+        "name": "holder_name",
+        "type": "string",
+        "retired": true
+      },
+      "4": {
+        "name": "lap_time_ms",
+        "type": "int32",
+        "retired": true
+      },
+      "5": {
+        "name": "tick",
+        "type": "int32",
+        "retired": true
+      }
+    }
+  },
+  "0xf7aed5fa682060af": {
+    "name": "run",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "string",
+        "retired": false
+      },
+      "2": {
+        "name": "phase",
+        "type": "string",
+        "retired": false
+      },
+      "3": {
+        "name": "seed",
+        "type": "int32",
+        "retired": false
+      },
+      "4": {
+        "name": "race",
+        "type": "int32",
+        "retired": false
+      },
+      "5": {
+        "name": "mode",
+        "type": "string",
+        "retired": false
+      },
+      "6": {
+        "name": "input",
+        "type": "string",
+        "retired": false
+      },
+      "7": {
+        "name": "clock",
+        "type": "string",
+        "retired": false
+      },
+      "8": {
+        "name": "lifted",
+        "type": "int32",
+        "retired": false
+      },
+      "9": {
+        "name": "stage_id",
+        "type": "string",
+        "retired": false
+      },
+      "10": {
+        "name": "stage_num",
+        "type": "int32",
+        "retired": false
+      },
+      "11": {
+        "name": "next_num",
+        "type": "int32",
+        "retired": false
+      },
+      "12": {
+        "name": "stage_name",
+        "type": "string",
+        "retired": false
+      },
+      "13": {
+        "name": "final",
+        "type": "string",
+        "retired": false
+      },
+      "14": {
+        "name": "fork_left",
+        "type": "string",
+        "retired": false
+      },
+      "15": {
+        "name": "fork_right",
+        "type": "string",
+        "retired": false
+      },
+      "16": {
+        "name": "route",
+        "type": "string",
+        "retired": false
+      },
+      "17": {
+        "name": "racing",
+        "type": "string",
+        "retired": false
+      },
+      "18": {
+        "name": "rival_label",
+        "type": "string",
+        "retired": false
+      },
+      "19": {
+        "name": "res_title",
+        "type": "string",
+        "retired": false
+      },
+      "20": {
+        "name": "res_over",
+        "type": "string",
+        "retired": false
+      },
+      "21": {
+        "name": "res_kicker",
+        "type": "string",
+        "retired": false
+      },
+      "22": {
+        "name": "line1_label",
+        "type": "string",
+        "retired": false
+      },
+      "23": {
+        "name": "line1_value",
+        "type": "string",
+        "retired": false
+      },
+      "24": {
+        "name": "line2_label",
+        "type": "string",
+        "retired": false
+      },
+      "25": {
+        "name": "line2_value",
+        "type": "string",
+        "retired": false
+      },
+      "26": {
+        "name": "line3_label",
+        "type": "string",
+        "retired": false
+      },
+      "27": {
+        "name": "line3_value",
+        "type": "string",
+        "retired": false
+      },
+      "28": {
+        "name": "line4_label",
+        "type": "string",
+        "retired": false
+      },
+      "29": {
+        "name": "line4_value",
+        "type": "string",
+        "retired": false
+      },
+      "30": {
+        "name": "total",
+        "type": "string",
+        "retired": false
+      },
+      "31": {
+        "name": "outcome",
+        "type": "string",
+        "retired": false
+      },
+      "32": {
+        "name": "score",
+        "type": "int32",
+        "retired": false
+      },
+      "33": {
+        "name": "stage",
+        "type": "int32",
+        "retired": false
+      },
+      "34": {
+        "name": "run_ms",
+        "type": "int32",
+        "retired": false
+      },
+      "35": {
+        "name": "initial_0",
+        "type": "string",
+        "retired": false
+      },
+      "36": {
+        "name": "initial_1",
+        "type": "string",
+        "retired": false
+      },
+      "37": {
+        "name": "initial_2",
+        "type": "string",
+        "retired": false
+      },
+      "38": {
+        "name": "cursor",
+        "type": "int32",
+        "retired": false
+      },
+      "39": {
+        "name": "denied",
+        "type": "string",
+        "retired": false
+      },
+      "40": {
+        "name": "saved",
+        "type": "string",
+        "retired": false
+      },
+      "41": {
+        "name": "saved_score",
+        "type": "int32",
+        "retired": false
+      },
+      "42": {
+        "name": "saved_initials",
+        "type": "string",
+        "retired": false
+      },
+      "43": {
+        "name": "station",
+        "type": "int32",
+        "retired": false
+      },
+      "44": {
+        "name": "muted",
+        "type": "string",
+        "retired": false
+      },
+      "45": {
+        "name": "volume",
+        "type": "int32",
+        "retired": false
+      },
+      "46": {
+        "name": "pitlane",
+        "type": "string",
+        "retired": false
+      },
+      "47": {
+        "name": "duel",
+        "type": "string",
+        "retired": false
+      },
+      "48": {
+        "name": "seat",
+        "type": "int32",
+        "retired": false
+      },
+      "49": {
+        "name": "duel_stage",
+        "type": "string",
+        "retired": false
+      },
+      "50": {
+        "name": "peer",
+        "type": "string",
+        "retired": false
+      },
+      "51": {
+        "name": "verdict",
+        "type": "string",
+        "retired": false
+      },
+      "52": {
+        "name": "replay",
+        "type": "string",
+        "retired": false
+      }
+    }
+  },
+  "0x889dbdd918bfeda3": {
+    "name": "run_signal",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "string",
+        "retired": false
+      },
+      "2": {
+        "name": "description",
+        "type": "string",
+        "retired": false
+      }
+    }
+  },
+  "0xdc94f27f104784e5": {
+    "name": "run_input",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "string",
+        "retired": false
+      },
+      "2": {
+        "name": "n",
+        "type": "int32",
+        "retired": false
+      },
+      "3": {
+        "name": "action",
+        "type": "string",
+        "retired": false
+      }
+    }
+  },
+  "0xccb3e9083902f32b": {
+    "name": "run_milestone",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "string",
+        "retired": false
+      },
+      "2": {
+        "name": "race",
+        "type": "int32",
+        "retired": false
+      },
+      "3": {
+        "name": "frame",
+        "type": "int32",
+        "retired": false
+      },
+      "4": {
+        "name": "kind",
+        "type": "string",
+        "retired": false
+      },
+      "5": {
+        "name": "checksum",
+        "type": "string",
+        "retired": false
+      },
+      "6": {
+        "name": "from",
+        "type": "int32",
+        "retired": false
+      },
+      "7": {
+        "name": "width",
+        "type": "int32",
+        "retired": false
+      },
+      "8": {
+        "name": "inputs",
+        "type": "string",
+        "retired": false
+      },
+      "9": {
+        "name": "detail",
+        "type": "string",
+        "retired": false
+      },
+      "10": {
+        "name": "snapshot",
+        "type": "string",
+        "retired": false
+      }
+    }
+  },
+  "0x91c22f2244218908": {
+    "name": "lobby_tab",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "string",
+        "retired": false
+      },
+      "2": {
+        "name": "lease",
+        "type": "string",
+        "retired": false
+      },
+      "3": {
+        "name": "me",
+        "type": "string",
+        "retired": false
+      },
+      "4": {
+        "name": "note",
+        "type": "string",
+        "retired": false
+      },
+      "5": {
+        "name": "shown",
+        "type": "string",
+        "retired": false
+      },
+      "6": {
+        "name": "open",
+        "type": "string",
+        "retired": false
+      },
+      "7": {
+        "name": "offer",
+        "type": "string",
+        "retired": false
+      },
+      "8": {
+        "name": "stage",
+        "type": "string",
+        "retired": false
+      },
+      "9": {
+        "name": "name",
+        "type": "string",
+        "retired": false
+      }
+    }
+  },
+  "0xc3877102c61a72f3": {
+    "name": "app_user",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "uuid",
+        "retired": false
+      },
+      "2": {
+        "name": "handle",
+        "type": "string",
+        "retired": false
+      }
+    }
+  },
+  "0x918e449216b97307": {
+    "name": "high_score",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "uuid",
+        "retired": false
+      },
+      "2": {
+        "name": "player_id",
+        "type": "uuid",
+        "retired": false
+      },
+      "3": {
+        "name": "initials",
+        "type": "string",
+        "retired": false
+      },
+      "4": {
+        "name": "score",
+        "type": "int32",
+        "retired": false
+      },
+      "5": {
+        "name": "outcome",
+        "type": "string",
+        "retired": false
+      },
+      "6": {
+        "name": "stage",
+        "type": "int32",
+        "retired": false
+      },
+      "7": {
+        "name": "run_ms",
+        "type": "int32",
+        "retired": false
+      },
+      "8": {
+        "name": "created_at",
+        "type": "timestamp",
+        "retired": false
+      }
+    }
+  },
+  "0xebfa4ed60fd5d64f": {
+    "name": "apexrun_presence_seat",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "text",
+        "retired": false
+      },
+      "2": {
+        "name": "instance_id",
+        "type": "uuid",
+        "retired": false
+      },
+      "3": {
+        "name": "actor",
+        "type": "uuid",
+        "retired": false
+      },
+      "4": {
+        "name": "seat",
+        "type": "text",
+        "retired": false
+      },
+      "5": {
+        "name": "revision",
+        "type": "bigint",
+        "retired": false
+      },
+      "6": {
+        "name": "phase",
+        "type": "text",
+        "retired": false
+      },
+      "7": {
+        "name": "view",
+        "type": "json",
+        "retired": false
+      },
+      "8": {
+        "name": "name",
+        "type": "text",
+        "retired": false
+      }
+    }
+  },
+  "0xcdf55ec168b97d9c": {
+    "name": "apexrun_presence_command",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "text",
+        "retired": false
+      },
+      "2": {
+        "name": "instance_id",
+        "type": "uuid",
+        "retired": false
+      },
+      "3": {
+        "name": "actor",
+        "type": "uuid",
+        "retired": false
+      },
+      "4": {
+        "name": "request",
+        "type": "json",
+        "retired": false
+      },
+      "5": {
+        "name": "revision",
+        "type": "bigint",
+        "retired": false
+      },
+      "6": {
+        "name": "outcome",
+        "type": "text",
+        "retired": false
+      },
+      "7": {
+        "name": "reason",
+        "type": "text",
+        "retired": false
+      }
+    }
+  },
+  "0x93c026e1862e2c67": {
+    "name": "apexrun_presence_public",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "text",
+        "retired": false
+      },
+      "2": {
+        "name": "name",
+        "type": "text",
+        "retired": false
+      }
+    }
+  },
+  "0xc4d6d832835cfe26": {
+    "name": "apexrun_presence_lease",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "text",
+        "retired": false
+      },
+      "2": {
+        "name": "actor",
+        "type": "uuid",
+        "retired": false
+      },
+      "3": {
+        "name": "beat",
+        "type": "int",
+        "retired": false
+      }
+    }
+  },
+  "0x95166b7168e7c797": {
+    "name": "apexrun_challenge_seat",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "text",
+        "retired": false
+      },
+      "2": {
+        "name": "instance_id",
+        "type": "uuid",
+        "retired": false
+      },
+      "3": {
+        "name": "actor",
+        "type": "uuid",
+        "retired": false
+      },
+      "4": {
+        "name": "seat",
+        "type": "text",
+        "retired": false
+      },
+      "5": {
+        "name": "revision",
+        "type": "bigint",
+        "retired": false
+      },
+      "6": {
+        "name": "phase",
+        "type": "text",
+        "retired": false
+      },
+      "7": {
+        "name": "view",
+        "type": "json",
+        "retired": false
+      },
+      "8": {
+        "name": "inviter_name",
+        "type": "text",
+        "retired": false
+      },
+      "9": {
+        "name": "target_name",
+        "type": "text",
+        "retired": false
+      },
+      "10": {
+        "name": "stage",
+        "type": "text",
+        "retired": false
+      },
+      "11": {
+        "name": "duel",
+        "type": "text",
+        "retired": false
+      }
+    }
+  },
+  "0x832f13adb3057bba": {
+    "name": "apexrun_challenge_command",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "text",
+        "retired": false
+      },
+      "2": {
+        "name": "instance_id",
+        "type": "uuid",
+        "retired": false
+      },
+      "3": {
+        "name": "actor",
+        "type": "uuid",
+        "retired": false
+      },
+      "4": {
+        "name": "request",
+        "type": "json",
+        "retired": false
+      },
+      "5": {
+        "name": "revision",
+        "type": "bigint",
+        "retired": false
+      },
+      "6": {
+        "name": "outcome",
+        "type": "text",
+        "retired": false
+      },
+      "7": {
+        "name": "reason",
+        "type": "text",
+        "retired": false
+      }
+    }
+  },
+  "0xdb31c593d68dc01e": {
+    "name": "apexrun_challenge_open",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "text",
+        "retired": false
+      },
+      "2": {
+        "name": "instance_id",
+        "type": "uuid",
+        "retired": false
+      },
+      "3": {
+        "name": "actor",
+        "type": "uuid",
+        "retired": false
+      },
+      "4": {
+        "name": "kind",
+        "type": "text",
+        "retired": false
+      },
+      "5": {
+        "name": "input",
+        "type": "json",
+        "retired": false
+      },
+      "6": {
+        "name": "outcome",
+        "type": "text",
+        "retired": false
+      },
+      "7": {
+        "name": "reason",
+        "type": "text",
+        "retired": false
+      }
+    }
+  },
+  "0xdbf8bb586fc2ffbb": {
+    "name": "apexrun_duel_seat",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "text",
+        "retired": false
+      },
+      "2": {
+        "name": "instance_id",
+        "type": "uuid",
+        "retired": false
+      },
+      "3": {
+        "name": "actor",
+        "type": "uuid",
+        "retired": false
+      },
+      "4": {
+        "name": "seat",
+        "type": "text",
+        "retired": false
+      },
+      "5": {
+        "name": "revision",
+        "type": "bigint",
+        "retired": false
+      },
+      "6": {
+        "name": "phase",
+        "type": "text",
+        "retired": false
+      },
+      "7": {
+        "name": "view",
+        "type": "json",
+        "retired": false
+      },
+      "8": {
+        "name": "stage",
+        "type": "text",
+        "retired": false
+      },
+      "9": {
+        "name": "winner",
+        "type": "text",
+        "retired": false
+      }
+    }
+  },
+  "0x85b89e1f36b95052": {
+    "name": "apexrun_duel_command",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "text",
+        "retired": false
+      },
+      "2": {
+        "name": "instance_id",
+        "type": "uuid",
+        "retired": false
+      },
+      "3": {
+        "name": "actor",
+        "type": "uuid",
+        "retired": false
+      },
+      "4": {
+        "name": "request",
+        "type": "json",
+        "retired": false
+      },
+      "5": {
+        "name": "revision",
+        "type": "bigint",
+        "retired": false
+      },
+      "6": {
+        "name": "outcome",
+        "type": "text",
+        "retired": false
+      },
+      "7": {
+        "name": "reason",
+        "type": "text",
+        "retired": false
+      }
+    }
+  }
+}

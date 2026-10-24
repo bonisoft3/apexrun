@@ -1,0 +1,67 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-check-boot:
+    build:
+      additional_contexts:
+        apexrun-browser: service:apexrun-browser
+        apexrun-launch: service:apexrun-launch
+        plugins_omnishell-runtime-image: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}
+      context: ..
+      dockerfile: .bayt/Dockerfile.check-boot
+      target: check-boot
+      tags:
+      - bayt-apexrun-check-boot:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-check-boot:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    command:
+    - mise
+    - x
+    - --
+    - sh
+    - -c
+    - >-
+      for f in tests/*.app.json; do [ ! -e "$$f" ] || cp "$$f"
+      "$${f%.app.json}.json"; done && deno run --config tests/deno.json --no-lock --allow-read --allow-write
+      --allow-net --allow-env --allow-run --allow-sys
+      --unsafely-ignore-certificate-errors=caddy tests/boot.ts .
+    depends_on:
+      apexrun-launch:
+        condition: service_healthy
+        restart: true
+    environment:
+      APP_URL: https://caddy:8443
+      ORIGIN: ${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+      SETTLE_TIMEOUT_MS: "50000"
+    image: bayt-apexrun-check-boot:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    scale: 0
+  apexrun-check-boot_bayt:
+    build:
+      additional_contexts:
+        apexrun-browser_bayt: service:apexrun-browser_bayt
+        apexrun-launch_bayt: service:apexrun-launch_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.check-boot
+      target: check-boot_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-check-boot_bayt:latest
+    scale: 0
+  apexrun-check-boot_srcs:
+    build:
+      additional_contexts:
+        apexrun-browser_srcs: service:apexrun-browser_srcs
+      context: ..
+      dockerfile: .bayt/Dockerfile.check-boot
+      target: check-boot_srcs
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-check-boot_srcs:latest
+    scale: 0

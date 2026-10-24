@@ -1,0 +1,62 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-crud:
+    build:
+      additional_contexts:
+        apexrun-database: service:apexrun-database
+        apexrun-timer-check: service:apexrun-timer-check
+      context: ..
+      dockerfile: .bayt/Dockerfile.crud
+      target: crud
+      tags:
+      - bayt-apexrun-crud:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-crud:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    depends_on:
+      apexrun-database:
+        condition: service_healthy
+        restart: true
+      apexrun-timer-check:
+        condition: service_completed_successfully
+    environment:
+      PGRST_DB_URI: >-
+        postgres://authenticator:${AUTHENTICATOR_PASSWORD:-dev-authenticator-password}@database:5432/${POSTGRES_DB:-apexrun}
+      PGRST_DB_SCHEMA: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_DB_PRE_REQUEST: public.app_pre_request
+      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
+      PGRST_SERVER_HOST: "*"
+      PGRST_SERVER_PORT: "3000"
+      PGRST_ADMIN_SERVER_PORT: "3001"
+    healthcheck:
+      test:
+      - CMD
+      - httpcheck
+      - http://127.0.0.1:3001/ready
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+      start_interval: 500ms
+    image: bayt-apexrun-crud:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    networks:
+      default:
+        aliases:
+        - crud
+  apexrun-crud_bayt:
+    build:
+      additional_contexts:
+        apexrun-database_bayt: service:apexrun-database_bayt
+        apexrun-timer-check_bayt: service:apexrun-timer-check_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.crud
+      target: crud_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-crud_bayt:latest
+    scale: 0

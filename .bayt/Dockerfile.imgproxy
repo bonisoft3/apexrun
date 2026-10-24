@@ -1,0 +1,16 @@
+# generated from bayt.cue — do not edit
+FROM ghcr.io/imgproxy/imgproxy:v3.31.1@sha256:2b7a56dbf9c8a8e12e7109a5bdd27d31a8c1aa49f2116c927c6aedc37e18db98 AS imgproxy
+ARG BAYT_DIR
+WORKDIR /monorepo/${BAYT_DIR}
+COPY .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/bayt.imgproxy.json ./.bayt/
+
+FROM busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223 AS imgproxy_bayt_ctxs
+ARG BAYT_DIR
+WORKDIR /monorepo/${BAYT_DIR}
+COPY --parents .bayt/compose.imgproxy.yaml .bayt/Dockerfile.imgproxy .bayt/bayt.imgproxy.json .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/process-compose.yaml ./
+COPY --from=apexrun-rclone-s3_bayt /monorepo /monorepo
+ARG SOURCE_DATE_EPOCH
+ARG BAYT_CLAMP=1
+RUN if [ "${BAYT_CLAMP:-1}" != 0 ]; then find /monorepo/${BAYT_DIR} -exec touch -hd @${SOURCE_DATE_EPOCH:-0} {} + && { d=$(dirname /monorepo/${BAYT_DIR}); while [ "$d" != / ]; do touch -hd @${SOURCE_DATE_EPOCH:-0} "$d" || exit; d=$(dirname "$d"); done; }; fi
+FROM scratch AS imgproxy_bayt
+COPY --from=imgproxy_bayt_ctxs /monorepo /monorepo

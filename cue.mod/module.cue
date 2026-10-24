@@ -1,0 +1,38 @@
+// Mirror-only module declaration. Copybara stages this file from
+// .mirror/cue.mod/ to the bonisoft3/apexrun root as
+// cue.mod/module.cue. In the monorepo apexrun's CUE resolves against the
+// root cue.mod (bonisoft.org), which is HEAD; copybara rewrites its imports
+// to github.com/bonisoft3/*, and the mirror resolves them from the Central
+// Registry at the versions below, the ones .mise.toml installs.
+module: "github.com/bonisoft3/apexrun@v0"
+
+language: {
+	version: "v0.16.1"
+}
+
+source: {
+	kind: "git"
+}
+
+deps: {
+	"github.com/bonisoft3/bayt@v0": {
+		v:       "v0.66.0"
+		default: true
+	}
+	"github.com/bonisoft3/mecha@v0": {
+		v:       "v0.17.1"
+		default: true
+	}
+	"github.com/bonisoft3/omnishell@v0": {
+		v:       "v0.18.1"
+		default: true
+	}
+	"github.com/bonisoft3/pronto@v0": {
+		v:       "v0.22.1"
+		default: true
+	}
+	"github.com/bonisoft3/sayt@v0": {
+		v:       "v0.45.0"
+		default: true
+	}
+}

@@ -1,0 +1,46 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-clock:
+    build:
+      additional_contexts:
+        apexrun-ticker: service:apexrun-ticker
+        libraries_mecha-clock-image: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/mecha-clock:0.17.0@sha256:9d8cdaca612d880a4de4ab3176f80a1e7acdb38b10295f9aa5990217dcb3317f}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-clock-image}
+      context: ..
+      dockerfile: .bayt/Dockerfile.clock
+      target: clock
+      tags:
+      - bayt-apexrun-clock:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-clock:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    depends_on:
+      apexrun-ticker:
+        condition: service_started
+    environment:
+      POKE_URL: http://ticker:9998
+      POKE_INTERVAL: ${POKE_INTERVAL:-60s}
+      POKE_CALLER: compose
+      SERVICE_JWT: >-
+        ${SERVICE_JWT:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZSIsInN1YiI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImV4cCI6MTk4ODE1MDQwMH0.dGYz_sMSnOvZy0eANh7spJbgyr2fEzeynOERIqW7gd4}
+    image: bayt-apexrun-clock:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    networks:
+      default:
+        aliases:
+        - clock
+    restart: on-failure
+  apexrun-clock_bayt:
+    build:
+      additional_contexts:
+        apexrun-ticker_bayt: service:apexrun-ticker_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.clock
+      target: clock_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-clock_bayt:latest
+    scale: 0

@@ -1,0 +1,9 @@
+[
+ "PY=../assets-pack/.venv/bin/python   # the assets-pack venv; web/node_modules, web/vendor and web/pack link to the assets-pack install",
+ "scripts/build_all.sh [id ...]         # every id (rocks2.MODELS) -> work/build/<id>_lod{0,1,2}.glb + <id>.json, one process per id (deterministic)",
+ "$PY scripts/lineup.py [set ...]       # each set lined up on its stage, toon-lit -> work/look/set_<set>.jpg while iterating",
+ "$PY scripts/look.py <id> ...          # per-model views while iterating -> work/look/<id>.jpg",
+ "$PY scripts/pack.py",
+ "$PY scripts/validate.py",
+ "$PY scripts/evidence.py               # -> evidence.jpg"
+]

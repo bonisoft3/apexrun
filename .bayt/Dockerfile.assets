@@ -1,0 +1,30 @@
+# generated from bayt.cue — do not edit
+FROM denoland/deno:debian-2.9.7@sha256:fa335acdf6b72106eda2cb6a8cb5f4187e7630e357467489db4b2e7352d5e432 AS assets
+ARG BAYT_DIR
+WORKDIR /app
+COPY services/assets/seed.ts assets/manifest.json /app/
+COPY --parents services/assets/seed.ts assets/manifest.json ./
+COPY .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/bayt.assets.json ./.bayt/
+CMD ["run", "--cached-only", "--allow-read=/app", "--allow-env", "--allow-net=storage.googleapis.com,rclone-s3:3900", "seed.ts"]
+RUN deno cache seed.ts
+
+FROM busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223 AS assets_ctxs
+ARG BAYT_DIR
+WORKDIR /monorepo/${BAYT_DIR}
+COPY --parents services/assets/seed.ts assets/manifest.json ./
+ARG SOURCE_DATE_EPOCH
+ARG BAYT_CLAMP=1
+RUN if [ "${BAYT_CLAMP:-1}" != 0 ]; then find /monorepo/${BAYT_DIR} -exec touch -hd @${SOURCE_DATE_EPOCH:-0} {} + && { d=$(dirname /monorepo/${BAYT_DIR}); while [ "$d" != / ]; do touch -hd @${SOURCE_DATE_EPOCH:-0} "$d" || exit; d=$(dirname "$d"); done; }; fi
+FROM scratch AS assets_srcs
+COPY --from=assets_ctxs /monorepo /monorepo
+
+FROM busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223 AS assets_bayt_ctxs
+ARG BAYT_DIR
+WORKDIR /monorepo/${BAYT_DIR}
+COPY --parents .bayt/compose.assets.yaml .bayt/Dockerfile.assets .bayt/bayt.assets.json .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/process-compose.yaml ./
+COPY --from=apexrun-rclone-s3_bayt /monorepo /monorepo
+ARG SOURCE_DATE_EPOCH
+ARG BAYT_CLAMP=1
+RUN if [ "${BAYT_CLAMP:-1}" != 0 ]; then find /monorepo/${BAYT_DIR} -exec touch -hd @${SOURCE_DATE_EPOCH:-0} {} + && { d=$(dirname /monorepo/${BAYT_DIR}); while [ "$d" != / ]; do touch -hd @${SOURCE_DATE_EPOCH:-0} "$d" || exit; d=$(dirname "$d"); done; }; fi
+FROM scratch AS assets_bayt
+COPY --from=assets_bayt_ctxs /monorepo /monorepo

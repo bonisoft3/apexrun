@@ -1,0 +1,219 @@
+{
+  "_generated_from": "bayt.cue (do not edit)",
+  "compose": {
+    "up": false,
+    "manual": false,
+    "environment": {
+      "ASSET_MANIFEST": "/app/manifest.json",
+      "ASSET_ORIGIN": "https://storage.googleapis.com/trash-362115-supertuxkart-assets",
+      "BLOB_STORE": "http://rclone-s3:3900/mecha-objects"
+    },
+    "ports": [],
+    "volumes": [],
+    "depends_on": {
+      "apexrun-rclone-s3": {
+        "condition": "service_healthy"
+      }
+    },
+    "networks": {
+      "default": {
+        "aliases": [
+          "assets"
+        ]
+      }
+    },
+    "restart": "no"
+  },
+  "dockerfile": {
+    "preamble": [],
+    "preambleCopyContexts": [],
+    "from": {
+      "name": "denoland/deno:debian-2.9.7@sha256:fa335acdf6b72106eda2cb6a8cb5f4187e7630e357467489db4b2e7352d5e432"
+    },
+    "workdir": "/app",
+    "add": [],
+    "mounts": [],
+    "secrets": {},
+    "extra_hosts": [],
+    "copy": [
+      {
+        "from": null,
+        "srcs": [
+          "services/assets/seed.ts",
+          "assets/manifest.json"
+        ],
+        "dst": "/app/",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      }
+    ],
+    "epilogue": [
+      "RUN deno cache seed.ts"
+    ],
+    "healthcheck": null,
+    "expose": [],
+    "entrypoint": null,
+    "incremental": false,
+    "cmd": [
+      "run",
+      "--cached-only",
+      "--allow-read=/app",
+      "--allow-env",
+      "--allow-net=storage.googleapis.com,rclone-s3:3900",
+      "seed.ts"
+    ]
+  },
+  "name": "assets",
+  "project": "apexrun",
+  "dir": ".",
+  "activate": "",
+  "srcs": {
+    "globs": [
+      "services/assets/seed.ts",
+      "assets/manifest.json"
+    ],
+    "exclude": []
+  },
+  "outs": {
+    "globs": [],
+    "exclude": []
+  },
+  "state": {
+    "globs": []
+  },
+  "env": {},
+  "synthetics": {
+    "bayt": {
+      "name": "assets_bayt",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [
+          ".bayt/compose.assets.yaml",
+          ".bayt/Dockerfile.assets",
+          ".bayt/bayt.assets.json",
+          ".bayt/Taskfile.yml",
+          ".bayt/Taskfile.bayt.yml",
+          ".bayt/process-compose.yaml"
+        ],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.assets.yaml",
+        "./.bayt/compose.rclone-s3.yaml"
+      ]
+    },
+    "outs": {
+      "name": "assets_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.assets.yaml",
+        "./.bayt/compose.rclone-s3.yaml"
+      ]
+    },
+    "srcs": {
+      "name": "assets_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [
+          "services/assets/seed.ts",
+          "assets/manifest.json"
+        ],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [
+        "rclone-s3_outs_srcs"
+      ],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.assets.yaml",
+        "./.bayt/compose.rclone-s3.yaml"
+      ]
+    }
+  },
+  "visibility": "internal",
+  "emitsSrcs": true,
+  "deps": [
+    "rclone-s3_outs"
+  ],
+  "sameProjectDeps": [
+    "rclone-s3_outs"
+  ],
+  "transitiveDeps": [
+    "rclone-s3_outs"
+  ],
+  "transitiveCrossDeps": [],
+  "upClosure": [
+    "./.bayt/compose.assets.yaml",
+    "./.bayt/compose.rclone-s3.yaml"
+  ],
+  "chainedDeps": [
+    {
+      "name": "rclone-s3_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    }
+  ],
+  "cmds": [],
+  "cache": {
+    "full": false,
+    "similar": false
+  }
+}

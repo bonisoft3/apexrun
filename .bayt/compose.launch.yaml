@@ -1,0 +1,88 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-launch:
+    build:
+      additional_contexts:
+        apexrun-caddy: service:apexrun-caddy
+        apexrun-database: service:apexrun-database
+        apexrun-crud: service:apexrun-crud
+        apexrun-electric: service:apexrun-electric
+        apexrun-auth: service:apexrun-auth
+        apexrun-rclone-s3: service:apexrun-rclone-s3
+        apexrun-imgproxy: service:apexrun-imgproxy
+        apexrun-clock: service:apexrun-clock
+        apexrun-assets: service:apexrun-assets
+        apexrun-render: service:apexrun-render
+      context: ..
+      dockerfile: .bayt/Dockerfile.launch
+      target: launch
+      tags:
+      - bayt-apexrun-launch:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-launch:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    depends_on:
+      apexrun-caddy:
+        condition: service_healthy
+        restart: true
+      apexrun-database:
+        condition: service_healthy
+        restart: true
+      apexrun-crud:
+        condition: service_healthy
+        restart: true
+      apexrun-electric:
+        condition: service_healthy
+        restart: true
+      apexrun-auth:
+        condition: service_started
+      apexrun-rclone-s3:
+        condition: service_healthy
+        restart: true
+      apexrun-imgproxy:
+        condition: service_healthy
+        restart: true
+      apexrun-clock:
+        condition: service_started
+      apexrun-assets:
+        condition: service_completed_successfully
+      apexrun-render:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test:
+      - CMD
+      - echo
+      - apexrun is healthy
+      interval: 5s
+      timeout: 2s
+      retries: 3
+    image: bayt-apexrun-launch:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    networks:
+      default:
+        aliases:
+        - launch
+  apexrun-launch_bayt:
+    build:
+      additional_contexts:
+        apexrun-caddy_bayt: service:apexrun-caddy_bayt
+        apexrun-database_bayt: service:apexrun-database_bayt
+        apexrun-crud_bayt: service:apexrun-crud_bayt
+        apexrun-electric_bayt: service:apexrun-electric_bayt
+        apexrun-auth_bayt: service:apexrun-auth_bayt
+        apexrun-rclone-s3_bayt: service:apexrun-rclone-s3_bayt
+        apexrun-imgproxy_bayt: service:apexrun-imgproxy_bayt
+        apexrun-clock_bayt: service:apexrun-clock_bayt
+        apexrun-assets_bayt: service:apexrun-assets_bayt
+        apexrun-render_bayt: service:apexrun-render_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.launch
+      target: launch_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-launch_bayt:latest
+    scale: 0

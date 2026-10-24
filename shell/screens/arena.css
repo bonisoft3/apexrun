@@ -1,0 +1,1795 @@
+/* Apex Run Standalone Full-Frame Arena & Pit-Lane Telemetry HUD */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* The arena fills exactly the viewport under the shell's nav: a column whose
+   last box takes the remaining height, so nothing is clipped and the page
+   never scrolls under the game. */
+html:has(.screen[data-screen="arena"]),
+body:has(.screen[data-screen="arena"]) {
+  height: 100%;
+  overflow: hidden;
+}
+
+body:has(.screen[data-screen="arena"]),
+#app:has(.screen[data-screen="arena"]),
+.shell-screen:has(> .screen[data-screen="arena"]) {
+  display: flex;
+  flex-direction: column;
+}
+
+#app:has(.screen[data-screen="arena"]),
+.shell-screen:has(> .screen[data-screen="arena"]),
+.screen[data-screen="arena"] {
+  flex: 1;
+  min-height: 0;
+}
+
+.screen[data-screen="arena"] {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #000000;
+  color: #FFFFFF;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+}
+
+.viewport-box {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Booting, the race stays out of sight behind the loading line until its
+   first frames are drawn with the title card up; the two then fade in
+   together, and the line goes. */
+.arena-run > * {
+  transition: opacity 0.35s ease-out;
+}
+
+.arena-run:has(> .arena-race:not([data-kinetic-ready])) > :not(.arena-loading) {
+  opacity: 0;
+}
+
+.arena-race[data-kinetic-ready] ~ .arena-loading {
+  display: none;
+}
+
+.arena-loading {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  font: 700 clamp(18px, 3vw, 28px) 'Russo One', system-ui, sans-serif;
+  letter-spacing: 0.3em;
+  color: #ffb347;
+  pointer-events: none;
+}
+
+/* The kinetic child's mount; its presenter puts the scene's canvas in it. */
+.arena-race {
+  position: absolute;
+  inset: 0;
+  background: #000000;
+  cursor: crosshair;
+}
+
+.arena-race > canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* The presenter's frame-timed moments: the haze under the panels, the cards
+   and banners over them. */
+canvas.stk-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+canvas.stk-layer-over {
+  z-index: 150;
+}
+
+/* Toggleable Pit-Lane Telemetry Badge */
+.pitlane-badge {
+  position: absolute;
+  top: 14px;
+  right: 80px;
+  z-index: 100;
+  background: rgba(13, 71, 161, 0.85);
+  border: 1px solid #4FC3F7;
+  border-radius: 6px;
+  color: #E1F5FE;
+  padding: 6px 14px;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.pitlane-badge:hover {
+  background: #0288D1;
+  color: #FFFFFF;
+  border-color: #B3E5FC;
+  transform: translateY(-1px);
+}
+
+/* STK Pit-Lane Telemetry Terminal Overlay */
+.pitlane-overlay {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  width: min(440px, calc(100vw - 40px));
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  z-index: 150;
+  background: rgba(10, 25, 47, 0.94);
+  border: 2px solid #0288D1;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(2, 136, 209, 0.4);
+  backdrop-filter: blur(10px);
+  font-family: monospace;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.arena-run:not([data-pitlane="yes"]) .pitlane-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+}
+
+.pitlane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1E88E5;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.pitlane-title {
+  font-size: 14px;
+  font-weight: 900;
+  color: #FFD54F;
+  letter-spacing: 0.08em;
+}
+
+.pitlane-close {
+  background: none;
+  border: 1px solid #455A64;
+  color: #90A4AE;
+  font-size: 14px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pitlane-close:hover {
+  color: #FFFFFF;
+  border-color: #ECEFF1;
+}
+
+/* The host's own time-travel controls (omnishell's mountControls). */
+.kinetic-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #1E88E5;
+  border-radius: 8px;
+}
+
+.kc-playback,
+.kc-timeline,
+.kc-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #81D4FA;
+}
+
+.kc-scrubber {
+  flex: 1;
+  accent-color: #0288D1;
+  cursor: pointer;
+}
+
+.kc-btn {
+  background: #1565C0;
+  border: none;
+  color: #FFFFFF;
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 5px 9px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.kc-btn:hover {
+  background: #1E88E5;
+}
+
+.kc-live-badge.historical {
+  color: #FFCA28;
+}
+
+/* Plane 2: Declarative Pronto HTML/CSS Arcade HUD & Modals */
+.stk-plane2 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Out Run Next-Gen HUD Design System */
+:root {
+  --outrun-orange: #ff5e00;
+  --outrun-cyan: #00f0ff;
+  --outrun-gold: #ffd700;
+  --outrun-magenta: #ff0077;
+  --outrun-redline: #ff1e42;
+}
+
+.glow-text-cyan {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.75), 0 0 25px rgba(0, 240, 255, 0.4);
+}
+.glow-text-orange {
+  text-shadow: 0 0 12px rgba(255, 94, 0, 0.8), 0 0 30px rgba(255, 94, 0, 0.4);
+}
+.glow-text-gold {
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 215, 0, 0.4);
+}
+
+/* DESIGN.md "Ghibli gouache": the painting is the screen, so the HUD rides
+   over it small and see-through. */
+.hud-panel {
+  background: linear-gradient(135deg, rgba(13, 17, 30, 0.42) 0%, rgba(6, 9, 18, 0.5) 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.hud-panel-orange {
+  border-color: rgba(255, 94, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(255, 94, 0, 0.15);
+}
+.hud-slant {
+  transform: skewX(-12deg);
+}
+.hud-slant-content {
+  display: inline-block;
+  transform: skewX(12deg);
+}
+
+.stk-plane2 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px 20px;
+  font-family: 'Rajdhani', sans-serif;
+  color: #FFFFFF;
+  zoom: 0.8;
+}
+
+.hud-top-bar {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  align-items: start;
+  pointer-events: auto;
+}
+
+.hud-top-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 320px;
+}
+
+.hud-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hud-badge-stage {
+  padding: 3px 10px;
+  background: linear-gradient(90deg, #ff5e00, #ff1e42);
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  border-radius: 3px;
+  box-shadow: 0 0 15px rgba(255, 94, 0, 0.5);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  color: #000;
+  letter-spacing: 0.08em;
+}
+
+.hud-badge-multiplier {
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(0, 240, 255, 0.6);
+  border-radius: 3px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 0.1em;
+}
+
+.hud-mono-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #B0BEC5;
+}
+
+.hud-stage-card {
+  padding: 10px 14px;
+  border-left: 4px solid #ff5e00;
+}
+
+.hud-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.hud-stage-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  background: linear-gradient(90deg, #ffffff, #ffd54f, #ffb300);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.hud-fork-dist {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #00f0ff;
+}
+
+.hud-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(10, 15, 25, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 4px 0 8px 0;
+}
+
+.hud-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00f0ff, #ffd700, #ff5e00);
+  border-radius: 3px;
+  box-shadow: 0 0 10px #ff5e00;
+  transition: width 0.1s linear;
+}
+
+.hud-score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hud-label-dim {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: #90A4AE;
+  letter-spacing: 0.1em;
+}
+
+.hud-score-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.hud-unit-gold {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: #ffd700;
+}
+
+/* Top Center: Time Limit Card */
+.hud-top-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hud-timer-card {
+  padding: 10px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.hud-timer-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: #90A4AE;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.hud-timer-digits {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+}
+
+.hud-timer-main {
+  font-size: 48px;
+  color: #ffd700;
+  line-height: 1;
+}
+
+.hud-timer-dec {
+  font-size: 28px;
+  color: #ffd700;
+}
+
+.hud-timer-unit {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 215, 0, 0.7);
+  margin-left: 2px;
+}
+
+.hud-timer-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.hud-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.hud-status-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: #10b981;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+/* Top Right: Route Matrix & Radio */
+.hud-top-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.hud-matrix-card {
+  padding: 8px 12px;
+  width: 280px;
+}
+
+.hud-matrix-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hud-matrix-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-cyan-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00f0ff;
+  box-shadow: 0 0 8px #00f0ff;
+}
+
+.hud-matrix-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #E2E8F0;
+  letter-spacing: 0.05em;
+}
+
+.hud-fork-alert {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ff5e00;
+  letter-spacing: 0.05em;
+}
+
+.hud-matrix-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hud-branches-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.branch-left {
+  color: #00f0ff;
+}
+
+.branch-right {
+  color: #ff5e00;
+}
+
+.hud-tag-easy {
+  font-size: 8px;
+  padding: 1px 4px;
+  background: rgba(0, 100, 150, 0.6);
+  border-radius: 2px;
+  color: #80d8ff;
+}
+
+.hud-tag-pro {
+  font-size: 8px;
+  padding: 1px 4px;
+  background: rgba(150, 50, 0, 0.6);
+  border-radius: 2px;
+  color: #ffcc80;
+}
+
+.hud-matrix-svg {
+  width: 160px;
+  height: 36px;
+}
+
+/* Radio Card */
+.hud-radio-card {
+  padding: 8px 12px;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hud-radio-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.hud-radio-actions .hud-radio-skip {
+  flex: 1;
+  min-height: 44px;
+  font-size: 12px;
+}
+
+.hud-radio-actions .hud-radio-skip[aria-pressed="true"] {
+  background: #FFB347;
+  color: #141A24;
+}
+
+.hud-radio-genre {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: #9AA6B8;
+}
+
+.hud-radio-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hud-equalizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 34px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1px 3px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.eq-bar {
+  width: 4px;
+  height: 2px;
+  border-radius: 1px 1px 0 0;
+  background: #FFB347;
+}
+
+.eq-bar:nth-child(3n + 2) { background: #FF7A59; }
+.eq-bar:nth-child(3n) { background: #FF4F8B; }
+
+.hud-radio-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-radio-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: #90A4AE;
+}
+
+.hud-fm-pill {
+  padding: 0 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.hud-radio-station {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.hud-radio-skip {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: #E2E8F0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.hud-radio-skip:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Mid-screen horizon reticle */
+.hud-reticles-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.hud-horizon-crosshair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-24px);
+  opacity: 0.35;
+}
+
+.crosshair-bar {
+  width: 50px;
+  height: 1px;
+  background: #00f0ff;
+}
+
+.crosshair-diamond {
+  width: 6px;
+  height: 6px;
+  border: 1px solid #00f0ff;
+  transform: rotate(45deg);
+  margin: 0 8px;
+}
+
+/* Bottom Bar */
+.hud-bottom-bar {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  align-items: end;
+  pointer-events: auto;
+}
+
+/* Bottom Left: Highway Telemetry */
+.hud-bottom-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 320px;
+}
+
+.hud-telemetry-card {
+  padding: 10px 14px;
+  border-left: 4px solid #00f0ff;
+}
+
+.hud-tel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hud-tel-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #CFD8DC;
+  letter-spacing: 0.05em;
+}
+
+.hud-livelink {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: #10b981;
+  background: rgba(6, 78, 59, 0.6);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.hud-tel-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hud-tel-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.hud-tel-dim {
+  font-family: 'Share Tech Mono', monospace;
+  color: #90A4AE;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.hud-red-ping {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ff1e42;
+  box-shadow: 0 0 6px #ff1e42;
+}
+
+.hud-tel-highlight {
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+.hud-tel-cyan {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: #00f0ff;
+}
+
+.hud-tel-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.hud-grid-cell {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 5px 8px;
+}
+
+.cell-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  color: #90A4AE;
+  display: block;
+}
+
+.cell-val {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.unit-orange { color: #ff5e00; font-size: 9px; }
+.unit-white { color: #ffffff; font-size: 9px; }
+
+.hud-draft-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hud-draft-alert {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.hud-draft-meter {
+  display: flex;
+  gap: 3px;
+}
+
+.draft-seg {
+  width: 12px;
+  height: 4px;
+  background: rgba(0, 240, 255, 0.2);
+  border-radius: 1px;
+}
+
+.draft-seg.active {
+  background: #00f0ff;
+  box-shadow: 0 0 6px #00f0ff;
+}
+
+.hud-util-strip {
+  display: flex;
+  gap: 8px;
+}
+
+.hud-util-btn {
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #CFD8DC;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.hud-util-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+/* Bottom Center: Road Surface */
+.hud-bottom-center {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 8px;
+}
+
+.hud-surface-pill {
+  padding: 5px 16px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: #90A4AE;
+}
+
+.pill-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #607D8B;
+}
+
+.text-white { color: #ffffff; }
+.text-emerald { color: #34d399; }
+.text-amber { color: #fbbf24; }
+
+/* Bottom Right: Speedometer & Tachometer Cluster */
+.hud-bottom-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.hud-cluster-card {
+  padding: 12px 16px;
+  width: 290px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hud-trans-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hud-trans-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 900;
+  color: #B0BEC5;
+  letter-spacing: 0.08em;
+}
+
+.hud-gearbox-toggle {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.gear-tag {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #78909C;
+}
+
+.gear-tag.active {
+  background: linear-gradient(90deg, #ff5e00, #ff1e42);
+  color: #ffffff;
+  font-weight: 900;
+  box-shadow: 0 0 10px rgba(255, 94, 0, 0.6);
+}
+
+.hud-tacho-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hud-tacho-top {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: #90A4AE;
+}
+
+.hud-rpm-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ff5e00;
+}
+
+.hud-tacho-leds {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 2px;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tacho-led {
+  height: 100%;
+  border-radius: 1px;
+  opacity: 0.25;
+  transition: opacity 0.05s ease;
+}
+
+.tacho-led.green { background: #10b981; }
+.tacho-led.yellow { background: #fbbf24; }
+.tacho-led.orange { background: #ff5e00; }
+.tacho-led.red { background: #ff1e42; }
+
+.tacho-led.active {
+  opacity: 1;
+}
+.tacho-led.active.green { box-shadow: 0 0 6px #10b981; }
+.tacho-led.active.yellow { box-shadow: 0 0 6px #fbbf24; }
+.tacho-led.active.orange { box-shadow: 0 0 6px #ff5e00; }
+.tacho-led.active.red { box-shadow: 0 0 8px #ff1e42; }
+
+.hud-velocity-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 2px;
+}
+
+.hud-velo-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-velo-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  color: #90A4AE;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+
+.hud-velo-mode {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.hud-velo-digits {
+  display: flex;
+  align-items: baseline;
+}
+
+.hud-speed-num {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 48px;
+  font-weight: 900;
+  font-style: italic;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.hud-speed-unit {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffd700;
+  margin-left: 4px;
+}
+
+.hud-cluster-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: #90A4AE;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.hud-nitro {
+  --nitro: #ffd700;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--nitro);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hud-nitro[data-state="boost"] { --nitro: #4de8ff; }
+.hud-nitro[data-state="charging"] { --nitro: #78909c; }
+
+.hud-nitro-bar {
+  position: relative;
+  width: 56px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.hud-nitro-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--nitro);
+  box-shadow: 0 0 8px var(--nitro);
+}
+/* The edges between the tank's three charges. */
+.hud-nitro-charge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(0, 0, 0, 0.7);
+  left: var(--charge);
+}
+.hud-nitro-charge + .hud-nitro-charge { left: calc(var(--charge) * 2); }
+
+.stk-prompt {
+  position: absolute;
+  left: 50%;
+  top: 32%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: rgba(12, 16, 24, 0.75);
+  color: #FFFFFF;
+  font: 700 16px/1.2 system-ui, sans-serif;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+  animation: stk-pulse 1.1s ease-in-out infinite alternate;
+}
+@keyframes stk-pulse { from { opacity: 0.55; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .stk-prompt { animation: none; }
+}
+
+.stk-modal-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 10, 20, 0.85);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.stk-modal-card {
+  background: rgba(10, 25, 47, 0.96);
+  border: 2px solid #0288D1;
+  border-radius: 14px;
+  padding: 28px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 440px;
+  width: 90vw;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+}
+
+.stk-modal-title {
+  font-size: 28px;
+  font-weight: 900;
+  font-family: "Impact", sans-serif;
+  color: #0288D1;
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+.stk-btn {
+  background: #0288D1;
+  border: none;
+  border-radius: 6px;
+  color: #FFFFFF;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.stk-btn:hover {
+  background: #03A9F4;
+  transform: translateY(-1px);
+  box-shadow: 0 0 14px rgba(3, 169, 244, 0.6);
+}
+
+/* Out Run Simcade Telemetry Extensions */
+.stk-gear-badge {
+  font-size: 20px;
+  font-weight: 900;
+  font-family: monospace;
+  color: #00E5FF;
+  background: rgba(0, 229, 255, 0.15);
+  border: 1px solid #00E5FF;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-right: 6px;
+}
+
+.stk-radio-group {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.stk-radio-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  color: #CFD8DC;
+  font-size: 11px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: 64px;
+  flex: 1;
+  text-align: left;
+}
+
+.stk-radio-freq {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+}
+
+.stk-volume {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  font-size: 11px;
+  color: #81D4FA;
+}
+
+.stk-volume input {
+  flex: 1;
+  accent-color: #FFB347;
+}
+
+.stk-radio-btn:hover {
+  border-color: #4FC3F7;
+}
+
+.hud-radio-skip:focus-visible,
+.stk-radio-btn:focus-visible,
+.stk-volume input:focus-visible {
+  outline: 2px solid #FFB347;
+  outline-offset: 2px;
+}
+
+.hud-rival-card {
+  margin-top: 8px;
+  width: 260px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-color: #FFB347;
+}
+
+.hud-rival-head {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #FFB347;
+}
+
+.hud-rival-gap {
+  font-size: 15px;
+  font-weight: 700;
+  color: #F5F7FA;
+}
+
+.hud-rival-bar {
+  height: 5px;
+  background: #1E2633;
+  border-radius: 3px;
+}
+
+.hud-rival-fill {
+  height: 5px;
+  width: 0;
+  background: #FFB347;
+  border-radius: 3px;
+}
+
+.stk-results-card { min-width: min(420px, 100% - 32px); box-sizing: border-box; }
+
+.stk-res-kicker {
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  color: #FFB347;
+}
+
+.stk-res-title { color: #FFD54F; font-style: italic; }
+.stk-res-title[data-over="yes"] { color: #FF4D4D; }
+
+.stk-res-lines {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  row-gap: 6px;
+  column-gap: 24px;
+  width: 100%;
+  margin: 0;
+  font-size: 15px;
+}
+
+.stk-res-label { color: #9AA6B8; text-align: left; }
+.stk-res-value { text-align: right; font-variant-numeric: tabular-nums; }
+
+.stk-res-total {
+  padding-top: 8px;
+  border-top: 1px solid #3A4658;
+  font-weight: 700;
+  color: #F5F7FA;
+}
+
+.stk-res-value.stk-res-total { font-size: 20px; color: #FFD54F; }
+
+/* Between the route matrix above and the transmission card below. */
+.arena-finish {
+  position: absolute;
+  top: 132px;
+  right: 16px;
+  z-index: 210;
+  width: 340px;
+  max-height: calc(100% - 340px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(20, 26, 36, 0.94);
+  border: 1px solid #3A4658;
+  border-radius: 12px;
+  color: #F5F7FA;
+}
+
+/* Below the stage, the results card keeps the middle of the screen: the board
+   docks as a bottom sheet. */
+@media (max-width: 720px) {
+  .arena-finish {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    max-height: 55%;
+    border-radius: 12px 12px 0 0;
+  }
+}
+
+.arena-score {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* The score panel is its phase's: initials to enter, then saved or the
+   table's refusal; a run that does not rank gets the board alone. */
+.arena-run:not([data-phase="initials"], [data-phase="saved"]) .arena-score,
+.arena-run[data-phase="initials"] :is(.arena-finish-saved, .store-error),
+.arena-run[data-phase="saved"] :is(.arena-finish-label, .arena-initials, .arena-finish-hint, .invalid, .arena-finish-save),
+.arena-run[data-phase="saved"]:not([data-saved="yes"]) .arena-finish-saved,
+.arena-run[data-phase="saved"]:not([data-saved="refused"]) .store-error,
+.arena-run:not([data-denied="yes"]) .invalid {
+  display: none;
+}
+
+.arena-score .store-error,
+.arena-score .invalid,
+.arena-finish-saved {
+  margin: 0;
+  font-size: 13px;
+}
+.arena-score .store-error,
+.arena-score .invalid { color: #FF8A80; }
+.arena-finish-saved { color: #FFB347; font-weight: 700; letter-spacing: 0.06em; }
+
+.arena-finish-label,
+.arena-finish-title {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: #FFB347;
+}
+
+.arena-initials {
+  display: flex;
+  justify-content: center;
+  gap: 0.5em;
+  padding: 6px 12px;
+  font: 700 40px/1.1 ui-monospace, Menlo, monospace;
+  color: #FFB347;
+  background: #1E2633;
+  border: 2px solid #FFB347;
+  border-radius: 8px;
+}
+
+.arena-initial {
+  padding: 0 0.1em;
+}
+
+/* The slot the cursor is on, as a selected letter. */
+.arena-run[data-cursor="0"] .arena-initial:nth-child(1),
+.arena-run[data-cursor="1"] .arena-initial:nth-child(2),
+.arena-run[data-cursor="2"] .arena-initial:nth-child(3) {
+  color: #141A24;
+  background: #FFB347;
+}
+
+.arena-finish-hint {
+  margin: 0;
+  font-size: 12px;
+  color: #9AA6B8;
+}
+
+.arena-finish-save {
+  min-height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: #FFB347;
+  color: #141A24;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.arena-board {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  counter-reset: rank;
+}
+
+.arena-board-row {
+  counter-increment: rank;
+  display: grid;
+  grid-template-columns: 20px 44px minmax(0, 1fr) auto auto;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.arena-board-row::before {
+  content: counter(rank);
+  color: #9AA6B8;
+}
+
+.arena-board-row[data-mine-score="true"][data-mine-initials="true"] {
+  background: #3A2A10;
+  outline: 1px solid #FFB347;
+  color: #FFB347;
+}
+
+.arena-board-initials { font-weight: 700; letter-spacing: 0.1em; }
+.arena-board-outcome { color: #9AA6B8; overflow: hidden; text-overflow: ellipsis; }
+.arena-board-time { color: #9AA6B8; text-align: right; }
+.arena-board-score { text-align: right; }
+
+.arena-board .empty { color: #9AA6B8; font-size: 13px; }
+
+/* Players are anonymous guests with nothing to sign out of: the strip keeps
+   to the routes, so the guest's session box stays out of it. */
+html body > nav .shell-me { display: none; }
+
+/* On a phone only the race's own readouts stay: time, rival, speed. */
+@media (max-width: 720px), (max-height: 480px) {
+  .stk-plane2 {
+    zoom: 0.6;
+    padding: 8px 10px;
+  }
+  .hud-telemetry-card,
+  .hud-radio-card,
+  .hud-matrix-card,
+  .hud-surface-pill,
+  .pitlane-badge {
+    display: none;
+  }
+}
+
+/* The presenter's layers (pronto's kinetic-machine record, "The HUD splits by
+   refresh rate"): a canvas sits where the digits sat and takes their font,
+   colour and glow; one that fills a track takes the track's box. */
+canvas.hud-layer {
+  display: inline-block;
+  height: 1lh;
+  vertical-align: bottom;
+}
+canvas.hud-layer-wide { width: 100%; }
+canvas.hud-layer-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+canvas.hud-layer-span {
+  grid-column: 1 / -1;
+  height: 6px;
+}
+canvas.hud-layer-gear {
+  width: 84px;
+  height: 18px;
+  padding: 0;
+}
+canvas.hud-layer-eq {
+  width: 34px;
+  height: 100%;
+}
+
+/* The run row's phase is what shows: the title, pause and results cards,
+   the board, the rival's card while the race is on. */
+.arena-run:not([data-phase="title"], [data-phase="paused"], [data-phase="result"], [data-phase="initials"], [data-phase="saved"]) .stk-modal-scrim,
+.arena-run:not([data-phase="title"]) .stk-title-card,
+.arena-run:not([data-phase="paused"]) .stk-pause-card,
+.arena-run:not([data-phase="result"], [data-phase="initials"], [data-phase="saved"]) :is(.stk-results-card, .arena-finish),
+.arena-run:not([data-racing="yes"]) .hud-rival-card,
+.arena-run[data-mode="hotseat"] .hud-rival-bonus,
+.arena-race:not([data-kinetic-loading]) ~ .arena-art-loading,
+.stk-res-lines > :empty,
+.stk-res-lines:has(.stk-res-value.stk-res-total:empty) .stk-res-total {
+  display: none;
+}
+
+.arena-art-loading {
+  z-index: 150;
+}
+
+/* The ending's set piece and the road trip are the picture's (DESIGN.md
+   "End of a run"): the panels step aside, keeping their boxes, which the
+   presenter's layers are measured by. */
+.arena-run :is(.stk-plane2, .pitlane-badge) {
+  transition: opacity 0.6s ease;
+}
+.arena-run:is([data-phase="arrival"], [data-phase="replay"]) :is(.stk-plane2, .pitlane-badge) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* A fork stage names its two branches; a destination, its goal. */
+.arena-run[data-final="yes"] .hud-fork-on,
+.arena-run:not([data-final="yes"]) .hud-fork-off {
+  display: none;
+}
+
+/* The radio: the tuner shows the row's station, the title card marks it. */
+.arena-run :is(.radio-0, .radio-1, .radio-2, .radio-off) {
+  display: none;
+}
+.arena-run[data-station="0"] .radio-0,
+.arena-run[data-station="1"] .radio-1,
+.arena-run[data-station="2"] .radio-2,
+.arena-run[data-station="-1"] .radio-off {
+  display: inline;
+}
+.arena-run[data-station="0"] .radio-pick-0,
+.arena-run[data-station="1"] .radio-pick-1,
+.arena-run[data-station="2"] .radio-pick-2 {
+  background: #01679A;
+  border-color: #FFB347;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+/* The title card's own furniture. */
+.stk-title-sub {
+  margin: 0;
+  font-size: 13px;
+  color: #81D4FA;
+}
+
+.stk-title-keys {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 12px;
+  line-height: 1.8;
+  text-align: left;
+  color: #E1F5FE;
+  background: rgba(2, 136, 209, 0.15);
+  border: 1px solid rgba(2, 136, 209, 0.4);
+  border-radius: 8px;
+}
+
+.stk-title-pick {
+  margin-top: 2px;
+  font-size: 11px;
+  color: #81D4FA;
+}
+
+.stk-title-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 260px;
+}
+
+.stk-btn-go {
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 900;
+  color: #003300;
+  background: #00E676;
+  box-shadow: 0 4px 14px rgba(0, 230, 118, 0.4);
+}
+
+.stk-pause-card .stk-modal-title {
+  color: #FF9800;
+}
+
+/* The route matrix: the stages driven so far in cyan, the current one gold. */
+.hud-matrix-svg circle {
+  fill: #1e293b;
+}
+.arena-run[data-visited~="coconut-beach"] .node-coconut-beach,
+.arena-run[data-visited~="desert-canyons"] .node-desert-canyons,
+.arena-run[data-visited~="gateway-pass"] .node-gateway-pass,
+.arena-run[data-visited~="alpine-peaks"] .node-alpine-peaks,
+.arena-run[data-visited~="wilderness-run"] .node-wilderness-run,
+.arena-run[data-visited~="tulip-gardens"] .node-tulip-gardens,
+.arena-run[data-visited~="sunset-highway"] .node-sunset-highway,
+.arena-run[data-visited~="ancient-ruins"] .node-ancient-ruins,
+.arena-run[data-visited~="metropolis-night"] .node-metropolis-night,
+.arena-run[data-visited~="coastal-cliffs"] .node-coastal-cliffs,
+.arena-run[data-visited~="destination-marina"] .node-destination-marina,
+.arena-run[data-visited~="destination-oasis"] .node-destination-oasis,
+.arena-run[data-visited~="destination-castle"] .node-destination-castle,
+.arena-run[data-visited~="destination-colosseum"] .node-destination-colosseum,
+.arena-run[data-visited~="destination-aerodrome"] .node-destination-aerodrome {
+  fill: #00f0ff;
+}
+.arena-run[data-stage="coconut-beach"] .node-coconut-beach,
+.arena-run[data-stage="desert-canyons"] .node-desert-canyons,
+.arena-run[data-stage="gateway-pass"] .node-gateway-pass,
+.arena-run[data-stage="alpine-peaks"] .node-alpine-peaks,
+.arena-run[data-stage="wilderness-run"] .node-wilderness-run,
+.arena-run[data-stage="tulip-gardens"] .node-tulip-gardens,
+.arena-run[data-stage="sunset-highway"] .node-sunset-highway,
+.arena-run[data-stage="ancient-ruins"] .node-ancient-ruins,
+.arena-run[data-stage="metropolis-night"] .node-metropolis-night,
+.arena-run[data-stage="coastal-cliffs"] .node-coastal-cliffs,
+.arena-run[data-stage="destination-marina"] .node-destination-marina,
+.arena-run[data-stage="destination-oasis"] .node-destination-oasis,
+.arena-run[data-stage="destination-castle"] .node-destination-castle,
+.arena-run[data-stage="destination-colosseum"] .node-destination-colosseum,
+.arena-run[data-stage="destination-aerodrome"] .node-destination-aerodrome {
+  fill: #ffd700;
+}
+
+/* The online lobby (machines/lobby.js): a card of the title's own, over the
+   lobby's tab row, which takes the title card's place while it is open. */
+.stk-lobby-door { display: contents; }
+.stk-btn-online {
+  background: #FFB347;
+  color: #1E1A17;
+}
+.stk-btn-online:hover { background: #FFC877; box-shadow: 0 0 14px rgba(255, 179, 71, 0.6); }
+.arena-run:not([data-phase="title"]) .stk-lobby-card,
+.stk-lobby-card:not([data-open="yes"]),
+.arena-run:has(.stk-lobby-card[data-open="yes"]) .stk-title-card,
+.stk-lobby-card:not([data-shown="show"]) :is(.stk-lobby-when-on, .stk-lobby-racers, .stk-lobby-racers-label),
+.stk-lobby-card[data-shown="show"] .stk-lobby-when-off,
+.stk-lobby-note:empty {
+  display: none;
+}
+.stk-lobby-card { max-width: 520px; gap: 12px; }
+.stk-lobby-you { font-size: 13px; letter-spacing: 0.12em; color: #81D4FA; }
+.stk-lobby-you b { color: #FFD54F; }
+.stk-lobby-card[data-shown="show"] .stk-lobby-toggle { background: #0F7A5F; }
+.stk-lobby-stages {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 6px;
+  width: 100%;
+}
+.stk-lobby-stage {
+  min-height: 36px;
+  padding: 6px 8px;
+  font: 700 11px/1.2 inherit;
+  letter-spacing: 0.06em;
+  color: #E1F5FE;
+  background: rgba(2, 136, 209, 0.15);
+  border: 1px solid rgba(2, 136, 209, 0.4);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.stk-lobby-card[data-pick="coconut-beach"] #stage-coconut-beach,
+.stk-lobby-card[data-pick="desert-canyons"] #stage-desert-canyons,
+.stk-lobby-card[data-pick="gateway-pass"] #stage-gateway-pass,
+.stk-lobby-card[data-pick="alpine-peaks"] #stage-alpine-peaks,
+.stk-lobby-card[data-pick="wilderness-run"] #stage-wilderness-run,
+.stk-lobby-card[data-pick="tulip-gardens"] #stage-tulip-gardens,
+.stk-lobby-card[data-pick="sunset-highway"] #stage-sunset-highway,
+.stk-lobby-card[data-pick="ancient-ruins"] #stage-ancient-ruins,
+.stk-lobby-card[data-pick="metropolis-night"] #stage-metropolis-night,
+.stk-lobby-card[data-pick="coastal-cliffs"] #stage-coastal-cliffs {
+  background: #01679A;
+  border-color: #FFB347;
+  color: #FFFFFF;
+}
+.stk-lobby-racers, .stk-lobby-offers {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  font-size: 13px;
+  color: #9AA6B8;
+}
+.stk-lobby-racer, .stk-lobby-offer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 12px;
+  text-align: left;
+  color: #F5F7FA;
+  background: rgba(20, 26, 36, 0.9);
+  border: 1px solid #3A4658;
+  border-radius: 8px;
+}
+.stk-lobby-racer > b, .stk-lobby-offer > span { flex: 1; }
+.stk-lobby-offer { border-color: #FFB347; }
+.stk-lobby-offer b { color: #FFD54F; }
+.stk-lobby-note { font-size: 12px; color: #FF4D4D; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* An online duel's card says how its machine ended it. */
+.stk-res-verdict { font-size: 12px; letter-spacing: 0.14em; color: #81D4FA; }
+.stk-res-verdict > span,
+.arena-run:not([data-mode="online"]) .stk-res-verdict { display: none; }
+.arena-run[data-verdict="pending"] .verdict-pending,
+.arena-run[data-verdict="won"] .verdict-won,
+.arena-run[data-verdict="lost"] .verdict-lost,
+.arena-run[data-verdict="draw"] .verdict-draw,
+.arena-run[data-verdict="disputed"] .verdict-disputed,
+.arena-run[data-verdict="abandoned"] .verdict-abandoned { display: inline; }
+.arena-run[data-verdict="won"] .stk-res-verdict { color: #2BD9A8; }
+.arena-run:is([data-verdict="disputed"], [data-verdict="abandoned"]) .stk-res-verdict { color: #FF4D4D; }
+/* An online duel is raced once: the lobby offers the next. */
+.arena-run[data-mode="online"] #stk-res-restart,
+.arena-run:not([data-mode="online"]) #stk-res-lobby { display: none; }

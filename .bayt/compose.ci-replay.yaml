@@ -1,0 +1,47 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-ci-replay:
+    build:
+      additional_contexts:
+        apexrun-setup: service:apexrun-setup
+        apexrun-database: service:apexrun-database
+      context: ..
+      dockerfile: .bayt/Dockerfile.ci-replay
+      target: ci-replay
+      tags:
+      - bayt-apexrun-ci-replay:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-ci-replay:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-ci-replay:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    scale: 0
+  apexrun-ci-replay_bayt:
+    build:
+      additional_contexts:
+        apexrun-setup_bayt: service:apexrun-setup_bayt
+        apexrun-database_bayt: service:apexrun-database_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.ci-replay
+      target: ci-replay_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-ci-replay_bayt:latest
+    scale: 0
+  apexrun-ci-replay_srcs:
+    build:
+      additional_contexts:
+        apexrun-setup_srcs: service:apexrun-setup_srcs
+        apexrun-database_srcs: service:apexrun-database_srcs
+      context: ..
+      dockerfile: .bayt/Dockerfile.ci-replay
+      target: ci-replay_srcs
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-ci-replay_srcs:latest
+    scale: 0

@@ -1,0 +1,95 @@
+# generated from bayt.cue — do not edit
+includes:
+  browser:
+    taskfile: ./Taskfile.browser.yaml
+    dir: ../
+    optional: true
+  ci-replay:
+    taskfile: ./Taskfile.ci-replay.yaml
+    dir: ../
+    optional: true
+  setup:
+    taskfile: ./Taskfile.setup.yaml
+    dir: ../
+    optional: true
+  lint-inputs:
+    taskfile: ./Taskfile.lint-inputs.yaml
+    dir: ../
+    optional: true
+  lint:
+    taskfile: ./Taskfile.lint.yaml
+    dir: ../
+    optional: true
+  generate:
+    taskfile: ./Taskfile.generate.yaml
+    dir: ../
+    optional: true
+  build:
+    taskfile: ./Taskfile.build.yaml
+    dir: ../
+    optional: true
+  test:
+    taskfile: ./Taskfile.test.yaml
+    dir: ../
+    optional: true
+  integrate:
+    taskfile: ./Taskfile.integrate.yaml
+    dir: ../
+    optional: true
+  ci-visual:
+    taskfile: ./Taskfile.ci-visual.yaml
+    dir: ../
+    optional: true
+  ci:
+    taskfile: ./Taskfile.ci.yaml
+    dir: ../
+    optional: true
+  check-finish:
+    taskfile: ./Taskfile.check-finish.yaml
+    dir: ../
+    optional: true
+  ci-finish:
+    taskfile: ./Taskfile.ci-finish.yaml
+    dir: ../
+    optional: true
+  check-boot:
+    taskfile: ./Taskfile.check-boot.yaml
+    dir: ../
+    optional: true
+  ci-boot:
+    taskfile: ./Taskfile.ci-boot.yaml
+    dir: ../
+    optional: true
+  check-online:
+    taskfile: ./Taskfile.check-online.yaml
+    dir: ../
+    optional: true
+  ci-online:
+    taskfile: ./Taskfile.ci-online.yaml
+    dir: ../
+    optional: true
+  check-duel:
+    taskfile: ./Taskfile.check-duel.yaml
+    dir: ../
+    optional: true
+  ci-duel:
+    taskfile: ./Taskfile.ci-duel.yaml
+    dir: ../
+    optional: true
+  check-leaderboard-access:
+    taskfile: ./Taskfile.check-leaderboard-access.yaml
+    dir: ../
+    optional: true
+  ci-leaderboard-access:
+    taskfile: ./Taskfile.ci-leaderboard-access.yaml
+    dir: ../
+    optional: true
+  launch-action:
+    taskfile: ./Taskfile.launch-action.yaml
+    dir: ../
+    optional: true
+  integrate-action:
+    taskfile: ./Taskfile.integrate-action.yaml
+    dir: ../
+    optional: true
+version: "3"

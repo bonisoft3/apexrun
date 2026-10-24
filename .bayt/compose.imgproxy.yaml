@@ -1,0 +1,58 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-imgproxy:
+    build:
+      additional_contexts:
+        apexrun-rclone-s3: service:apexrun-rclone-s3
+      context: ..
+      dockerfile: .bayt/Dockerfile.imgproxy
+      target: imgproxy
+      tags:
+      - bayt-apexrun-imgproxy:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-imgproxy:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    depends_on:
+      apexrun-rclone-s3:
+        condition: service_started
+    environment:
+      IMGPROXY_USE_S3: "true"
+      IMGPROXY_S3_ENDPOINT: http://rclone-s3:3900
+      AWS_ACCESS_KEY_ID: ${RCLONE_ACCESS_KEY:-GK000000000000000000000000}
+      AWS_SECRET_ACCESS_KEY: >-
+        ${RCLONE_SECRET_KEY:-0000000000000000000000000000000000000000000000000000000000000000}
+      AWS_REGION: rclone
+      IMGPROXY_BIND: ":8081"
+      IMGPROXY_MAX_SRC_RESOLUTION: "50"
+      IMGPROXY_SET_CANONICAL_HEADER: "false"
+      IMGPROXY_CACHE_CONTROL_PASSTHROUGH: "true"
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - "bash -c 'echo -e \"GET /health HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n\" > /dev/tcp/127.0.0.1/8081'"
+      interval: 5s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+      start_interval: 500ms
+    image: bayt-apexrun-imgproxy:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    networks:
+      default:
+        aliases:
+        - imgproxy
+    restart: on-failure
+  apexrun-imgproxy_bayt:
+    build:
+      additional_contexts:
+        apexrun-rclone-s3_bayt: service:apexrun-rclone-s3_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.imgproxy
+      target: imgproxy_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-imgproxy_bayt:latest
+    scale: 0

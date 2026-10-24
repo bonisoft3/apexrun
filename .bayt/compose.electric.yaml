@@ -1,0 +1,59 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-electric:
+    build:
+      additional_contexts:
+        apexrun-database: service:apexrun-database
+        apexrun-timer-check: service:apexrun-timer-check
+      context: ..
+      dockerfile: .bayt/Dockerfile.electric
+      target: electric
+      tags:
+      - bayt-apexrun-electric:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-electric:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    depends_on:
+      apexrun-database:
+        condition: service_healthy
+        restart: true
+      apexrun-timer-check:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: >-
+        postgresql://electric:${ELECTRIC_PASSWORD:-dev-electric-password}@database:5432/${POSTGRES_DB:-apexrun}?sslmode=disable
+      ELECTRIC_SECRET: ${ELECTRIC_SECRET:-dev-electric-secret}
+      ELECTRIC_MANUAL_TABLE_PUBLISHING: "true"
+    healthcheck:
+      test:
+      - CMD
+      - curl
+      - -f
+      - http://localhost:3000/v1/health
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+      start_interval: 500ms
+    image: bayt-apexrun-electric:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    networks:
+      default:
+        aliases:
+        - electric
+    restart: on-failure
+  apexrun-electric_bayt:
+    build:
+      additional_contexts:
+        apexrun-database_bayt: service:apexrun-database_bayt
+        apexrun-timer-check_bayt: service:apexrun-timer-check_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.electric
+      target: electric_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-electric_bayt:latest
+    scale: 0

@@ -1,0 +1,46 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-lint:
+    build:
+      additional_contexts:
+        apexrun-generate: service:apexrun-generate
+      context: ..
+      dockerfile: .bayt/Dockerfile.lint
+      target: lint
+      tags:
+      - bayt-apexrun-lint:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-lint:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-lint:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    scale: 0
+  apexrun-lint_bayt:
+    build:
+      additional_contexts:
+        apexrun-generate_bayt: service:apexrun-generate_bayt
+        apexrun-setup_bayt: service:apexrun-setup_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.lint
+      target: lint_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-lint_bayt:latest
+    scale: 0
+  apexrun-lint_srcs:
+    build:
+      additional_contexts:
+        apexrun-generate_srcs: service:apexrun-generate_srcs
+        apexrun-setup_srcs: service:apexrun-setup_srcs
+      context: ..
+      dockerfile: .bayt/Dockerfile.lint
+      target: lint_srcs
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-lint_srcs:latest
+    scale: 0

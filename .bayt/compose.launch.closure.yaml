@@ -1,0 +1,64 @@
+# generated from bayt.cue — do not edit
+include:
+- path: .././.bayt/compose.browser.yaml
+  required: false
+- path: .././.bayt/compose.ci-replay.yaml
+  required: false
+- path: .././.bayt/compose.database.yaml
+  required: false
+- path: .././.bayt/compose.setup.yaml
+  required: false
+- path: .././.bayt/compose.lint.yaml
+  required: false
+- path: .././.bayt/compose.generate.yaml
+  required: false
+- path: .././.bayt/compose.build.yaml
+  required: false
+- path: .././.bayt/compose.test.yaml
+  required: false
+- path: .././.bayt/compose.launch.yaml
+  required: false
+- path: .././.bayt/compose.caddy.yaml
+  required: false
+- path: .././.bayt/compose.crud.yaml
+  required: false
+- path: .././.bayt/compose.timer-check.yaml
+  required: false
+- path: .././.bayt/compose.served.yaml
+  required: false
+- path: .././.bayt/compose.electric.yaml
+  required: false
+- path: .././.bayt/compose.auth.yaml
+  required: false
+- path: .././.bayt/compose.rclone-s3.yaml
+  required: false
+- path: .././.bayt/compose.imgproxy.yaml
+  required: false
+- path: .././.bayt/compose.clock.yaml
+  required: false
+- path: .././.bayt/compose.ticker.yaml
+  required: false
+- path: .././.bayt/compose.assets.yaml
+  required: false
+- path: .././.bayt/compose.render.yaml
+  required: false
+- path: .././.bayt/compose.integrate.yaml
+  required: false
+- path: .././.bayt/compose.check-finish.yaml
+  required: false
+- path: .././.bayt/compose.check-boot.yaml
+  required: false
+- path: .././.bayt/compose.check-online.yaml
+  required: false
+- path: .././.bayt/compose.check-duel.yaml
+  required: false
+- path: .././.bayt/compose.check-leaderboard-access.yaml
+  required: false
+- path: ../monorepo/${MONOREPO_COMPOSE_MODE:-docker-image}.yaml
+  required: false
+services:
+  bayt:
+    extends:
+      file: ./compose.launch.yaml
+      service: apexrun-launch
+    scale: 1

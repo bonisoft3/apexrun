@@ -1,0 +1,41 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-rclone-s3:
+    build:
+      context: ..
+      dockerfile: .bayt/Dockerfile.rclone-s3
+      target: rclone-s3
+      tags:
+      - bayt-apexrun-rclone-s3:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-rclone-s3:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    environment:
+      RCLONE_LOCAL_BUCKET: mecha-objects
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget -S -O /dev/null http://127.0.0.1:3900/ 2>&1 | grep -q 'HTTP/'
+      interval: 5s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+      start_interval: 500ms
+    image: bayt-apexrun-rclone-s3:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    networks:
+      default:
+        aliases:
+        - rclone-s3
+  apexrun-rclone-s3_bayt:
+    build:
+      context: ..
+      dockerfile: .bayt/Dockerfile.rclone-s3
+      target: rclone-s3_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-rclone-s3_bayt:latest
+    scale: 0

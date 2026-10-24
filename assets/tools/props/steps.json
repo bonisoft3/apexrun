@@ -1,0 +1,18 @@
+[
+ "PY=../assets-pack/.venv/bin/python   # the assets-pack venv (uv sync there); web/node_modules and web/vendor link to the assets-pack install",
+ "$PY scripts/sdxl.py scripts/jobs_refs.json",
+ "$PY scripts/cutout.py rembg work/sdxl/<job>_s<seed>.png work/cut/<job>_s<seed>.png   (boxtruck_s12, boxtruck_s16, broken-arch_s3, broken-arch_s4, cypress/lighthouse picks)",
+ "scripts/queue_hy1.sh; scripts/queue_hy2.sh   # Hunyuan3D-2 full, octree 512, num_chunks 20000, serialised after SDXL",
+ "cp ../assets-pack/work/hy/car-{sedan,convertible,pickup}.{glb,json} work/hy/; cp ../assets-pack/work/cut/car-*.png work/cut/",
+ "$PY scripts/align.py car-sedan work/cut/car-sedan.png front left 4.65 1.75 1.40   (convertible 4.30 1.72 1.25, pickup 4.55 1.72 1.70, boxtruck: see recipes aligned)",
+ "$PY scripts/preview.py <aligned...>; $PY scripts/elev.py /work/preview/<c>.glb work/elev/<c> <scale> <centre y>; $PY scripts/section.py work/align/<c>.ply ...",
+ "$PY scripts/traffic.py car-sedan car-convertible car-pickup car-boxtruck",
+ "$PY scripts/towers.py",
+ "$PY scripts/props.py",
+ "$PY scripts/props_b.py",
+ "$PY scripts/arch.py",
+ "$PY scripts/landforms.py",
+ "$PY scripts/pack.py",
+ "$PY scripts/validate.py",
+ "$PY scripts/evidence.py"
+]

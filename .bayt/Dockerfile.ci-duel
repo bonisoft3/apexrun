@@ -1,0 +1,171 @@
+# generated from bayt.cue — do not edit
+FROM docker:29.9.1-cli@sha256:6fae2214c3121a28d5aa639d09032f61310b7c9c75ffbad1025f261a1b621800 AS ci-duel
+ARG BAYT_DIR
+WORKDIR /monorepo/${BAYT_DIR}
+COPY --from=bonitao/lazybox:0.8.5@sha256:091a3b63ba222777000acc3bf8327faebfea4870e23ee07c6eb42431dadb2ac6 /lazybox/ /root/.local/share/lazybox/
+COPY --from=alpine/socat:1.8.0.0@sha256:a6be4c0262b339c53ddad723cdd178a1a13271e1137c65e27f90a08c16de02b8 /usr/bin/socat1 /usr/local/bin/socat
+COPY --from=alpine/socat:1.8.0.0@sha256:a6be4c0262b339c53ddad723cdd178a1a13271e1137c65e27f90a08c16de02b8 /usr/lib/libreadline.so.8 /usr/lib/libncursesw.so.6 /usr/lib/
+ENV PATH=$PATH:/root/.local/bin:/root/.local/share/lazybox/bin
+COPY <<'BKID_MISE' /opt/bkid/mise.toml
+[settings]
+experimental = true
+github_attestations = false
+locked = true
+lockfile = true
+slsa = false
+
+[settings.github]
+github_attestations = false
+slsa = false
+
+[tools]
+'github:depot/cli' = '2.102.25'
+'github:go-task/task' = 'v3.54.0'
+BKID_MISE
+COPY <<'BKID_LOCK' /opt/bkid/mise.lock
+[tools]
+[[tools.'github:depot/cli']]
+backend = 'github:depot/cli'
+version = '2.102.25'
+
+[tools.'github:depot/cli'.platforms]
+[tools.'github:depot/cli'.platforms.linux-arm64]
+checksum = 'sha256:52abe04ef24cd06f2ed37e15dbaa1d52d282db26ead04ff2493faf181347d6eb'
+url = 'https://github.com/depot/cli/releases/download/v2.102.25/depot_2.102.25_linux_arm64.tar.gz'
+url_api = 'https://api.github.com/repos/depot/cli/releases/assets/660782767'
+
+[tools.'github:depot/cli'.platforms.linux-arm64-musl]
+checksum = 'sha256:52abe04ef24cd06f2ed37e15dbaa1d52d282db26ead04ff2493faf181347d6eb'
+url = 'https://github.com/depot/cli/releases/download/v2.102.25/depot_2.102.25_linux_arm64.tar.gz'
+url_api = 'https://api.github.com/repos/depot/cli/releases/assets/660782767'
+
+[tools.'github:depot/cli'.platforms.linux-x64]
+checksum = 'sha256:b62952f5951a0bcd4f48597b59fe29a4b7d84cac4e82710ee19d79262bf271af'
+url = 'https://github.com/depot/cli/releases/download/v2.102.25/depot_2.102.25_linux_amd64.tar.gz'
+url_api = 'https://api.github.com/repos/depot/cli/releases/assets/660782770'
+
+[tools.'github:depot/cli'.platforms.linux-x64-musl]
+checksum = 'sha256:b62952f5951a0bcd4f48597b59fe29a4b7d84cac4e82710ee19d79262bf271af'
+url = 'https://github.com/depot/cli/releases/download/v2.102.25/depot_2.102.25_linux_amd64.tar.gz'
+url_api = 'https://api.github.com/repos/depot/cli/releases/assets/660782770'
+
+[[tools.'github:go-task/task']]
+backend = 'github:go-task/task'
+version = 'v3.54.0'
+
+[tools.'github:go-task/task'.platforms]
+[tools.'github:go-task/task'.platforms.linux-arm64]
+checksum = 'sha256:d7189d439d4a6058e39e1b2acd7c8b27acd4856691b408f23b242e4294e1df5b'
+url = 'https://github.com/go-task/task/releases/download/v3.54.0/task_linux_arm64.tar.gz'
+url_api = 'https://api.github.com/repos/go-task/task/releases/assets/604090041'
+
+[tools.'github:go-task/task'.platforms.linux-arm64-musl]
+checksum = 'sha256:d7189d439d4a6058e39e1b2acd7c8b27acd4856691b408f23b242e4294e1df5b'
+url = 'https://github.com/go-task/task/releases/download/v3.54.0/task_linux_arm64.tar.gz'
+url_api = 'https://api.github.com/repos/go-task/task/releases/assets/604090041'
+
+[tools.'github:go-task/task'.platforms.linux-x64]
+checksum = 'sha256:680859dbb4d881a9c72d4d9a8f510825450849af8567deacd7302c01124416fb'
+url = 'https://github.com/go-task/task/releases/download/v3.54.0/task_linux_amd64.tar.gz'
+url_api = 'https://api.github.com/repos/go-task/task/releases/assets/604090073'
+
+[tools.'github:go-task/task'.platforms.linux-x64-musl]
+checksum = 'sha256:680859dbb4d881a9c72d4d9a8f510825450849af8567deacd7302c01124416fb'
+url = 'https://github.com/go-task/task/releases/download/v3.54.0/task_linux_amd64.tar.gz'
+url_api = 'https://api.github.com/repos/go-task/task/releases/assets/604090073'
+BKID_LOCK
+COPY --from=bayt . /monorepo/plugins/bayt/runtime
+RUN cd /opt/bkid && mise trust -y && mise install && mise exec -- sh -c 'cp "$(mise which task)" /usr/local/bin/task && cp "$(mise which depot)" /usr/local/bin/depot'
+ENV PATH=/monorepo/plugins/bayt/runtime:${PATH}
+ARG MONOREPO_COMPOSE_MODE
+ENV MONOREPO_COMPOSE_MODE=$MONOREPO_COMPOSE_MODE
+ARG BAYT_RUNTIME
+ENV BAYT_RUNTIME=$BAYT_RUNTIME
+COPY --from=libraries_mecha-airlock-image_bayt /monorep[o] /monorepo/
+COPY --from=libraries_mecha-airlock-image_srcs /monorep[o] /monorepo/
+COPY --from=libraries_mecha-auth-image_bayt /monorep[o] /monorepo/
+COPY --from=libraries_mecha-auth-image_srcs /monorep[o] /monorepo/
+COPY --from=libraries_mecha-clock-image_bayt /monorep[o] /monorepo/
+COPY --from=libraries_mecha-clock-image_srcs /monorep[o] /monorepo/
+COPY --from=libraries_mecha-compute-image_bayt /monorep[o] /monorepo/
+COPY --from=libraries_mecha-compute-image_srcs /monorep[o] /monorepo/
+COPY --from=libraries_mecha-conduit-image_bayt /monorep[o] /monorepo/
+COPY --from=libraries_mecha-database-image_bayt /monorep[o] /monorepo/
+COPY --from=libraries_mecha-database-image_srcs /monorep[o] /monorepo/
+COPY --from=libraries_mecha-mesh-image_bayt /monorep[o] /monorepo/
+COPY --from=libraries_mecha-mesh-image_srcs /monorep[o] /monorepo/
+COPY --from=libraries_mecha-ticker-image_bayt /monorep[o] /monorepo/
+COPY --from=libraries_mecha-ticker-image_srcs /monorep[o] /monorepo/
+COPY --from=plugins_omnishell-runtime-image_bayt /monorep[o] /monorepo/
+COPY --from=plugins_omnishell-runtime-image_srcs /monorep[o] /monorepo/
+COPY --from=workspaceroot-pronto-sources_bayt /monorep[o] /monorepo/
+COPY --from=workspaceroot-pronto-sources_srcs /monorep[o] /monorepo/
+COPY --parents monorepo/*.yaml ./
+COPY --from=apexrun-check-duel_srcs --parents /monorepo/${BAYT_DIR:+${BAYT_DIR}/}tests/** /
+COPY --from=apexrun-check-duel_bayt --link /monorepo /monorepo
+COPY --from=apexrun-database_srcs --parents /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/database/migrations/000_extensions.sql /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/database/migrations/001_roles.sql /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/database/migrations/002_grants.sql /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/database/migrations/004_types.sql /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/database/migrations/005_create_tables.sql /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/database/migrations/006_policies.sql /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/database/migrations/007_txid.sql /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/database/migrations/008_publication.sql /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/database/migrations/016_mecha_actors.sql /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/database/migrations/010_high_score_writes.sql /
+COPY --from=apexrun-caddy_srcs --parents /monorepo/${BAYT_DIR:+${BAYT_DIR}/}docker/Caddyfile /
+COPY --from=apexrun-assets_srcs --parents /monorepo/${BAYT_DIR:+${BAYT_DIR}/}services/assets/seed.ts /monorepo/${BAYT_DIR:+${BAYT_DIR}/}assets/manifest.json /
+COPY --from=apexrun-served_srcs --parents /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/index.html /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/shell.css /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/boot.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}offline-first-sw.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/shell.yaml /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/shell.json /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/design.css /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/screens/arena.html /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/screens/arena.css /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/handlers/lease.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/handlers/lobby.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/handlers/run.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/renderers/ending.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/renderers/run_time.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/renderers/stage.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engines/apexrun.json /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engines/sound.json /monorepo/${BAYT_DIR:+${BAYT_DIR}/}assets/manifest.json /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/art.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/effects.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/hud.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/present.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/prng.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/renderer.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/scatter.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/scenery.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/simulation.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/stage_look.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal.html /monorepo/${BAYT_DIR:+${BAYT_DIR}/}ir.html /monorepo/${BAYT_DIR:+${BAYT_DIR}/}ir/card.css /monorepo/${BAYT_DIR:+${BAYT_DIR}/}ir/neighbourhood-app.svg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}ir/neighbourhood-arena.svg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}brief.html /monorepo/${BAYT_DIR:+${BAYT_DIR}/}brief.md /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/stitch_outrun_vision.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/stitch_hud_telemetry.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t41_castle_arrival.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t41_oasis_arrival.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t41_aerodrome_arrival.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t41_trip_helicopter.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t41_trip_pull.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t41_trip_roadside.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t41_goal.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t40_lobby.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t40_challenged.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t40_racing_a.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t40_racing_b.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t40_result_a.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t40_result_b.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t39_checkpoint_before.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t39_checkpoint_after.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t39_go_before.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t39_go_after.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t39_result_before.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t39_result_after.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t39_initials.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t39_duel_end.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/turn38-cluster-dom.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/turn38-cluster-layers.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/turn38-hud-dom.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/turn38-hud-layers.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t37_duel_racing.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t37_duel_online.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t36_firefox.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t36_webkit.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t35_presenter.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t34_transition.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t34_transition_before.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t34_loading.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t34_pull.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t33_arm.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t33_approach.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t33_landmarks.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t33_compare.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t32_closeups.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t32_compare.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t31_compare.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t31_tulip.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t30_compare.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t30_cliffs.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t29_compare.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t29_desert.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t28_compare.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t28_coconut.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t28_phone.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t27_coconut.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t27_desert.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t27_riders.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t26_coconut.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t26_desert.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t25_desert.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t25_alpine.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t24_coconut.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t24_tulip.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t23_railway_desert.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t23_railway_alpine.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t22_roll.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t22_dive.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t21_granite.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t21_sandstone.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t20_gantry.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t20_metro_climb.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t19_cartoon.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t18_field.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t17_world.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t16_hero.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t15_handover.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t15_goal.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t14_desert.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t14_alpine.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t14_wilderness.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t14_night.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t14_trial.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t13_climb.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t13_boost.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t13_hood.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t13_gauge.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t12_ao.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t11_speed.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t11_night.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t11_hood.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t10_swoop.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t10_countdown.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t10_extended.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t10_depart.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t9_coconut.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t9_alpine.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t9_castle.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t9_webgl2.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t8_traffic.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t8_crash.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t6_steer.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t7_coconut-beach.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t7_desert-canyons.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t7_alpine-peaks.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t7_castle.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t6_hood.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t4_rival.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t5_chase.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t5_hood.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t4_timeover.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t4_saved.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t4_phone_saved.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t3_tuner.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t3_title.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_before_wall.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_before_rival_finish.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_live_coconut.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_desert.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_alpine.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_metropolis.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_tulip.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_coastal.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_marina.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_fork_left.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_fork_right.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_hood.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_title.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_paused.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_cdn_down.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/t2_arena.jpg /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/traffic_overtaking.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/traffic_closepass.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/traffic_cockpit.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/outrun_chase_gameplay.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}journal_assets/outrun_cockpit_gameplay.png /monorepo/${BAYT_DIR:+${BAYT_DIR}/}acceptance.md /monorepo/${BAYT_DIR:+${BAYT_DIR}/}DESIGN.md /monorepo/${BAYT_DIR:+${BAYT_DIR}/}robots.txt /monorepo/${BAYT_DIR:+${BAYT_DIR}/}sitemap.xml /
+COPY --from=apexrun-render_srcs --parents /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/index.html /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/shell.css /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/boot.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/shell.yaml /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/shell.json /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/design.css /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/screens/arena.html /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/screens/arena.css /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/handlers/lease.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/handlers/lobby.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/handlers/run.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/renderers/ending.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/renderers/run_time.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/renderers/stage.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engines/apexrun.json /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engines/sound.json /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/art.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/effects.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/hud.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/present.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/prng.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/renderer.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/scatter.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/scenery.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/simulation.js /monorepo/${BAYT_DIR:+${BAYT_DIR}/}shell/engine/stage_look.js /
+COPY --from=apexrun-browser_srcs --parents /monorepo/${BAYT_DIR:+${BAYT_DIR}/}[m]ise.toml /monorepo/${BAYT_DIR:+${BAYT_DIR}/}[.]mise.toml /monorepo/${BAYT_DIR:+${BAYT_DIR}/}[m]ise.lock /monorepo/${BAYT_DIR:+${BAYT_DIR}/}[.]tool-versions /
+COPY .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/Taskfile.ci-duel.yaml .bayt/bayt.ci-duel.json ./.bayt/
+ENV BUILDX_BAKE_ENTITLEMENTS_FS=0
+ENV COMPOSE_BAKE=true
+RUN --mount=type=secret,id=docker_host --mount=type=secret,id=buildx_builder --mount=type=secret,id=testcontainers_host --mount=type=secret,id=cache_scope --mount=type=secret,id=cache_scope_fallback --mount=type=secret,id=sayt_buildkit_syntax --mount=type=secret,id=sayt_no_cache --mount=type=secret,id=bayt_image_tag --mount=type=secret,id=bayt_pull_policy --mount=type=secret,id=sayt_no_cache_from --mount=type=secret,id=sayt_no_cache_to --mount=type=secret,id=depot_token --mount=type=secret,id=depot_project_id --mount=type=secret,id=depot_org_id --mount=type=secret,id=depot_disable_otel --mount=type=secret,id=actions_results_url --mount=type=secret,id=actions_runtime_token --mount=type=secret,id=bkid_project --mount=type=secret,id=buildx_instance --mount=type=secret,id=docker_config,mode=0600 --mount=type=cache,target=/root/.cache/bayt,id=apexrun-ci-duel:/root/.cache/bayt,sharing=locked <<BAYT_INJECT
+set -e
+export DOCKER_HOST="$(cat /run/secrets/docker_host)"
+export BUILDX_BUILDER="$(cat /run/secrets/buildx_builder)"
+export TESTCONTAINERS_HOST_OVERRIDE="$(cat /run/secrets/testcontainers_host)"
+export CACHE_SCOPE="$(cat /run/secrets/cache_scope)"
+export CACHE_SCOPE_FALLBACK="$(cat /run/secrets/cache_scope_fallback)"
+export BUILDKIT_SYNTAX="$(cat /run/secrets/sayt_buildkit_syntax)"
+export SAYT_NO_CACHE="$(cat /run/secrets/sayt_no_cache)"
+export BAYT_IMAGE_TAG="$(cat /run/secrets/bayt_image_tag)"
+export BAYT_PULL_POLICY="$(cat /run/secrets/bayt_pull_policy)"
+export SAYT_NO_CACHE_FROM="$(cat /run/secrets/sayt_no_cache_from)"
+export SAYT_NO_CACHE_TO="$(cat /run/secrets/sayt_no_cache_to)"
+export DEPOT_TOKEN="$(cat /run/secrets/depot_token)"
+export DEPOT_PROJECT_ID="$(cat /run/secrets/depot_project_id)"
+export DEPOT_ORG_ID="$(cat /run/secrets/depot_org_id)"
+export DEPOT_DISABLE_OTEL="$(cat /run/secrets/depot_disable_otel)"
+export ACTIONS_RESULTS_URL="$(cat /run/secrets/actions_results_url)"
+export ACTIONS_RUNTIME_TOKEN="$(cat /run/secrets/actions_runtime_token)"
+export BKID_PROJECT="$(cat /run/secrets/bkid_project)"
+export BUILDX_INSTANCE="$(cat /run/secrets/buildx_instance)"
+export DOCKER_AUTH_CONFIG="$(cat /run/secrets/docker_config)"
+if [ -s "/run/secrets/docker_config" ]; then mkdir -p "$(dirname "/root/.docker/config.json")"; cp -p "/run/secrets/docker_config" "/root/.docker/config.json"; fi
+if [ -n "$DOCKER_HOST" ] && [ ! -e /var/run/docker.sock ]; then
+  ulimit -n 1048576 2>/dev/null || true
+  addr=${DOCKER_HOST#tcp://}
+  [ -n "$addr" ] || { echo "bkid: DOCKER_HOST=$DOCKER_HOST has no tcp:// address" >&2; exit 1; }
+  socat -d0 -t 86400 UNIX-LISTEN:/var/run/docker.sock,fork,backlog=1024,reuseaddr "TCP:$addr,keepalive,keepidle=30,keepintvl=15,keepcnt=4" &
+  SOCAT_PID=$!
+  trap 'kill $SOCAT_PID 2>/dev/null || true' EXIT INT TERM
+  socat -u OPEN:/dev/null UNIX-CONNECT:/var/run/docker.sock,retry=20,interval=0.2 >/dev/null 2>&1 \
+    || { echo "bkid: socat bridge to /var/run/docker.sock not ready" >&2; exit 1; }
+fi
+if [ -n "$BUILDX_BUILDER" ] && [ -n "$BUILDX_INSTANCE" ]; then
+  install -d -m 0700 /root/.docker/buildx/instances
+  printf '%s' "$BUILDX_INSTANCE" > "/root/.docker/buildx/instances/$BUILDX_BUILDER"
+  chmod 0600 "/root/.docker/buildx/instances/$BUILDX_BUILDER"
+fi
+task -t .bayt/Taskfile.yml bayt:ci-duel
+BAYT_INJECT
+
+FROM busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223 AS ci-duel_bayt_ctxs
+ARG BAYT_DIR
+WORKDIR /monorepo/${BAYT_DIR}
+COPY --parents .bayt/compose.ci-duel.yaml .bayt/Dockerfile.ci-duel .bayt/bayt.ci-duel.json .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/Taskfile.ci-duel.yaml .bayt/process-compose.yaml ./
+COPY --from=apexrun-check-duel_bayt /monorepo /monorepo
+COPY --from=apexrun-database_bayt /monorepo /monorepo
+COPY --from=apexrun-caddy_bayt /monorepo /monorepo
+COPY --from=apexrun-assets_bayt /monorepo /monorepo
+COPY --from=apexrun-served_bayt /monorepo /monorepo
+COPY --from=apexrun-render_bayt /monorepo /monorepo
+COPY --from=apexrun-browser_bayt /monorepo /monorepo
+ARG SOURCE_DATE_EPOCH
+ARG BAYT_CLAMP=1
+RUN if [ "${BAYT_CLAMP:-1}" != 0 ]; then find /monorepo/${BAYT_DIR} -exec touch -hd @${SOURCE_DATE_EPOCH:-0} {} + && { d=$(dirname /monorepo/${BAYT_DIR}); while [ "$d" != / ]; do touch -hd @${SOURCE_DATE_EPOCH:-0} "$d" || exit; d=$(dirname "$d"); done; }; fi
+FROM scratch AS ci-duel_bayt
+COPY --from=ci-duel_bayt_ctxs /monorepo /monorepo

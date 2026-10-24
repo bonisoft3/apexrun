@@ -1,0 +1,4130 @@
+{
+  "version": 1,
+  "types": {
+    "types": {
+      "string": {
+        "pg": "text",
+        "column": "plain",
+        "subset": true,
+        "base": [
+          "text",
+          "varchar",
+          "bpchar",
+          "tsvector"
+        ],
+        "json": "string",
+        "refuse": "\\x00",
+        "order": "text",
+        "beyond": [
+          "scalar-values"
+        ]
+      },
+      "bool": {
+        "pg": "boolean",
+        "column": "plain",
+        "subset": true,
+        "base": [
+          "bool",
+          "boolean"
+        ],
+        "json": "boolean",
+        "order": "boolean",
+        "beyond": []
+      },
+      "int32": {
+        "pg": "integer",
+        "column": "plain",
+        "subset": true,
+        "base": [
+          "int2",
+          "int4",
+          "integer",
+          "smallint"
+        ],
+        "json": "number",
+        "min": -2147483648,
+        "max": 2147483647,
+        "order": "number",
+        "beyond": []
+      },
+      "int64": {
+        "pg": "bigint",
+        "column": "domain",
+        "subset": false,
+        "sql": "portable_int64",
+        "base": [
+          "int8",
+          "bigint"
+        ],
+        "json": "string",
+        "pattern": "^(0|-?[1-9][0-9]*)$",
+        "order": "integer",
+        "beyond": [
+          "int64-range"
+        ]
+      },
+      "double": {
+        "pg": "double precision",
+        "column": "checked",
+        "subset": true,
+        "base": [
+          "float4",
+          "float8",
+          "double precision",
+          "real"
+        ],
+        "json": "number",
+        "order": "number",
+        "beyond": []
+      },
+      "bytes": {
+        "pg": "bytea",
+        "column": "domain",
+        "subset": false,
+        "sql": "portable_bytes",
+        "base": [
+          "bytea"
+        ],
+        "json": "string",
+        "pattern": "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+        "order": "none",
+        "beyond": []
+      },
+      "uuid": {
+        "pg": "uuid",
+        "column": "plain",
+        "subset": true,
+        "base": [
+          "uuid"
+        ],
+        "json": "string",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "order": "text",
+        "beyond": []
+      },
+      "timestamp": {
+        "pg": "timestamptz",
+        "column": "domain",
+        "subset": false,
+        "sql": "portable_timestamp",
+        "base": [
+          "timestamptz",
+          "timestamp with time zone"
+        ],
+        "json": "string",
+        "pattern": "^(000[1-9]|00[1-9][0-9]|0[1-9][0-9]{2}|[1-9][0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\\.[0-9]{6}Z$",
+        "order": "text",
+        "beyond": [
+          "calendar"
+        ]
+      },
+      "duration": {
+        "pg": "interval",
+        "column": "domain",
+        "subset": false,
+        "sql": "portable_duration",
+        "base": [
+          "interval"
+        ],
+        "json": "string",
+        "pattern": "^PT(0|[1-9][0-9]*)(\\.[0-9]{0,5}[1-9])?S$",
+        "order": "duration",
+        "beyond": [
+          "duration-range"
+        ]
+      },
+      "decimal": {
+        "pg": "numeric",
+        "column": "domain",
+        "subset": false,
+        "base": [
+          "numeric",
+          "decimal"
+        ],
+        "json": "string",
+        "pattern": "^(0|-?[1-9][0-9]*|-?(0|[1-9][0-9]*)\\.[0-9]*[1-9])$",
+        "order": "decimal",
+        "beyond": [
+          "decimal-profile"
+        ]
+      },
+      "date": {
+        "pg": "date",
+        "column": "checked",
+        "subset": true,
+        "base": [
+          "date"
+        ],
+        "json": "string",
+        "pattern": "^(000[1-9]|00[1-9][0-9]|0[1-9][0-9]{2}|[1-9][0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+        "order": "text",
+        "beyond": [
+          "calendar"
+        ]
+      },
+      "time": {
+        "pg": "time(6)",
+        "column": "domain",
+        "subset": false,
+        "sql": "portable_time",
+        "base": [
+          "time",
+          "time without time zone"
+        ],
+        "json": "string",
+        "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\\.[0-9]{6}$",
+        "order": "text",
+        "beyond": []
+      },
+      "timezone": {
+        "pg": "text",
+        "column": "checked",
+        "subset": true,
+        "base": [
+          "text"
+        ],
+        "json": "string",
+        "pattern": "^[A-Za-z0-9+_/-]+$",
+        "order": "none",
+        "beyond": [
+          "tzdb"
+        ]
+      },
+      "json": {
+        "pg": "json",
+        "column": "checked",
+        "subset": false,
+        "base": [
+          "json",
+          "jsonb"
+        ],
+        "json": "value",
+        "order": "none",
+        "beyond": [
+          "scalar-values",
+          "finite-numbers"
+        ]
+      },
+      "geojson": {
+        "pg": "json",
+        "column": "checked",
+        "subset": false,
+        "base": [
+          "json",
+          "jsonb",
+          "geometry",
+          "geography"
+        ],
+        "json": "value",
+        "order": "none",
+        "beyond": [
+          "scalar-values",
+          "finite-numbers",
+          "ring-closure"
+        ]
+      }
+    },
+    "aliases": {
+      "text": "string",
+      "int": "int32",
+      "bigint": "int64",
+      "timestamptz": "timestamp",
+      "tsvector": "string"
+    }
+  },
+  "entities": {
+    "Match": {
+      "name": "Match",
+      "ir": "Match",
+      "table": "match",
+      "id": "0x915566778899aabb",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "string",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 64"
+        },
+        {
+          "name": "track_id",
+          "ordinal": 2,
+          "retired": true,
+          "type": "string",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "status",
+          "ordinal": 3,
+          "retired": true,
+          "type": "string",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "laps_total",
+          "ordinal": 4,
+          "retired": true,
+          "type": "int32",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "current_lap",
+          "ordinal": 5,
+          "retired": true,
+          "type": "int32",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "player_position",
+          "ordinal": 6,
+          "retired": true,
+          "type": "int32",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "winner_id",
+          "ordinal": 7,
+          "retired": true,
+          "type": "string",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "time_elapsed_s",
+          "ordinal": 8,
+          "retired": true,
+          "type": "int32",
+          "pk": false,
+          "required": false
+        }
+      ],
+      "seed": [],
+      "durability": "tab",
+      "level": "ephemeral",
+      "server": false,
+      "writers": [],
+      "cel": {
+        "checks": {},
+        "enums": {},
+        "bounds": {
+          "id": {
+            "sizeMax": 64
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "Kart": {
+      "name": "Kart",
+      "ir": "Kart",
+      "table": "kart",
+      "id": "0x9266778899aabbcc",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "string",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 64"
+        },
+        {
+          "name": "character",
+          "ordinal": 2,
+          "retired": true,
+          "type": "string",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "is_player",
+          "ordinal": 3,
+          "retired": true,
+          "type": "string",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "speed_kmh",
+          "ordinal": 4,
+          "retired": true,
+          "type": "int32",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "position",
+          "ordinal": 5,
+          "retired": true,
+          "type": "int32",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "current_lap",
+          "ordinal": 6,
+          "retired": true,
+          "type": "int32",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "nitro_fuel",
+          "ordinal": 7,
+          "retired": true,
+          "type": "int32",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "item",
+          "ordinal": 8,
+          "retired": true,
+          "type": "string",
+          "pk": false,
+          "required": false
+        }
+      ],
+      "seed": [],
+      "durability": "tab",
+      "level": "ephemeral",
+      "server": false,
+      "writers": [],
+      "cel": {
+        "checks": {},
+        "enums": {},
+        "bounds": {
+          "id": {
+            "sizeMax": 64
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "LapRecord": {
+      "name": "LapRecord",
+      "ir": "LapRecord",
+      "table": "lap_record",
+      "id": "0x93778899aabbccdd",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "string",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 64"
+        },
+        {
+          "name": "track_id",
+          "ordinal": 2,
+          "retired": true,
+          "type": "string",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "holder_name",
+          "ordinal": 3,
+          "retired": true,
+          "type": "string",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "lap_time_ms",
+          "ordinal": 4,
+          "retired": true,
+          "type": "int32",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "tick",
+          "ordinal": 5,
+          "retired": true,
+          "type": "int32",
+          "pk": false,
+          "required": false
+        }
+      ],
+      "seed": [],
+      "durability": "tab",
+      "level": "ephemeral",
+      "server": false,
+      "writers": [],
+      "cel": {
+        "checks": {},
+        "enums": {},
+        "bounds": {
+          "id": {
+            "sizeMax": 64
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "Run": {
+      "name": "Run",
+      "ir": "Run",
+      "table": "run",
+      "id": "0xf7aed5fa682060af",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "string",
+          "pk": true,
+          "required": true,
+          "cel": "this == 'run'"
+        },
+        {
+          "name": "phase",
+          "ordinal": 2,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this in ['title', 'race', 'paused', 'ended', 'arrival', 'replay', 'result', 'initials', 'saved']"
+        },
+        {
+          "name": "seed",
+          "ordinal": 3,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "race",
+          "ordinal": 4,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "mode",
+          "ordinal": 5,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this in ['', 'hotseat', 'online']"
+        },
+        {
+          "name": "input",
+          "ordinal": 6,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this in ['car', 'menu']"
+        },
+        {
+          "name": "clock",
+          "ordinal": 7,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this in ['play', 'hold']"
+        },
+        {
+          "name": "lifted",
+          "ordinal": 8,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "stage_id",
+          "ordinal": 9,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "stage_num",
+          "ordinal": 10,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "next_num",
+          "ordinal": 11,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "stage_name",
+          "ordinal": 12,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "final",
+          "ordinal": 13,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "fork_left",
+          "ordinal": 14,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "fork_right",
+          "ordinal": 15,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "route",
+          "ordinal": 16,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "racing",
+          "ordinal": 17,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "rival_label",
+          "ordinal": 18,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "res_title",
+          "ordinal": 19,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "res_over",
+          "ordinal": 20,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "res_kicker",
+          "ordinal": 21,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "line1_label",
+          "ordinal": 22,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "line1_value",
+          "ordinal": 23,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "line2_label",
+          "ordinal": 24,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "line2_value",
+          "ordinal": 25,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "line3_label",
+          "ordinal": 26,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "line3_value",
+          "ordinal": 27,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "line4_label",
+          "ordinal": 28,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "line4_value",
+          "ordinal": 29,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "total",
+          "ordinal": 30,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "outcome",
+          "ordinal": 31,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "score",
+          "ordinal": 32,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "stage",
+          "ordinal": 33,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "run_ms",
+          "ordinal": 34,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "initial_0",
+          "ordinal": 35,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "initial_1",
+          "ordinal": 36,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "initial_2",
+          "ordinal": 37,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "cursor",
+          "ordinal": 38,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "denied",
+          "ordinal": 39,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "saved",
+          "ordinal": 40,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this in ['no', 'yes', 'refused']"
+        },
+        {
+          "name": "saved_score",
+          "ordinal": 41,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "saved_initials",
+          "ordinal": 42,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "station",
+          "ordinal": 43,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true,
+          "cel": "this >= -1 && this <= 2"
+        },
+        {
+          "name": "muted",
+          "ordinal": 44,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "volume",
+          "ordinal": 45,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true,
+          "cel": "this >= 0 && this <= 100"
+        },
+        {
+          "name": "pitlane",
+          "ordinal": 46,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "duel",
+          "ordinal": 47,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 36"
+        },
+        {
+          "name": "seat",
+          "ordinal": 48,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true,
+          "cel": "this >= 0 && this <= 1"
+        },
+        {
+          "name": "duel_stage",
+          "ordinal": 49,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "peer",
+          "ordinal": 50,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 8192"
+        },
+        {
+          "name": "verdict",
+          "ordinal": 51,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this in ['', 'pending', 'won', 'lost', 'draw', 'disputed', 'abandoned']"
+        },
+        {
+          "name": "replay",
+          "ordinal": 52,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        }
+      ],
+      "seed": [],
+      "durability": "tab",
+      "level": "ephemeral",
+      "server": false,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce",
+            "update"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {},
+        "enums": {
+          "id": [
+            "run"
+          ],
+          "phase": [
+            "title",
+            "race",
+            "paused",
+            "ended",
+            "arrival",
+            "replay",
+            "result",
+            "initials",
+            "saved"
+          ],
+          "mode": [
+            "",
+            "hotseat",
+            "online"
+          ],
+          "input": [
+            "car",
+            "menu"
+          ],
+          "clock": [
+            "play",
+            "hold"
+          ],
+          "saved": [
+            "no",
+            "yes",
+            "refused"
+          ],
+          "verdict": [
+            "",
+            "pending",
+            "won",
+            "lost",
+            "draw",
+            "disputed",
+            "abandoned"
+          ]
+        },
+        "bounds": {
+          "station": {
+            "intMin": -1,
+            "intMax": 2
+          },
+          "volume": {
+            "intMin": 0,
+            "intMax": 100
+          },
+          "duel": {
+            "sizeMax": 36
+          },
+          "seat": {
+            "intMin": 0,
+            "intMax": 1
+          },
+          "duel_stage": {
+            "sizeMax": 16
+          },
+          "peer": {
+            "sizeMax": 8192
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "RunSignal": {
+      "name": "RunSignal",
+      "ir": "RunSignal",
+      "table": "run_signal",
+      "id": "0x889dbdd918bfeda3",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "string",
+          "pk": true,
+          "required": true
+        },
+        {
+          "name": "description",
+          "ordinal": 2,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 8192"
+        }
+      ],
+      "seed": [],
+      "durability": "tab",
+      "level": "ephemeral",
+      "server": false,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {},
+        "enums": {},
+        "bounds": {
+          "description": {
+            "sizeMax": 8192
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "RunInput": {
+      "name": "RunInput",
+      "ir": "RunInput",
+      "table": "run_input",
+      "id": "0xdc94f27f104784e5",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "string",
+          "pk": true,
+          "required": true
+        },
+        {
+          "name": "n",
+          "ordinal": 2,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "action",
+          "ordinal": 3,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        }
+      ],
+      "seed": [],
+      "durability": "tab",
+      "level": "ephemeral",
+      "server": false,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {},
+        "enums": {},
+        "bounds": {}
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "RunMilestone": {
+      "name": "RunMilestone",
+      "ir": "RunMilestone",
+      "table": "run_milestone",
+      "id": "0xccb3e9083902f32b",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "string",
+          "pk": true,
+          "required": true
+        },
+        {
+          "name": "race",
+          "ordinal": 2,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "frame",
+          "ordinal": 3,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "kind",
+          "ordinal": 4,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "checksum",
+          "ordinal": 5,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "from",
+          "ordinal": 6,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "width",
+          "ordinal": 7,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "inputs",
+          "ordinal": 8,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "detail",
+          "ordinal": 9,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "snapshot",
+          "ordinal": 10,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true
+        }
+      ],
+      "seed": [],
+      "durability": "tab",
+      "level": "ephemeral",
+      "server": false,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {},
+        "enums": {},
+        "bounds": {}
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "LobbyTab": {
+      "name": "LobbyTab",
+      "ir": "LobbyTab",
+      "table": "lobby_tab",
+      "id": "0x91c22f2244218908",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "string",
+          "pk": true,
+          "required": true,
+          "cel": "this == 'the'"
+        },
+        {
+          "name": "lease",
+          "ordinal": 2,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 36"
+        },
+        {
+          "name": "me",
+          "ordinal": 3,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 36"
+        },
+        {
+          "name": "note",
+          "ordinal": 4,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 64"
+        },
+        {
+          "name": "shown",
+          "ordinal": 5,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": false,
+          "cel": "this in ['', 'show', 'hide']"
+        },
+        {
+          "name": "open",
+          "ordinal": 6,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this in ['no', 'yes']"
+        },
+        {
+          "name": "offer",
+          "ordinal": 7,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 36"
+        },
+        {
+          "name": "stage",
+          "ordinal": 8,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "name",
+          "ordinal": 9,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 16"
+        }
+      ],
+      "seed": [],
+      "durability": "tab",
+      "level": "ephemeral",
+      "server": false,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {},
+        "enums": {
+          "id": [
+            "the"
+          ],
+          "shown": [
+            "",
+            "show",
+            "hide"
+          ],
+          "open": [
+            "no",
+            "yes"
+          ]
+        },
+        "bounds": {
+          "lease": {
+            "sizeMax": 36
+          },
+          "me": {
+            "sizeMax": 36
+          },
+          "note": {
+            "sizeMax": 64
+          },
+          "offer": {
+            "sizeMax": 36
+          },
+          "stage": {
+            "sizeMax": 16
+          },
+          "name": {
+            "sizeMax": 16
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "AppUser": {
+      "access": {
+        "scope": "internal"
+      },
+      "name": "AppUser",
+      "ir": "AppUser",
+      "read": "eager",
+      "table": "app_user",
+      "id": "0xc3877102c61a72f3",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "uuid",
+          "pk": true,
+          "required": true
+        },
+        {
+          "name": "handle",
+          "ordinal": 2,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "unique": true,
+          "cel": "this.size() > 0"
+        }
+      ],
+      "seed": [],
+      "durability": "server",
+      "level": "replicated",
+      "server": true,
+      "writers": [],
+      "cel": {
+        "checks": {
+          "handle": "char_length(handle) > 0"
+        },
+        "enums": {},
+        "bounds": {
+          "handle": {
+            "sizeMin": 1
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "HighScore": {
+      "access": {
+        "scope": "public"
+      },
+      "name": "HighScore",
+      "ir": "HighScore",
+      "read": "lazy",
+      "table": "high_score",
+      "id": "0x918e449216b97307",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "uuid",
+          "pk": true,
+          "required": true,
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "player_id",
+          "ordinal": 2,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true,
+          "ref": "app_user",
+          "default": "auth_uid()"
+        },
+        {
+          "name": "initials",
+          "ordinal": 3,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this.matches('^[A-Z]{3}$') && this != 'ASS' && this != 'CUM' && this != 'FAG' && this != 'FCK' && this != 'FUC' && this != 'FUK' && this != 'KKK' && this != 'NIG' && this != 'SEX' && this != 'TIT'"
+        },
+        {
+          "name": "score",
+          "ordinal": 4,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true,
+          "cel": "this >= 0 && this <= 7422146"
+        },
+        {
+          "name": "outcome",
+          "ordinal": 5,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": true,
+          "cel": "this in ['A', 'B', 'C', 'D', 'E', 'time_over']"
+        },
+        {
+          "name": "stage",
+          "ordinal": 6,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true,
+          "cel": "this >= 1 && this <= 5"
+        },
+        {
+          "name": "run_ms",
+          "ordinal": 7,
+          "retired": false,
+          "type": "int32",
+          "pk": false,
+          "required": true,
+          "cel": "this > 0 && this <= 255000"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 8,
+          "retired": false,
+          "type": "timestamp",
+          "pk": false,
+          "required": true,
+          "default": "now()"
+        }
+      ],
+      "durability": "live",
+      "indexes": [
+        {
+          "on": "score",
+          "using": "btree"
+        }
+      ],
+      "invariant": {
+        "cel": "(this.outcome in ['A', 'B', 'C', 'D', 'E'] && this.stage == 5 && this.run_ms < 255000) || (this.outcome == 'time_over' && ((this.stage == 1 && this.run_ms == 75000) || (this.stage == 2 && this.run_ms == 120000) || (this.stage == 3 && this.run_ms == 165000) || (this.stage == 4 && this.run_ms == 210000) || (this.stage == 5 && this.run_ms == 255000)))",
+        "check": "(outcome IN ('A', 'B', 'C', 'D', 'E') AND stage = 5 AND run_ms < 255000) OR (outcome = 'time_over' AND ((((stage = 1 AND run_ms = 75000) OR (stage = 2 AND run_ms = 120000)) OR (stage = 3 AND run_ms = 165000)) OR ((stage = 4 AND run_ms = 210000) OR (stage = 5 AND run_ms = 255000))))"
+      },
+      "level": "compensable",
+      "seed": [],
+      "server": true,
+      "writers": [],
+      "cel": {
+        "checks": {
+          "initials": "initials ~ '^[A-Z]{3}$' AND initials <> 'ASS' AND initials <> 'CUM' AND initials <> 'FAG' AND initials <> 'FCK' AND initials <> 'FUC' AND initials <> 'FUK' AND initials <> 'KKK' AND initials <> 'NIG' AND initials <> 'SEX' AND initials <> 'TIT'",
+          "score": "score >= 0 AND score <= 7422146",
+          "outcome": "outcome IN ('A', 'B', 'C', 'D', 'E', 'time_over')",
+          "stage": "stage >= 1 AND stage <= 5",
+          "run_ms": "run_ms > 0 AND run_ms <= 255000"
+        },
+        "enums": {
+          "outcome": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "time_over"
+          ]
+        },
+        "bounds": {
+          "initials": {
+            "regex": "^[A-Z]{3}$"
+          },
+          "score": {
+            "intMin": 0,
+            "intMax": 7422146
+          },
+          "stage": {
+            "intMin": 1,
+            "intMax": 5
+          },
+          "run_ms": {
+            "intMin": 1,
+            "intMax": 255000
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "ApexrunPresenceSeat": {
+      "name": "ApexrunPresenceSeat",
+      "ir": "ApexrunPresenceSeat",
+      "access": {
+        "scope": "private",
+        "owner": "actor"
+      },
+      "durability": "live",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "text",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 64"
+        },
+        {
+          "name": "instance_id",
+          "ordinal": 2,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "actor",
+          "ordinal": 3,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "seat",
+          "ordinal": 4,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "revision",
+          "ordinal": 5,
+          "retired": false,
+          "type": "bigint",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "phase",
+          "ordinal": 6,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "view",
+          "ordinal": 7,
+          "retired": false,
+          "type": "json",
+          "pk": false,
+          "required": true,
+          "cel": "type(this) == map && size(this) == 4 && has(this.leases) && type(this.leases) == list && size(this.leases) <= 16 && this.leases.all(e1, type(e1) == map && size(e1) == 2 && has(e1.id) && type(e1.id) == string && e1.id.size() <= 36 && has(e1.until) && e1.until == int(e1.until) && e1.until >= 0 && e1.until <= 9007199254740991) && has(this.name) && type(this.name) == string && this.name.size() <= 16 && has(this.phase) && type(this.phase) == string && this.phase in [\"hidden\", \"visible\"] && has(this.until) && this.until == int(this.until) && this.until >= 0 && this.until <= 9007199254740991"
+        },
+        {
+          "name": "name",
+          "ordinal": 8,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 16"
+        }
+      ],
+      "id": "0xebfa4ed60fd5d64f",
+      "seed": [],
+      "table": "apexrun_presence_seat",
+      "level": "compensable",
+      "read": "eager",
+      "server": true,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {
+          "id": "char_length(id) <= 64",
+          "seat": "char_length(seat) <= 16",
+          "phase": "char_length(phase) <= 16",
+          "view": "public.portable_shape_valid(view, '{\"kind\":\"object\",\"fields\":{\"leases\":{\"kind\":\"array\",\"maxItems\":16,\"items\":{\"kind\":\"object\",\"fields\":{\"id\":{\"kind\":\"string\",\"sizeMax\":36},\"until\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":9007199254740991}}}},\"name\":{\"kind\":\"string\",\"sizeMax\":16},\"phase\":{\"kind\":\"string\",\"enumValues\":[\"hidden\",\"visible\"]},\"until\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":9007199254740991}}}'::jsonb)",
+          "name": "char_length(name) <= 16"
+        },
+        "enums": {},
+        "bounds": {
+          "id": {
+            "sizeMax": 64
+          },
+          "seat": {
+            "sizeMax": 16
+          },
+          "phase": {
+            "sizeMax": 16
+          },
+          "view": {
+            "kind": "object",
+            "fields": {
+              "leases": {
+                "kind": "array",
+                "maxItems": 16,
+                "items": {
+                  "kind": "object",
+                  "fields": {
+                    "id": {
+                      "kind": "string",
+                      "sizeMax": 36
+                    },
+                    "until": {
+                      "kind": "integer",
+                      "intMin": 0,
+                      "intMax": 9007199254740991
+                    }
+                  }
+                }
+              },
+              "name": {
+                "kind": "string",
+                "sizeMax": 16
+              },
+              "phase": {
+                "kind": "string",
+                "enumValues": [
+                  "hidden",
+                  "visible"
+                ]
+              },
+              "until": {
+                "kind": "integer",
+                "intMin": 0,
+                "intMax": 9007199254740991
+              }
+            }
+          },
+          "name": {
+            "sizeMax": 16
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "ApexrunPresenceCommand": {
+      "name": "ApexrunPresenceCommand",
+      "ir": "ApexrunPresenceCommand",
+      "access": {
+        "scope": "private",
+        "owner": "actor"
+      },
+      "durability": "live",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "text",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 128"
+        },
+        {
+          "name": "instance_id",
+          "ordinal": 2,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "actor",
+          "ordinal": 3,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true,
+          "default": "auth_uid()"
+        },
+        {
+          "name": "request",
+          "ordinal": 4,
+          "retired": false,
+          "type": "json",
+          "pk": false,
+          "required": true,
+          "cel": "type(this) == map && size(this) == 3 && has(this.event) && type(this.event) == map && size(this.event) == 2 && has(this.event.kind) && type(this.event.kind) == string && this.event.kind in [\"hide\", \"show\"] && has(this.event.payload) && type(this.event.payload) == map && has(this.expected_revision) && type(this.expected_revision) == string && this.expected_revision.size() <= 20 && has(this.version) && this.version == int(this.version) && this.version >= 1 && this.version <= 9007199254740991"
+        },
+        {
+          "name": "revision",
+          "ordinal": 5,
+          "retired": false,
+          "type": "bigint",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "outcome",
+          "ordinal": 6,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this in ['', 'accepted', 'rejected']"
+        },
+        {
+          "name": "reason",
+          "ordinal": 7,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 64"
+        }
+      ],
+      "id": "0xcdf55ec168b97d9c",
+      "seed": [],
+      "table": "apexrun_presence_command",
+      "level": "compensable",
+      "read": "eager",
+      "server": true,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {
+          "id": "char_length(id) <= 128",
+          "request": "public.portable_shape_valid(request, '{\"kind\":\"object\",\"fields\":{\"event\":{\"kind\":\"object\",\"fields\":{\"kind\":{\"kind\":\"string\",\"enumValues\":[\"hide\",\"show\"]},\"payload\":{\"kind\":\"object\"}}},\"expected_revision\":{\"kind\":\"string\",\"sizeMax\":20},\"version\":{\"kind\":\"integer\",\"intMin\":1,\"intMax\":9007199254740991}}}'::jsonb)",
+          "outcome": "outcome IN ('', 'accepted', 'rejected')",
+          "reason": "char_length(reason) <= 64"
+        },
+        "enums": {
+          "outcome": [
+            "",
+            "accepted",
+            "rejected"
+          ]
+        },
+        "bounds": {
+          "id": {
+            "sizeMax": 128
+          },
+          "request": {
+            "kind": "object",
+            "fields": {
+              "event": {
+                "kind": "object",
+                "fields": {
+                  "kind": {
+                    "kind": "string",
+                    "enumValues": [
+                      "hide",
+                      "show"
+                    ]
+                  },
+                  "payload": {
+                    "kind": "object"
+                  }
+                }
+              },
+              "expected_revision": {
+                "kind": "string",
+                "sizeMax": 20
+              },
+              "version": {
+                "kind": "integer",
+                "intMin": 1,
+                "intMax": 9007199254740991
+              }
+            }
+          },
+          "reason": {
+            "sizeMax": 64
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "ApexrunPresencePublic": {
+      "name": "ApexrunPresencePublic",
+      "ir": "ApexrunPresencePublic",
+      "id": "0x93c026e1862e2c67",
+      "table": "apexrun_presence_public",
+      "access": {
+        "scope": "public"
+      },
+      "durability": "live",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "text",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 36"
+        },
+        {
+          "name": "name",
+          "ordinal": 2,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 16"
+        }
+      ],
+      "seed": [],
+      "level": "compensable",
+      "read": "lazy",
+      "server": true,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {
+          "id": "char_length(id) <= 36",
+          "name": "char_length(name) <= 16"
+        },
+        "enums": {},
+        "bounds": {
+          "id": {
+            "sizeMax": 36
+          },
+          "name": {
+            "sizeMax": 16
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "ApexrunPresenceLease": {
+      "name": "ApexrunPresenceLease",
+      "ir": "ApexrunPresenceLease",
+      "access": {
+        "scope": "private",
+        "owner": "actor"
+      },
+      "durability": "live",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "text",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() == 36"
+        },
+        {
+          "name": "actor",
+          "ordinal": 2,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true,
+          "default": "auth_uid()"
+        },
+        {
+          "name": "beat",
+          "ordinal": 3,
+          "retired": false,
+          "type": "int",
+          "pk": false,
+          "required": true,
+          "cel": "this >= 0"
+        }
+      ],
+      "id": "0xc4d6d832835cfe26",
+      "seed": [],
+      "table": "apexrun_presence_lease",
+      "level": "compensable",
+      "read": "eager",
+      "server": true,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {
+          "id": "char_length(id) = 36",
+          "beat": "beat >= 0"
+        },
+        "enums": {},
+        "bounds": {
+          "id": {
+            "sizeMin": 36,
+            "sizeMax": 36
+          },
+          "beat": {
+            "intMin": 0
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "ApexrunChallengeSeat": {
+      "name": "ApexrunChallengeSeat",
+      "ir": "ApexrunChallengeSeat",
+      "access": {
+        "scope": "private",
+        "owner": "actor"
+      },
+      "durability": "live",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "text",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 64"
+        },
+        {
+          "name": "instance_id",
+          "ordinal": 2,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "actor",
+          "ordinal": 3,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "seat",
+          "ordinal": 4,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "revision",
+          "ordinal": 5,
+          "retired": false,
+          "type": "bigint",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "phase",
+          "ordinal": 6,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "view",
+          "ordinal": 7,
+          "retired": false,
+          "type": "json",
+          "pk": false,
+          "required": true,
+          "cel": "type(this) == map && size(this) == 9 && has(this.deadline) && this.deadline == int(this.deadline) && this.deadline >= 0 && this.deadline <= 9007199254740991 && has(this.duel) && type(this.duel) == string && this.duel.size() <= 36 && has(this.inviter) && type(this.inviter) == string && this.inviter.size() <= 36 && has(this.inviter_name) && type(this.inviter_name) == string && this.inviter_name.size() <= 16 && has(this.phase) && type(this.phase) == string && this.phase in [\"offered\", \"accepted\", \"declined\", \"cancelled\", \"expired\"] && has(this.seed) && this.seed == int(this.seed) && this.seed >= 0 && this.seed <= 2147483647 && has(this.stage) && type(this.stage) == string && this.stage in [\"coconut-beach\", \"desert-canyons\", \"gateway-pass\", \"alpine-peaks\", \"wilderness-run\", \"tulip-gardens\", \"sunset-highway\", \"ancient-ruins\", \"metropolis-night\", \"coastal-cliffs\"] && has(this.target) && type(this.target) == string && this.target.size() <= 36 && has(this.target_name) && type(this.target_name) == string && this.target_name.size() <= 16"
+        },
+        {
+          "name": "inviter_name",
+          "ordinal": 8,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "target_name",
+          "ordinal": 9,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "stage",
+          "ordinal": 10,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "duel",
+          "ordinal": 11,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 36"
+        }
+      ],
+      "id": "0x95166b7168e7c797",
+      "seed": [],
+      "table": "apexrun_challenge_seat",
+      "level": "compensable",
+      "read": "eager",
+      "server": true,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {
+          "id": "char_length(id) <= 64",
+          "seat": "char_length(seat) <= 16",
+          "phase": "char_length(phase) <= 16",
+          "view": "public.portable_shape_valid(view, '{\"kind\":\"object\",\"fields\":{\"deadline\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":9007199254740991},\"duel\":{\"kind\":\"string\",\"sizeMax\":36},\"inviter\":{\"kind\":\"string\",\"sizeMax\":36},\"inviter_name\":{\"kind\":\"string\",\"sizeMax\":16},\"phase\":{\"kind\":\"string\",\"enumValues\":[\"offered\",\"accepted\",\"declined\",\"cancelled\",\"expired\"]},\"seed\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":2147483647},\"stage\":{\"kind\":\"string\",\"enumValues\":[\"coconut-beach\",\"desert-canyons\",\"gateway-pass\",\"alpine-peaks\",\"wilderness-run\",\"tulip-gardens\",\"sunset-highway\",\"ancient-ruins\",\"metropolis-night\",\"coastal-cliffs\"]},\"target\":{\"kind\":\"string\",\"sizeMax\":36},\"target_name\":{\"kind\":\"string\",\"sizeMax\":16}}}'::jsonb)",
+          "inviter_name": "char_length(inviter_name) <= 16",
+          "target_name": "char_length(target_name) <= 16",
+          "stage": "char_length(stage) <= 16",
+          "duel": "char_length(duel) <= 36"
+        },
+        "enums": {},
+        "bounds": {
+          "id": {
+            "sizeMax": 64
+          },
+          "seat": {
+            "sizeMax": 16
+          },
+          "phase": {
+            "sizeMax": 16
+          },
+          "view": {
+            "kind": "object",
+            "fields": {
+              "deadline": {
+                "kind": "integer",
+                "intMin": 0,
+                "intMax": 9007199254740991
+              },
+              "duel": {
+                "kind": "string",
+                "sizeMax": 36
+              },
+              "inviter": {
+                "kind": "string",
+                "sizeMax": 36
+              },
+              "inviter_name": {
+                "kind": "string",
+                "sizeMax": 16
+              },
+              "phase": {
+                "kind": "string",
+                "enumValues": [
+                  "offered",
+                  "accepted",
+                  "declined",
+                  "cancelled",
+                  "expired"
+                ]
+              },
+              "seed": {
+                "kind": "integer",
+                "intMin": 0,
+                "intMax": 2147483647
+              },
+              "stage": {
+                "kind": "string",
+                "enumValues": [
+                  "coconut-beach",
+                  "desert-canyons",
+                  "gateway-pass",
+                  "alpine-peaks",
+                  "wilderness-run",
+                  "tulip-gardens",
+                  "sunset-highway",
+                  "ancient-ruins",
+                  "metropolis-night",
+                  "coastal-cliffs"
+                ]
+              },
+              "target": {
+                "kind": "string",
+                "sizeMax": 36
+              },
+              "target_name": {
+                "kind": "string",
+                "sizeMax": 16
+              }
+            }
+          },
+          "inviter_name": {
+            "sizeMax": 16
+          },
+          "target_name": {
+            "sizeMax": 16
+          },
+          "stage": {
+            "sizeMax": 16
+          },
+          "duel": {
+            "sizeMax": 36
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "ApexrunChallengeCommand": {
+      "name": "ApexrunChallengeCommand",
+      "ir": "ApexrunChallengeCommand",
+      "access": {
+        "scope": "private",
+        "owner": "actor"
+      },
+      "durability": "live",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "text",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 128"
+        },
+        {
+          "name": "instance_id",
+          "ordinal": 2,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "actor",
+          "ordinal": 3,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true,
+          "default": "auth_uid()"
+        },
+        {
+          "name": "request",
+          "ordinal": 4,
+          "retired": false,
+          "type": "json",
+          "pk": false,
+          "required": true,
+          "cel": "type(this) == map && size(this) == 3 && has(this.event) && type(this.event) == map && size(this.event) == 2 && has(this.event.kind) && type(this.event.kind) == string && this.event.kind in [\"accept\", \"cancel\", \"decline\"] && has(this.event.payload) && type(this.event.payload) == map && has(this.expected_revision) && type(this.expected_revision) == string && this.expected_revision.size() <= 20 && has(this.version) && this.version == int(this.version) && this.version >= 1 && this.version <= 9007199254740991"
+        },
+        {
+          "name": "revision",
+          "ordinal": 5,
+          "retired": false,
+          "type": "bigint",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "outcome",
+          "ordinal": 6,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this in ['', 'accepted', 'rejected']"
+        },
+        {
+          "name": "reason",
+          "ordinal": 7,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 64"
+        }
+      ],
+      "id": "0x832f13adb3057bba",
+      "seed": [],
+      "table": "apexrun_challenge_command",
+      "level": "compensable",
+      "read": "eager",
+      "server": true,
+      "writers": [],
+      "cel": {
+        "checks": {
+          "id": "char_length(id) <= 128",
+          "request": "public.portable_shape_valid(request, '{\"kind\":\"object\",\"fields\":{\"event\":{\"kind\":\"object\",\"fields\":{\"kind\":{\"kind\":\"string\",\"enumValues\":[\"accept\",\"cancel\",\"decline\"]},\"payload\":{\"kind\":\"object\"}}},\"expected_revision\":{\"kind\":\"string\",\"sizeMax\":20},\"version\":{\"kind\":\"integer\",\"intMin\":1,\"intMax\":9007199254740991}}}'::jsonb)",
+          "outcome": "outcome IN ('', 'accepted', 'rejected')",
+          "reason": "char_length(reason) <= 64"
+        },
+        "enums": {
+          "outcome": [
+            "",
+            "accepted",
+            "rejected"
+          ]
+        },
+        "bounds": {
+          "id": {
+            "sizeMax": 128
+          },
+          "request": {
+            "kind": "object",
+            "fields": {
+              "event": {
+                "kind": "object",
+                "fields": {
+                  "kind": {
+                    "kind": "string",
+                    "enumValues": [
+                      "accept",
+                      "cancel",
+                      "decline"
+                    ]
+                  },
+                  "payload": {
+                    "kind": "object"
+                  }
+                }
+              },
+              "expected_revision": {
+                "kind": "string",
+                "sizeMax": 20
+              },
+              "version": {
+                "kind": "integer",
+                "intMin": 1,
+                "intMax": 9007199254740991
+              }
+            }
+          },
+          "reason": {
+            "sizeMax": 64
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "ApexrunChallengeOpen": {
+      "name": "ApexrunChallengeOpen",
+      "ir": "ApexrunChallengeOpen",
+      "access": {
+        "scope": "private",
+        "owner": "actor"
+      },
+      "durability": "live",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "text",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 128"
+        },
+        {
+          "name": "instance_id",
+          "ordinal": 2,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "actor",
+          "ordinal": 3,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true,
+          "default": "auth_uid()"
+        },
+        {
+          "name": "kind",
+          "ordinal": 4,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": true,
+          "cel": "this in ['create', 'join']"
+        },
+        {
+          "name": "input",
+          "ordinal": 5,
+          "retired": false,
+          "type": "json",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "outcome",
+          "ordinal": 6,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this in ['', 'accepted', 'rejected']"
+        },
+        {
+          "name": "reason",
+          "ordinal": 7,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 64"
+        }
+      ],
+      "id": "0xdb31c593d68dc01e",
+      "seed": [],
+      "table": "apexrun_challenge_open",
+      "level": "compensable",
+      "read": "eager",
+      "server": true,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {
+          "id": "char_length(id) <= 128",
+          "kind": "kind IN ('create', 'join')",
+          "outcome": "outcome IN ('', 'accepted', 'rejected')",
+          "reason": "char_length(reason) <= 64"
+        },
+        "enums": {
+          "kind": [
+            "create",
+            "join"
+          ],
+          "outcome": [
+            "",
+            "accepted",
+            "rejected"
+          ]
+        },
+        "bounds": {
+          "id": {
+            "sizeMax": 128
+          },
+          "reason": {
+            "sizeMax": 64
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "ApexrunDuelSeat": {
+      "name": "ApexrunDuelSeat",
+      "ir": "ApexrunDuelSeat",
+      "access": {
+        "scope": "private",
+        "owner": "actor"
+      },
+      "durability": "live",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "text",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 64"
+        },
+        {
+          "name": "instance_id",
+          "ordinal": 2,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "actor",
+          "ordinal": 3,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "seat",
+          "ordinal": 4,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "revision",
+          "ordinal": 5,
+          "retired": false,
+          "type": "bigint",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "phase",
+          "ordinal": 6,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": true,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "view",
+          "ordinal": 7,
+          "retired": false,
+          "type": "json",
+          "pk": false,
+          "required": true,
+          "cel": "type(this) == map && size(this) == 12 && has(this.deadline) && this.deadline == int(this.deadline) && this.deadline >= 0 && this.deadline <= 9007199254740991 && has(this.described) && type(this.described) == bool && has(this.dispute) && type(this.dispute) == string && this.dispute.size() <= 24 && has(this.goal_a) && this.goal_a == int(this.goal_a) && this.goal_a >= -1 && this.goal_a <= 1000000 && has(this.goal_b) && this.goal_b == int(this.goal_b) && this.goal_b >= -1 && this.goal_b <= 1000000 && has(this.lifted) && type(this.lifted) == list && size(this.lifted) <= 8 && this.lifted.all(e1, type(e1) == map && size(e1) == 3 && has(e1.by) && type(e1.by) == list && size(e1.by) <= 2 && e1.by.all(e2, type(e2) == string && e2 in [\"a\", \"b\"]) && has(e1.frame) && e1.frame == int(e1.frame) && e1.frame >= 0 && e1.frame <= 1000000 && has(e1.kind) && type(e1.kind) == string && e1.kind in [\"grid\", \"start\", \"checkpoint\", \"time-over\", \"duel-finish\"]) && has(this.peer) && type(this.peer) == string && this.peer.size() <= 8192 && has(this.phase) && type(this.phase) == string && this.phase in [\"signalling\", \"racing\", \"finished\", \"disputed\", \"abandoned\"] && has(this.seed) && this.seed == int(this.seed) && this.seed >= 0 && this.seed <= 2147483647 && has(this.silent) && type(this.silent) == list && size(this.silent) <= 2 && this.silent.all(e1, type(e1) == string && e1 in [\"a\", \"b\"]) && has(this.stage) && type(this.stage) == string && this.stage in [\"coconut-beach\", \"desert-canyons\", \"gateway-pass\", \"alpine-peaks\", \"wilderness-run\", \"tulip-gardens\", \"sunset-highway\", \"ancient-ruins\", \"metropolis-night\", \"coastal-cliffs\"] && has(this.winner) && type(this.winner) == string && this.winner in [\"\", \"a\", \"b\", \"draw\"]"
+        },
+        {
+          "name": "stage",
+          "ordinal": 8,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 16"
+        },
+        {
+          "name": "winner",
+          "ordinal": 9,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 4"
+        }
+      ],
+      "id": "0xdbf8bb586fc2ffbb",
+      "seed": [],
+      "table": "apexrun_duel_seat",
+      "level": "compensable",
+      "read": "eager",
+      "server": true,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {
+          "id": "char_length(id) <= 64",
+          "seat": "char_length(seat) <= 16",
+          "phase": "char_length(phase) <= 16",
+          "view": "public.portable_shape_valid(view, '{\"kind\":\"object\",\"fields\":{\"deadline\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":9007199254740991},\"described\":{\"kind\":\"boolean\"},\"dispute\":{\"kind\":\"string\",\"sizeMax\":24},\"goal_a\":{\"kind\":\"integer\",\"intMin\":-1,\"intMax\":1000000},\"goal_b\":{\"kind\":\"integer\",\"intMin\":-1,\"intMax\":1000000},\"lifted\":{\"kind\":\"array\",\"maxItems\":8,\"items\":{\"kind\":\"object\",\"fields\":{\"by\":{\"kind\":\"array\",\"maxItems\":2,\"items\":{\"kind\":\"string\",\"enumValues\":[\"a\",\"b\"]}},\"frame\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":1000000},\"kind\":{\"kind\":\"string\",\"enumValues\":[\"grid\",\"start\",\"checkpoint\",\"time-over\",\"duel-finish\"]}}}},\"peer\":{\"kind\":\"string\",\"sizeMax\":8192},\"phase\":{\"kind\":\"string\",\"enumValues\":[\"signalling\",\"racing\",\"finished\",\"disputed\",\"abandoned\"]},\"seed\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":2147483647},\"silent\":{\"kind\":\"array\",\"maxItems\":2,\"items\":{\"kind\":\"string\",\"enumValues\":[\"a\",\"b\"]}},\"stage\":{\"kind\":\"string\",\"enumValues\":[\"coconut-beach\",\"desert-canyons\",\"gateway-pass\",\"alpine-peaks\",\"wilderness-run\",\"tulip-gardens\",\"sunset-highway\",\"ancient-ruins\",\"metropolis-night\",\"coastal-cliffs\"]},\"winner\":{\"kind\":\"string\",\"enumValues\":[\"\",\"a\",\"b\",\"draw\"]}}}'::jsonb)",
+          "stage": "char_length(stage) <= 16",
+          "winner": "char_length(winner) <= 4"
+        },
+        "enums": {},
+        "bounds": {
+          "id": {
+            "sizeMax": 64
+          },
+          "seat": {
+            "sizeMax": 16
+          },
+          "phase": {
+            "sizeMax": 16
+          },
+          "view": {
+            "kind": "object",
+            "fields": {
+              "deadline": {
+                "kind": "integer",
+                "intMin": 0,
+                "intMax": 9007199254740991
+              },
+              "described": {
+                "kind": "boolean"
+              },
+              "dispute": {
+                "kind": "string",
+                "sizeMax": 24
+              },
+              "goal_a": {
+                "kind": "integer",
+                "intMin": -1,
+                "intMax": 1000000
+              },
+              "goal_b": {
+                "kind": "integer",
+                "intMin": -1,
+                "intMax": 1000000
+              },
+              "lifted": {
+                "kind": "array",
+                "maxItems": 8,
+                "items": {
+                  "kind": "object",
+                  "fields": {
+                    "by": {
+                      "kind": "array",
+                      "maxItems": 2,
+                      "items": {
+                        "kind": "string",
+                        "enumValues": [
+                          "a",
+                          "b"
+                        ]
+                      }
+                    },
+                    "frame": {
+                      "kind": "integer",
+                      "intMin": 0,
+                      "intMax": 1000000
+                    },
+                    "kind": {
+                      "kind": "string",
+                      "enumValues": [
+                        "grid",
+                        "start",
+                        "checkpoint",
+                        "time-over",
+                        "duel-finish"
+                      ]
+                    }
+                  }
+                }
+              },
+              "peer": {
+                "kind": "string",
+                "sizeMax": 8192
+              },
+              "phase": {
+                "kind": "string",
+                "enumValues": [
+                  "signalling",
+                  "racing",
+                  "finished",
+                  "disputed",
+                  "abandoned"
+                ]
+              },
+              "seed": {
+                "kind": "integer",
+                "intMin": 0,
+                "intMax": 2147483647
+              },
+              "silent": {
+                "kind": "array",
+                "maxItems": 2,
+                "items": {
+                  "kind": "string",
+                  "enumValues": [
+                    "a",
+                    "b"
+                  ]
+                }
+              },
+              "stage": {
+                "kind": "string",
+                "enumValues": [
+                  "coconut-beach",
+                  "desert-canyons",
+                  "gateway-pass",
+                  "alpine-peaks",
+                  "wilderness-run",
+                  "tulip-gardens",
+                  "sunset-highway",
+                  "ancient-ruins",
+                  "metropolis-night",
+                  "coastal-cliffs"
+                ]
+              },
+              "winner": {
+                "kind": "string",
+                "enumValues": [
+                  "",
+                  "a",
+                  "b",
+                  "draw"
+                ]
+              }
+            }
+          },
+          "stage": {
+            "sizeMax": 16
+          },
+          "winner": {
+            "sizeMax": 4
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "ApexrunDuelCommand": {
+      "name": "ApexrunDuelCommand",
+      "ir": "ApexrunDuelCommand",
+      "access": {
+        "scope": "private",
+        "owner": "actor"
+      },
+      "durability": "live",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "text",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 128"
+        },
+        {
+          "name": "instance_id",
+          "ordinal": 2,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "actor",
+          "ordinal": 3,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true,
+          "default": "auth_uid()"
+        },
+        {
+          "name": "request",
+          "ordinal": 4,
+          "retired": false,
+          "type": "json",
+          "pk": false,
+          "required": true,
+          "cel": "type(this) == map && size(this) == 3 && has(this.event) && type(this.event) == map && size(this.event) == 2 && has(this.event.kind) && type(this.event.kind) == string && this.event.kind in [\"describe\", \"lift\"] && has(this.event.payload) && type(this.event.payload) == map && has(this.expected_revision) && type(this.expected_revision) == string && this.expected_revision.size() <= 20 && has(this.version) && this.version == int(this.version) && this.version >= 1 && this.version <= 9007199254740991"
+        },
+        {
+          "name": "revision",
+          "ordinal": 5,
+          "retired": false,
+          "type": "bigint",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "outcome",
+          "ordinal": 6,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this in ['', 'accepted', 'rejected']"
+        },
+        {
+          "name": "reason",
+          "ordinal": 7,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 64"
+        }
+      ],
+      "id": "0x85b89e1f36b95052",
+      "seed": [],
+      "table": "apexrun_duel_command",
+      "level": "compensable",
+      "read": "eager",
+      "server": true,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {
+          "id": "char_length(id) <= 128",
+          "request": "public.portable_shape_valid(request, '{\"kind\":\"object\",\"fields\":{\"event\":{\"kind\":\"object\",\"fields\":{\"kind\":{\"kind\":\"string\",\"enumValues\":[\"describe\",\"lift\"]},\"payload\":{\"kind\":\"object\"}}},\"expected_revision\":{\"kind\":\"string\",\"sizeMax\":20},\"version\":{\"kind\":\"integer\",\"intMin\":1,\"intMax\":9007199254740991}}}'::jsonb)",
+          "outcome": "outcome IN ('', 'accepted', 'rejected')",
+          "reason": "char_length(reason) <= 64"
+        },
+        "enums": {
+          "outcome": [
+            "",
+            "accepted",
+            "rejected"
+          ]
+        },
+        "bounds": {
+          "id": {
+            "sizeMax": 128
+          },
+          "request": {
+            "kind": "object",
+            "fields": {
+              "event": {
+                "kind": "object",
+                "fields": {
+                  "kind": {
+                    "kind": "string",
+                    "enumValues": [
+                      "describe",
+                      "lift"
+                    ]
+                  },
+                  "payload": {
+                    "kind": "object"
+                  }
+                }
+              },
+              "expected_revision": {
+                "kind": "string",
+                "sizeMax": 20
+              },
+              "version": {
+                "kind": "integer",
+                "intMin": 1,
+                "intMax": 9007199254740991
+              }
+            }
+          },
+          "reason": {
+            "sizeMax": 64
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    }
+  },
+  "hybrids": {
+    "apexrun_presence": {
+      "name": "apexrun_presence",
+      "version": 1,
+      "fuel": 10000,
+      "entropy": 0,
+      "initial": "hidden",
+      "initialize": {
+        "reduce": "initial",
+        "input": {
+          "type": "object",
+          "fields": {}
+        }
+      },
+      "ports": {
+        "admission": {
+          "name": "admit",
+          "params": [],
+          "id": "current_actor",
+          "input": {},
+          "members": {
+            "owner": {
+              "raw": "current_actor"
+            }
+          },
+          "locks": [],
+          "checks": []
+        },
+        "wake": {
+          "phases": [
+            "visible"
+          ],
+          "deadline": "until",
+          "event": "expire"
+        },
+        "lease": {
+          "touch": "touch",
+          "leave": "leave",
+          "held": "leases"
+        },
+        "reads": {
+          "available": {
+            "params": [
+              {
+                "name": "racer",
+                "type": "uuid"
+              }
+            ],
+            "returns": "boolean",
+            "sql": "SELECT EXISTS (SELECT FROM hybrid_apexrun_presence.instance p\n  WHERE p.id = racer AND p.state->>'phase' = 'visible'\n  AND EXISTS (SELECT FROM jsonb_array_elements(p.state->'leases') l\n    WHERE (l->>'until')::bigint > hybrid_apexrun_presence.clock()))\n  AND NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.instance d ON d.id = m.instance_id\n    WHERE m.actor = racer AND d.state->>'phase' IN ('signalling', 'racing'));"
+          }
+        }
+      },
+      "state": {
+        "type": "object",
+        "fields": {
+          "phase": {
+            "type": "string",
+            "maxLength": 7,
+            "values": [
+              "hidden",
+              "visible"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "leases": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "object",
+              "fields": {
+                "id": {
+                  "type": "string",
+                  "maxLength": 36
+                },
+                "until": {
+                  "type": "integer",
+                  "min": 0,
+                  "max": 9007199254740991
+                }
+              }
+            }
+          },
+          "until": {
+            "type": "integer",
+            "min": 0,
+            "max": 9007199254740991
+          }
+        }
+      },
+      "view": {
+        "type": "object",
+        "fields": {
+          "name": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "leases": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "object",
+              "fields": {
+                "id": {
+                  "type": "string",
+                  "maxLength": 36
+                },
+                "until": {
+                  "type": "integer",
+                  "min": 0,
+                  "max": 9007199254740991
+                }
+              }
+            }
+          },
+          "phase": {
+            "type": "string",
+            "maxLength": 7,
+            "values": [
+              "hidden",
+              "visible"
+            ]
+          },
+          "until": {
+            "type": "integer",
+            "min": 0,
+            "max": 9007199254740991
+          }
+        }
+      },
+      "public": {
+        "type": "object",
+        "fields": {
+          "name": {
+            "type": "string",
+            "maxLength": 16
+          }
+        }
+      },
+      "contracts": {
+        "show": {
+          "reads": [
+            "payload.name"
+          ],
+          "writes": [
+            "name"
+          ]
+        },
+        "touch": {
+          "reads": [
+            "now",
+            "payload.session"
+          ],
+          "writes": [
+            "leases",
+            "until"
+          ]
+        },
+        "leave": {
+          "reads": [
+            "now",
+            "payload.session"
+          ],
+          "writes": [
+            "leases",
+            "until"
+          ]
+        },
+        "expire": {
+          "reads": [
+            "now"
+          ],
+          "writes": [
+            "leases",
+            "until"
+          ]
+        },
+        "mayShow": {
+          "reads": [
+            "now",
+            "payload.name"
+          ]
+        },
+        "hasCapacity": {
+          "reads": [
+            "now",
+            "payload.session"
+          ]
+        }
+      },
+      "events": {
+        "show": {
+          "tier": "omnishell",
+          "payload": {
+            "type": "object",
+            "fields": {
+              "name": {
+                "type": "string",
+                "maxLength": 16
+              }
+            }
+          }
+        },
+        "hide": {
+          "tier": "omnishell",
+          "payload": {
+            "type": "object",
+            "fields": {}
+          }
+        },
+        "touch": {
+          "tier": "mecha",
+          "payload": {
+            "type": "object",
+            "fields": {
+              "session": {
+                "type": "string",
+                "maxLength": 36
+              }
+            }
+          }
+        },
+        "leave": {
+          "tier": "mecha",
+          "payload": {
+            "type": "object",
+            "fields": {
+              "session": {
+                "type": "string",
+                "maxLength": 36
+              }
+            }
+          }
+        },
+        "expire": {
+          "tier": "mecha",
+          "payload": {
+            "type": "object",
+            "fields": {}
+          }
+        }
+      },
+      "states": {
+        "hidden": {
+          "final": false,
+          "on": {
+            "show": {
+              "target": "visible",
+              "guard": "mayShow",
+              "reduce": "show"
+            },
+            "hide": {
+              "target": "hidden"
+            },
+            "touch": {
+              "guard": "hasCapacity",
+              "reduce": "touch"
+            },
+            "leave": {
+              "reduce": "leave"
+            },
+            "expire": {
+              "reduce": "expire"
+            }
+          }
+        },
+        "visible": {
+          "final": false,
+          "on": {
+            "show": {
+              "target": "visible",
+              "guard": "mayShow",
+              "reduce": "show"
+            },
+            "hide": {
+              "target": "hidden"
+            },
+            "touch": {
+              "guard": "hasCapacity",
+              "reduce": "touch"
+            },
+            "leave": {
+              "reduce": "leave"
+            },
+            "expire": {
+              "reduce": "expire"
+            }
+          }
+        }
+      },
+      "hatches": [],
+      "mecha": {
+        "locks": "",
+        "ports": {
+          "admission": {
+            "input": "jsonb_build_object()",
+            "members": "jsonb_build_object('owner', current_actor)",
+            "locks": ""
+          }
+        },
+        "transitions": []
+      }
+    },
+    "apexrun_challenge": {
+      "name": "apexrun_challenge",
+      "version": 1,
+      "fuel": 10000,
+      "entropy": 0,
+      "initial": "offered",
+      "locks": [
+        {
+          "when": "tier = 'omnishell'",
+          "schema": "hybrid_apexrun_presence",
+          "table": "instance",
+          "key": "id",
+          "values": [
+            {
+              "raw": "(game.state->>'inviter')::uuid"
+            },
+            {
+              "raw": "(game.state->>'target')::uuid"
+            }
+          ]
+        }
+      ],
+      "initialize": {
+        "reduce": "initial",
+        "input": {
+          "type": "object",
+          "fields": {
+            "inviter": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "target": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "duel": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "stage": {
+              "type": "string",
+              "maxLength": 16,
+              "values": [
+                "coconut-beach",
+                "desert-canyons",
+                "gateway-pass",
+                "alpine-peaks",
+                "wilderness-run",
+                "tulip-gardens",
+                "sunset-highway",
+                "ancient-ruins",
+                "metropolis-night",
+                "coastal-cliffs"
+              ]
+            },
+            "seed": {
+              "type": "integer",
+              "min": 0,
+              "max": 2147483647
+            },
+            "inviter_name": {
+              "type": "string",
+              "maxLength": 16
+            },
+            "target_name": {
+              "type": "string",
+              "maxLength": 16
+            }
+          }
+        }
+      },
+      "ports": {
+        "admission": {
+          "name": "apexrun_challenge_offer",
+          "params": [
+            {
+              "name": "challenge_id",
+              "type": "uuid"
+            },
+            {
+              "name": "target",
+              "type": "uuid"
+            },
+            {
+              "name": "stage",
+              "type": "text"
+            },
+            {
+              "name": "seed",
+              "type": "text"
+            }
+          ],
+          "id": "challenge_id",
+          "checks": [
+            {
+              "sql": "target IS NOT NULL AND current_actor <> target",
+              "reason": "invalid challenge racers",
+              "mode": "error"
+            },
+            {
+              "sql": "seed ~ '^[0-9]{1,10}$' AND seed::bigint <= 2147483647",
+              "reason": "invalid duel seed",
+              "mode": "error"
+            },
+            {
+              "sql": "stage IN ('coconut-beach', 'desert-canyons', 'gateway-pass', 'alpine-peaks', 'wilderness-run', 'tulip-gardens', 'sunset-highway', 'ancient-ruins', 'metropolis-night', 'coastal-cliffs')",
+              "reason": "unknown duel stage",
+              "mode": "error"
+            },
+            {
+              "sql": "NOT EXISTS (SELECT FROM hybrid_apexrun_challenge.instance c WHERE c.state->>'phase' = 'offered' AND (c.state->>'deadline')::bigint > hybrid_apexrun_challenge.clock() AND c.state->>'inviter' = current_actor::text)",
+              "reason": "outgoing_challenge_pending",
+              "mode": "reject"
+            },
+            {
+              "sql": "hybrid_apexrun_presence.available(current_actor) AND hybrid_apexrun_presence.available(target)",
+              "reason": "racer_unavailable",
+              "mode": "reject"
+            }
+          ],
+          "input": {
+            "inviter": {
+              "raw": "current_actor"
+            },
+            "target": {
+              "raw": "target"
+            },
+            "stage": {
+              "raw": "stage"
+            },
+            "seed": {
+              "raw": "seed::bigint"
+            },
+            "duel": {
+              "raw": "md5('apexrun_duel/' || challenge_id::text)::uuid"
+            },
+            "inviter_name": {
+              "raw": "(SELECT state->>'name' FROM hybrid_apexrun_presence.instance WHERE id = current_actor)"
+            },
+            "target_name": {
+              "raw": "(SELECT state->>'name' FROM hybrid_apexrun_presence.instance WHERE id = target)"
+            }
+          },
+          "locks": [
+            {
+              "schema": "hybrid_apexrun_presence",
+              "table": "instance",
+              "key": "id",
+              "values": [
+                {
+                  "raw": "current_actor"
+                },
+                {
+                  "raw": "target"
+                }
+              ]
+            }
+          ],
+          "members": {
+            "inviter": {
+              "raw": "current_actor"
+            },
+            "target": {
+              "raw": "target"
+            }
+          }
+        },
+        "wake": {
+          "phases": [
+            "offered"
+          ],
+          "deadline": "deadline",
+          "event": "expire"
+        }
+      },
+      "state": {
+        "type": "object",
+        "fields": {
+          "phase": {
+            "type": "string",
+            "maxLength": 9,
+            "values": [
+              "offered",
+              "accepted",
+              "declined",
+              "cancelled",
+              "expired"
+            ]
+          },
+          "inviter": {
+            "type": "string",
+            "maxLength": 36
+          },
+          "target": {
+            "type": "string",
+            "maxLength": 36
+          },
+          "inviter_name": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "target_name": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "stage": {
+            "type": "string",
+            "maxLength": 16,
+            "values": [
+              "coconut-beach",
+              "desert-canyons",
+              "gateway-pass",
+              "alpine-peaks",
+              "wilderness-run",
+              "tulip-gardens",
+              "sunset-highway",
+              "ancient-ruins",
+              "metropolis-night",
+              "coastal-cliffs"
+            ]
+          },
+          "seed": {
+            "type": "integer",
+            "min": 0,
+            "max": 2147483647
+          },
+          "deadline": {
+            "type": "integer",
+            "min": 0,
+            "max": 9007199254740991
+          },
+          "duel": {
+            "type": "string",
+            "maxLength": 36
+          }
+        }
+      },
+      "view": {
+        "type": "object",
+        "fields": {
+          "inviter": {
+            "type": "string",
+            "maxLength": 36
+          },
+          "phase": {
+            "type": "string",
+            "maxLength": 9,
+            "values": [
+              "offered",
+              "accepted",
+              "declined",
+              "cancelled",
+              "expired"
+            ]
+          },
+          "target": {
+            "type": "string",
+            "maxLength": 36
+          },
+          "inviter_name": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "target_name": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "stage": {
+            "type": "string",
+            "maxLength": 16,
+            "values": [
+              "coconut-beach",
+              "desert-canyons",
+              "gateway-pass",
+              "alpine-peaks",
+              "wilderness-run",
+              "tulip-gardens",
+              "sunset-highway",
+              "ancient-ruins",
+              "metropolis-night",
+              "coastal-cliffs"
+            ]
+          },
+          "seed": {
+            "type": "integer",
+            "min": 0,
+            "max": 2147483647
+          },
+          "deadline": {
+            "type": "integer",
+            "min": 0,
+            "max": 9007199254740991
+          },
+          "duel": {
+            "type": "string",
+            "maxLength": 36
+          }
+        }
+      },
+      "contracts": {
+        "mayAnswer": {
+          "reads": [
+            "actor",
+            "now"
+          ]
+        },
+        "mayCancel": {
+          "reads": [
+            "actor",
+            "now"
+          ]
+        },
+        "isDue": {
+          "reads": [
+            "now"
+          ]
+        }
+      },
+      "events": {
+        "expire": {
+          "tier": "mecha",
+          "payload": {
+            "type": "object",
+            "fields": {}
+          }
+        },
+        "accept": {
+          "tier": "omnishell",
+          "payload": {
+            "type": "object",
+            "fields": {}
+          }
+        },
+        "decline": {
+          "tier": "omnishell",
+          "payload": {
+            "type": "object",
+            "fields": {}
+          }
+        },
+        "cancel": {
+          "tier": "omnishell",
+          "payload": {
+            "type": "object",
+            "fields": {}
+          }
+        }
+      },
+      "states": {
+        "offered": {
+          "final": false,
+          "on": {
+            "accept": {
+              "target": "accepted",
+              "guard": "mayAnswer",
+              "requires": {
+                "sql": "hybrid_apexrun_presence.available((game.state->>'inviter')::uuid) AND hybrid_apexrun_presence.available((game.state->>'target')::uuid)",
+                "reason": "racer_unavailable"
+              },
+              "actions": [
+                {
+                  "spawn": {
+                    "machine": "apexrun_duel",
+                    "id": {
+                      "raw": "(game.state->>'duel')::uuid"
+                    },
+                    "input": {
+                      "stage": {
+                        "raw": "game.state->>'stage'"
+                      },
+                      "seed": {
+                        "raw": "(game.state->>'seed')::bigint"
+                      }
+                    },
+                    "members": {
+                      "a": {
+                        "raw": "game.state->>'inviter'"
+                      },
+                      "b": {
+                        "raw": "game.state->>'target'"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "decline": {
+              "target": "declined",
+              "guard": "mayAnswer"
+            },
+            "cancel": {
+              "target": "cancelled",
+              "guard": "mayCancel"
+            },
+            "expire": {
+              "target": "expired",
+              "guard": "isDue"
+            }
+          }
+        },
+        "accepted": {
+          "final": true,
+          "on": {}
+        },
+        "declined": {
+          "final": true,
+          "on": {}
+        },
+        "cancelled": {
+          "final": true,
+          "on": {}
+        },
+        "expired": {
+          "final": true,
+          "on": {}
+        }
+      },
+      "hatches": [],
+      "mecha": {
+        "locks": "IF (tier = 'omnishell') THEN\nPERFORM 1 FROM \"hybrid_apexrun_presence\".\"instance\" WHERE \"id\" IN ((game.state->>'inviter')::uuid, (game.state->>'target')::uuid) ORDER BY \"id\" FOR UPDATE;\nEND IF;",
+        "ports": {
+          "admission": {
+            "input": "jsonb_build_object('inviter', current_actor, 'target', target, 'stage', stage, 'seed', seed::bigint, 'duel', md5('apexrun_duel/' || challenge_id::text)::uuid, 'inviter_name', (SELECT state->>'name' FROM hybrid_apexrun_presence.instance WHERE id = current_actor), 'target_name', (SELECT state->>'name' FROM hybrid_apexrun_presence.instance WHERE id = target))",
+            "members": "jsonb_build_object('inviter', current_actor, 'target', target)",
+            "locks": "PERFORM 1 FROM \"hybrid_apexrun_presence\".\"instance\" WHERE \"id\" IN (current_actor, target) ORDER BY \"id\" FOR UPDATE;"
+          }
+        },
+        "transitions": [
+          {
+            "phase": "offered",
+            "event": "accept",
+            "requires": {
+              "sql": "hybrid_apexrun_presence.available((game.state->>'inviter')::uuid) AND hybrid_apexrun_presence.available((game.state->>'target')::uuid)",
+              "reason": "racer_unavailable"
+            },
+            "sql": "PERFORM hybrid_apexrun_duel.spawn((game.state->>'duel')::uuid, jsonb_build_object('stage', game.state->>'stage', 'seed', (game.state->>'seed')::bigint), jsonb_build_object('a', game.state->>'inviter', 'b', game.state->>'target'), now_ms);"
+          }
+        ]
+      }
+    },
+    "apexrun_duel": {
+      "name": "apexrun_duel",
+      "version": 1,
+      "fuel": 10000,
+      "entropy": 0,
+      "initial": "signalling",
+      "initialize": {
+        "reduce": "initial",
+        "input": {
+          "type": "object",
+          "fields": {
+            "stage": {
+              "type": "string",
+              "maxLength": 16,
+              "values": [
+                "coconut-beach",
+                "desert-canyons",
+                "gateway-pass",
+                "alpine-peaks",
+                "wilderness-run",
+                "tulip-gardens",
+                "sunset-highway",
+                "ancient-ruins",
+                "metropolis-night",
+                "coastal-cliffs"
+              ]
+            },
+            "seed": {
+              "type": "integer",
+              "min": 0,
+              "max": 2147483647
+            }
+          }
+        }
+      },
+      "ports": {
+        "wake": {
+          "phases": [
+            "signalling",
+            "racing"
+          ],
+          "deadline": "deadline",
+          "event": "timeout"
+        }
+      },
+      "state": {
+        "type": "object",
+        "fields": {
+          "phase": {
+            "type": "string",
+            "maxLength": 10,
+            "values": [
+              "signalling",
+              "racing",
+              "finished",
+              "disputed",
+              "abandoned"
+            ]
+          },
+          "stage": {
+            "type": "string",
+            "maxLength": 16,
+            "values": [
+              "coconut-beach",
+              "desert-canyons",
+              "gateway-pass",
+              "alpine-peaks",
+              "wilderness-run",
+              "tulip-gardens",
+              "sunset-highway",
+              "ancient-ruins",
+              "metropolis-night",
+              "coastal-cliffs"
+            ]
+          },
+          "seed": {
+            "type": "integer",
+            "min": 0,
+            "max": 2147483647
+          },
+          "offer": {
+            "type": "string",
+            "maxLength": 8192
+          },
+          "answer": {
+            "type": "string",
+            "maxLength": 8192
+          },
+          "deadline": {
+            "type": "integer",
+            "min": 0,
+            "max": 9007199254740991
+          },
+          "lifts": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "fields": {
+                "by": {
+                  "type": "array",
+                  "maxItems": 2,
+                  "items": {
+                    "type": "string",
+                    "maxLength": 1,
+                    "values": [
+                      "a",
+                      "b"
+                    ]
+                  }
+                },
+                "frame": {
+                  "type": "integer",
+                  "min": 0,
+                  "max": 1000000
+                },
+                "kind": {
+                  "type": "string",
+                  "maxLength": 12,
+                  "values": [
+                    "grid",
+                    "start",
+                    "checkpoint",
+                    "time-over",
+                    "duel-finish"
+                  ]
+                },
+                "checksum": {
+                  "type": "string",
+                  "maxLength": 24
+                },
+                "inputs": {
+                  "type": "string",
+                  "maxLength": 16384
+                },
+                "winner": {
+                  "type": "string",
+                  "maxLength": 4,
+                  "values": [
+                    "",
+                    "a",
+                    "b",
+                    "draw"
+                  ]
+                },
+                "goal_a": {
+                  "type": "integer",
+                  "min": -1,
+                  "max": 1000000
+                },
+                "goal_b": {
+                  "type": "integer",
+                  "min": -1,
+                  "max": 1000000
+                }
+              }
+            }
+          },
+          "winner": {
+            "type": "string",
+            "maxLength": 4,
+            "values": [
+              "",
+              "a",
+              "b",
+              "draw"
+            ]
+          },
+          "goal_a": {
+            "type": "integer",
+            "min": -1,
+            "max": 1000000
+          },
+          "goal_b": {
+            "type": "integer",
+            "min": -1,
+            "max": 1000000
+          },
+          "dispute": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "silent": {
+            "type": "array",
+            "maxItems": 2,
+            "items": {
+              "type": "string",
+              "maxLength": 1,
+              "values": [
+                "a",
+                "b"
+              ]
+            }
+          }
+        }
+      },
+      "view": {
+        "type": "object",
+        "fields": {
+          "stage": {
+            "type": "string",
+            "maxLength": 16,
+            "values": [
+              "coconut-beach",
+              "desert-canyons",
+              "gateway-pass",
+              "alpine-peaks",
+              "wilderness-run",
+              "tulip-gardens",
+              "sunset-highway",
+              "ancient-ruins",
+              "metropolis-night",
+              "coastal-cliffs"
+            ]
+          },
+          "seed": {
+            "type": "integer",
+            "min": 0,
+            "max": 2147483647
+          },
+          "deadline": {
+            "type": "integer",
+            "min": 0,
+            "max": 9007199254740991
+          },
+          "peer": {
+            "type": "string",
+            "maxLength": 8192
+          },
+          "described": {
+            "type": "boolean"
+          },
+          "lifted": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "fields": {
+                "frame": {
+                  "type": "integer",
+                  "min": 0,
+                  "max": 1000000
+                },
+                "kind": {
+                  "type": "string",
+                  "maxLength": 12,
+                  "values": [
+                    "grid",
+                    "start",
+                    "checkpoint",
+                    "time-over",
+                    "duel-finish"
+                  ]
+                },
+                "by": {
+                  "type": "array",
+                  "maxItems": 2,
+                  "items": {
+                    "type": "string",
+                    "maxLength": 1,
+                    "values": [
+                      "a",
+                      "b"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "winner": {
+            "type": "string",
+            "maxLength": 4,
+            "values": [
+              "",
+              "a",
+              "b",
+              "draw"
+            ]
+          },
+          "goal_a": {
+            "type": "integer",
+            "min": -1,
+            "max": 1000000
+          },
+          "goal_b": {
+            "type": "integer",
+            "min": -1,
+            "max": 1000000
+          },
+          "dispute": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "silent": {
+            "type": "array",
+            "maxItems": 2,
+            "items": {
+              "type": "string",
+              "maxLength": 1,
+              "values": [
+                "a",
+                "b"
+              ]
+            }
+          },
+          "phase": {
+            "type": "string",
+            "maxLength": 10,
+            "values": [
+              "signalling",
+              "racing",
+              "finished",
+              "disputed",
+              "abandoned"
+            ]
+          }
+        }
+      },
+      "contracts": {
+        "describe": {
+          "reads": [
+            "actor",
+            "payload.description"
+          ],
+          "writes": [
+            "offer",
+            "answer"
+          ]
+        },
+        "race": {
+          "reads": [
+            "now"
+          ],
+          "writes": [
+            "deadline"
+          ]
+        },
+        "lift": {
+          "reads": [
+            "actor",
+            "now",
+            "payload.frame",
+            "payload.kind",
+            "payload.checksum",
+            "payload.inputs",
+            "payload.winner",
+            "payload.goal_a",
+            "payload.goal_b"
+          ],
+          "writes": [
+            "lifts",
+            "dispute",
+            "deadline"
+          ]
+        },
+        "decide": {
+          "reads": [],
+          "writes": [
+            "winner",
+            "goal_a",
+            "goal_b",
+            "deadline"
+          ]
+        },
+        "timeout": {
+          "reads": [],
+          "writes": [
+            "silent",
+            "deadline"
+          ]
+        },
+        "mayDescribe": {
+          "reads": [
+            "actor"
+          ]
+        },
+        "mayLift": {
+          "reads": [
+            "actor",
+            "payload.frame",
+            "payload.kind"
+          ]
+        },
+        "isDue": {
+          "reads": [
+            "now"
+          ]
+        },
+        "connected": {
+          "reads": []
+        },
+        "desynced": {
+          "reads": []
+        },
+        "settled": {
+          "reads": []
+        }
+      },
+      "events": {
+        "describe": {
+          "tier": "omnishell",
+          "payload": {
+            "type": "object",
+            "fields": {
+              "description": {
+                "type": "string",
+                "maxLength": 8192
+              }
+            }
+          }
+        },
+        "lift": {
+          "tier": "omnishell",
+          "payload": {
+            "type": "object",
+            "fields": {
+              "frame": {
+                "type": "integer",
+                "min": 0,
+                "max": 1000000
+              },
+              "kind": {
+                "type": "string",
+                "maxLength": 12,
+                "values": [
+                  "grid",
+                  "start",
+                  "checkpoint",
+                  "time-over",
+                  "duel-finish"
+                ]
+              },
+              "checksum": {
+                "type": "string",
+                "maxLength": 24
+              },
+              "inputs": {
+                "type": "string",
+                "maxLength": 16384
+              },
+              "winner": {
+                "type": "string",
+                "maxLength": 4,
+                "values": [
+                  "",
+                  "a",
+                  "b",
+                  "draw"
+                ]
+              },
+              "goal_a": {
+                "type": "integer",
+                "min": -1,
+                "max": 1000000
+              },
+              "goal_b": {
+                "type": "integer",
+                "min": -1,
+                "max": 1000000
+              }
+            }
+          }
+        },
+        "timeout": {
+          "tier": "mecha",
+          "payload": {
+            "type": "object",
+            "fields": {}
+          }
+        }
+      },
+      "states": {
+        "signalling": {
+          "final": false,
+          "always": [
+            {
+              "target": "racing",
+              "guard": "connected",
+              "reduce": "race"
+            }
+          ],
+          "on": {
+            "describe": {
+              "guard": "mayDescribe",
+              "reduce": "describe"
+            },
+            "timeout": {
+              "target": "abandoned",
+              "guard": "isDue",
+              "reduce": "timeout"
+            }
+          }
+        },
+        "racing": {
+          "final": false,
+          "always": [
+            {
+              "target": "disputed",
+              "guard": "desynced"
+            },
+            {
+              "target": "finished",
+              "guard": "settled",
+              "reduce": "decide"
+            }
+          ],
+          "on": {
+            "lift": {
+              "guard": "mayLift",
+              "reduce": "lift"
+            },
+            "timeout": {
+              "target": "abandoned",
+              "guard": "isDue",
+              "reduce": "timeout"
+            }
+          }
+        },
+        "finished": {
+          "final": true,
+          "on": {}
+        },
+        "disputed": {
+          "final": true,
+          "on": {}
+        },
+        "abandoned": {
+          "final": true,
+          "on": {}
+        }
+      },
+      "hatches": [],
+      "mecha": {
+        "locks": "",
+        "ports": {},
+        "transitions": []
+      }
+    }
+  },
+  "hatches": {
+    "assets": {
+      "ir": "hatch-assets",
+      "kind": "container",
+      "note": "One-shot seed of the art pack into the blob store from its public origin, each file checked against the manifest's sha256."
+    }
+  },
+  "rawMigrations": [
+    {
+      "name": "010_high_score_writes.sql",
+      "src": "services/database/sql/010_high_score_writes.sql"
+    }
+  ],
+  "duckstreams": {}
+}

@@ -1,0 +1,240 @@
+# generated from bayt.cue — do not edit
+include:
+- path:
+  - ./compose.bayt.yaml
+  - ./compose.bayt.ports.yaml
+  required: false
+services:
+  browser:
+    extends:
+      file: ./compose.browser.yaml
+      service: apexrun-browser
+    profiles:
+    - browser
+    scale: 1
+  ci-replay:
+    extends:
+      file: ./compose.ci-replay.yaml
+      service: apexrun-ci-replay
+    profiles:
+    - ci-replay
+  setup:
+    extends:
+      file: ./compose.setup.yaml
+      service: apexrun-setup
+    profiles:
+    - setup
+    scale: 1
+  lint:
+    extends:
+      file: ./compose.lint.yaml
+      service: apexrun-lint
+    profiles:
+    - lint
+  generate:
+    extends:
+      file: ./compose.generate.yaml
+      service: apexrun-generate
+    profiles:
+    - generate
+  build:
+    extends:
+      file: ./compose.build.yaml
+      service: apexrun-build
+    profiles:
+    - build
+  test:
+    extends:
+      file: ./compose.test.yaml
+      service: apexrun-test
+    profiles:
+    - test
+  launch:
+    extends:
+      file: ./compose.launch.yaml
+      service: apexrun-launch
+    profiles:
+    - launch
+    scale: 1
+  integrate:
+    extends:
+      file: ./compose.integrate.yaml
+      service: apexrun-integrate
+    profiles:
+    - integrate
+    scale: 1
+  ci-visual:
+    extends:
+      file: ./compose.ci-visual.yaml
+      service: apexrun-ci-visual
+    profiles:
+    - ci-visual
+    scale: 1
+  ci:
+    extends:
+      file: ./compose.ci.yaml
+      service: apexrun-ci
+    profiles:
+    - ci
+    scale: 1
+  check-finish:
+    extends:
+      file: ./compose.check-finish.yaml
+      service: apexrun-check-finish
+    profiles:
+    - check-finish
+    scale: 1
+  ci-finish:
+    extends:
+      file: ./compose.ci-finish.yaml
+      service: apexrun-ci-finish
+    profiles:
+    - ci-finish
+    scale: 1
+  check-boot:
+    extends:
+      file: ./compose.check-boot.yaml
+      service: apexrun-check-boot
+    profiles:
+    - check-boot
+    scale: 1
+  ci-boot:
+    extends:
+      file: ./compose.ci-boot.yaml
+      service: apexrun-ci-boot
+    profiles:
+    - ci-boot
+    scale: 1
+  check-online:
+    extends:
+      file: ./compose.check-online.yaml
+      service: apexrun-check-online
+    profiles:
+    - check-online
+    scale: 1
+  ci-online:
+    extends:
+      file: ./compose.ci-online.yaml
+      service: apexrun-ci-online
+    profiles:
+    - ci-online
+    scale: 1
+  check-duel:
+    extends:
+      file: ./compose.check-duel.yaml
+      service: apexrun-check-duel
+    profiles:
+    - check-duel
+    scale: 1
+  ci-duel:
+    extends:
+      file: ./compose.ci-duel.yaml
+      service: apexrun-ci-duel
+    profiles:
+    - ci-duel
+    scale: 1
+  check-leaderboard-access:
+    extends:
+      file: ./compose.check-leaderboard-access.yaml
+      service: apexrun-check-leaderboard-access
+    profiles:
+    - check-leaderboard-access
+    scale: 1
+  ci-leaderboard-access:
+    extends:
+      file: ./compose.ci-leaderboard-access.yaml
+      service: apexrun-ci-leaderboard-access
+    profiles:
+    - ci-leaderboard-access
+    scale: 1
+  served:
+    extends:
+      file: ./compose.served.yaml
+      service: apexrun-served
+    profiles:
+    - served
+    scale: 1
+  render:
+    extends:
+      file: ./compose.render.yaml
+      service: apexrun-render
+    profiles:
+    - render
+    scale: 1
+  database:
+    extends:
+      file: ./compose.database.yaml
+      service: apexrun-database
+    profiles:
+    - database
+    scale: 1
+  auth:
+    extends:
+      file: ./compose.auth.yaml
+      service: apexrun-auth
+    profiles:
+    - auth
+    scale: 1
+  ticker:
+    extends:
+      file: ./compose.ticker.yaml
+      service: apexrun-ticker
+    profiles:
+    - ticker
+    scale: 1
+  clock:
+    extends:
+      file: ./compose.clock.yaml
+      service: apexrun-clock
+    profiles:
+    - clock
+    scale: 1
+  timer-check:
+    extends:
+      file: ./compose.timer-check.yaml
+      service: apexrun-timer-check
+    profiles:
+    - timer-check
+    scale: 1
+  caddy:
+    extends:
+      file: ./compose.caddy.yaml
+      service: apexrun-caddy
+    profiles:
+    - caddy
+    scale: 1
+  crud:
+    extends:
+      file: ./compose.crud.yaml
+      service: apexrun-crud
+    profiles:
+    - crud
+    scale: 1
+  electric:
+    extends:
+      file: ./compose.electric.yaml
+      service: apexrun-electric
+    profiles:
+    - electric
+    scale: 1
+  rclone-s3:
+    extends:
+      file: ./compose.rclone-s3.yaml
+      service: apexrun-rclone-s3
+    profiles:
+    - rclone-s3
+    scale: 1
+  imgproxy:
+    extends:
+      file: ./compose.imgproxy.yaml
+      service: apexrun-imgproxy
+    profiles:
+    - imgproxy
+    scale: 1
+  assets:
+    extends:
+      file: ./compose.assets.yaml
+      service: apexrun-assets
+    profiles:
+    - assets
+    scale: 1

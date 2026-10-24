@@ -1,0 +1,249 @@
+syntax = "proto3";
+package pronto.entities;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
+
+message ApexrunChallengeCommand {
+  optional string id = 1 [json_name = "id"];
+  optional string instance_id = 2 [json_name = "instance_id"];
+  optional string actor = 3 [json_name = "actor"];
+  google.protobuf.Value request = 4 [json_name = "request"];
+  optional int64 revision = 5 [json_name = "revision"];
+  optional string outcome = 6 [json_name = "outcome"];
+  optional string reason = 7 [json_name = "reason"];
+}
+
+message ApexrunChallengeOpen {
+  optional string id = 1 [json_name = "id"];
+  optional string instance_id = 2 [json_name = "instance_id"];
+  optional string actor = 3 [json_name = "actor"];
+  optional string kind = 4 [json_name = "kind"];
+  google.protobuf.Value input = 5 [json_name = "input"];
+  optional string outcome = 6 [json_name = "outcome"];
+  optional string reason = 7 [json_name = "reason"];
+}
+
+message ApexrunChallengeSeat {
+  optional string id = 1 [json_name = "id"];
+  optional string instance_id = 2 [json_name = "instance_id"];
+  optional string actor = 3 [json_name = "actor"];
+  optional string seat = 4 [json_name = "seat"];
+  optional int64 revision = 5 [json_name = "revision"];
+  optional string phase = 6 [json_name = "phase"];
+  google.protobuf.Value view = 7 [json_name = "view"];
+  optional string inviter_name = 8 [json_name = "inviter_name"];
+  optional string target_name = 9 [json_name = "target_name"];
+  optional string stage = 10 [json_name = "stage"];
+  optional string duel = 11 [json_name = "duel"];
+}
+
+message ApexrunDuelCommand {
+  optional string id = 1 [json_name = "id"];
+  optional string instance_id = 2 [json_name = "instance_id"];
+  optional string actor = 3 [json_name = "actor"];
+  google.protobuf.Value request = 4 [json_name = "request"];
+  optional int64 revision = 5 [json_name = "revision"];
+  optional string outcome = 6 [json_name = "outcome"];
+  optional string reason = 7 [json_name = "reason"];
+}
+
+message ApexrunDuelSeat {
+  optional string id = 1 [json_name = "id"];
+  optional string instance_id = 2 [json_name = "instance_id"];
+  optional string actor = 3 [json_name = "actor"];
+  optional string seat = 4 [json_name = "seat"];
+  optional int64 revision = 5 [json_name = "revision"];
+  optional string phase = 6 [json_name = "phase"];
+  google.protobuf.Value view = 7 [json_name = "view"];
+  optional string stage = 8 [json_name = "stage"];
+  optional string winner = 9 [json_name = "winner"];
+}
+
+message ApexrunPresenceCommand {
+  optional string id = 1 [json_name = "id"];
+  optional string instance_id = 2 [json_name = "instance_id"];
+  optional string actor = 3 [json_name = "actor"];
+  google.protobuf.Value request = 4 [json_name = "request"];
+  optional int64 revision = 5 [json_name = "revision"];
+  optional string outcome = 6 [json_name = "outcome"];
+  optional string reason = 7 [json_name = "reason"];
+}
+
+message ApexrunPresenceLease {
+  optional string id = 1 [json_name = "id"];
+  optional string actor = 2 [json_name = "actor"];
+  optional int32 beat = 3 [json_name = "beat"];
+}
+
+message ApexrunPresencePublic {
+  optional string id = 1 [json_name = "id"];
+  optional string name = 2 [json_name = "name"];
+}
+
+message ApexrunPresenceSeat {
+  optional string id = 1 [json_name = "id"];
+  optional string instance_id = 2 [json_name = "instance_id"];
+  optional string actor = 3 [json_name = "actor"];
+  optional string seat = 4 [json_name = "seat"];
+  optional int64 revision = 5 [json_name = "revision"];
+  optional string phase = 6 [json_name = "phase"];
+  google.protobuf.Value view = 7 [json_name = "view"];
+  optional string name = 8 [json_name = "name"];
+}
+
+message AppUser {
+  optional string id = 1 [json_name = "id"];
+  optional string handle = 2 [json_name = "handle"];
+}
+
+message HighScore {
+  optional string id = 1 [json_name = "id"];
+  optional string player_id = 2 [json_name = "player_id"];
+  optional string initials = 3 [json_name = "initials"];
+  optional int32 score = 4 [json_name = "score"];
+  optional string outcome = 5 [json_name = "outcome"];
+  optional int32 stage = 6 [json_name = "stage"];
+  optional int32 run_ms = 7 [json_name = "run_ms"];
+  google.protobuf.Timestamp created_at = 8 [json_name = "created_at"];
+}
+
+message Kart {
+  optional string id = 1 [json_name = "id"];
+  reserved 2;
+  reserved "character";
+  reserved 3;
+  reserved "is_player";
+  reserved 4;
+  reserved "speed_kmh";
+  reserved 5;
+  reserved "position";
+  reserved 6;
+  reserved "current_lap";
+  reserved 7;
+  reserved "nitro_fuel";
+  reserved 8;
+  reserved "item";
+}
+
+message LapRecord {
+  optional string id = 1 [json_name = "id"];
+  reserved 2;
+  reserved "track_id";
+  reserved 3;
+  reserved "holder_name";
+  reserved 4;
+  reserved "lap_time_ms";
+  reserved 5;
+  reserved "tick";
+}
+
+message LobbyTab {
+  optional string id = 1 [json_name = "id"];
+  optional string lease = 2 [json_name = "lease"];
+  optional string me = 3 [json_name = "me"];
+  optional string note = 4 [json_name = "note"];
+  optional string shown = 5 [json_name = "shown"];
+  optional string open = 6 [json_name = "open"];
+  optional string offer = 7 [json_name = "offer"];
+  optional string stage = 8 [json_name = "stage"];
+  optional string name = 9 [json_name = "name"];
+}
+
+message Match {
+  optional string id = 1 [json_name = "id"];
+  reserved 2;
+  reserved "track_id";
+  reserved 3;
+  reserved "status";
+  reserved 4;
+  reserved "laps_total";
+  reserved 5;
+  reserved "current_lap";
+  reserved 6;
+  reserved "player_position";
+  reserved 7;
+  reserved "winner_id";
+  reserved 8;
+  reserved "time_elapsed_s";
+}
+
+message Run {
+  optional string id = 1 [json_name = "id"];
+  optional string phase = 2 [json_name = "phase"];
+  optional int32 seed = 3 [json_name = "seed"];
+  optional int32 race = 4 [json_name = "race"];
+  optional string mode = 5 [json_name = "mode"];
+  optional string input = 6 [json_name = "input"];
+  optional string clock = 7 [json_name = "clock"];
+  optional int32 lifted = 8 [json_name = "lifted"];
+  optional string stage_id = 9 [json_name = "stage_id"];
+  optional int32 stage_num = 10 [json_name = "stage_num"];
+  optional int32 next_num = 11 [json_name = "next_num"];
+  optional string stage_name = 12 [json_name = "stage_name"];
+  optional string final = 13 [json_name = "final"];
+  optional string fork_left = 14 [json_name = "fork_left"];
+  optional string fork_right = 15 [json_name = "fork_right"];
+  optional string route = 16 [json_name = "route"];
+  optional string racing = 17 [json_name = "racing"];
+  optional string rival_label = 18 [json_name = "rival_label"];
+  optional string res_title = 19 [json_name = "res_title"];
+  optional string res_over = 20 [json_name = "res_over"];
+  optional string res_kicker = 21 [json_name = "res_kicker"];
+  optional string line1_label = 22 [json_name = "line1_label"];
+  optional string line1_value = 23 [json_name = "line1_value"];
+  optional string line2_label = 24 [json_name = "line2_label"];
+  optional string line2_value = 25 [json_name = "line2_value"];
+  optional string line3_label = 26 [json_name = "line3_label"];
+  optional string line3_value = 27 [json_name = "line3_value"];
+  optional string line4_label = 28 [json_name = "line4_label"];
+  optional string line4_value = 29 [json_name = "line4_value"];
+  optional string total = 30 [json_name = "total"];
+  optional string outcome = 31 [json_name = "outcome"];
+  optional int32 score = 32 [json_name = "score"];
+  optional int32 stage = 33 [json_name = "stage"];
+  optional int32 run_ms = 34 [json_name = "run_ms"];
+  optional string initial_0 = 35 [json_name = "initial_0"];
+  optional string initial_1 = 36 [json_name = "initial_1"];
+  optional string initial_2 = 37 [json_name = "initial_2"];
+  optional int32 cursor = 38 [json_name = "cursor"];
+  optional string denied = 39 [json_name = "denied"];
+  optional string saved = 40 [json_name = "saved"];
+  optional int32 saved_score = 41 [json_name = "saved_score"];
+  optional string saved_initials = 42 [json_name = "saved_initials"];
+  optional int32 station = 43 [json_name = "station"];
+  optional string muted = 44 [json_name = "muted"];
+  optional int32 volume = 45 [json_name = "volume"];
+  optional string pitlane = 46 [json_name = "pitlane"];
+  optional string duel = 47 [json_name = "duel"];
+  optional int32 seat = 48 [json_name = "seat"];
+  optional string duel_stage = 49 [json_name = "duel_stage"];
+  optional string peer = 50 [json_name = "peer"];
+  optional string verdict = 51 [json_name = "verdict"];
+  optional string replay = 52 [json_name = "replay"];
+}
+
+message RunInput {
+  optional string id = 1 [json_name = "id"];
+  optional int32 n = 2 [json_name = "n"];
+  optional string action = 3 [json_name = "action"];
+}
+
+message RunMilestone {
+  optional string id = 1 [json_name = "id"];
+  optional int32 race = 2 [json_name = "race"];
+  optional int32 frame = 3 [json_name = "frame"];
+  optional string kind = 4 [json_name = "kind"];
+  optional string checksum = 5 [json_name = "checksum"];
+  optional int32 from = 6 [json_name = "from"];
+  optional int32 width = 7 [json_name = "width"];
+  optional string inputs = 8 [json_name = "inputs"];
+  optional string detail = 9 [json_name = "detail"];
+  optional string snapshot = 10 [json_name = "snapshot"];
+}
+
+message RunSignal {
+  optional string id = 1 [json_name = "id"];
+  optional string description = 2 [json_name = "description"];
+}

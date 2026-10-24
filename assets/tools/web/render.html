@@ -1,0 +1,98 @@
+<!doctype html><html><head><meta charset="utf-8"><title>render</title>
+<script src="node_modules/babylonjs/babylon.js"></script>
+<script src="node_modules/babylonjs-loaders/babylonjs.loaders.js"></script>
+<script src="engine.js"></script>
+<style>html,body{margin:0;background:#000}canvas{display:block}</style></head>
+<body><canvas id="c" width="1024" height="768"></canvas>
+<script>
+// Evidence renderer: one scene per job, WebGPU, ACES, the stage .env for IBL plus a shadowing sun.
+let engine;
+const V = (a) => new BABYLON.Vector3(a[0], a[1], a[2]);
+function frames(scene, n) { return new Promise(res => { let k = 0; const o = scene.onAfterRenderObservable.add(() => { if (++k >= n) { scene.onAfterRenderObservable.remove(o); res(); } }); }); }
+
+window.renderJob = async (job) => {
+  const canvas = document.getElementById('c');
+  if (!engine) engine = await window.makeEngine(canvas, { antialias: true });
+  engine.setSize(job.width || 1024, job.height || 768, true);
+  const scene = new BABYLON.Scene(engine);
+  scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+  const ip = scene.imageProcessingConfiguration;
+  ip.toneMappingEnabled = true; ip.toneMappingType = BABYLON.ImageProcessingConfiguration.TONEMAPPING_ACES;
+  ip.exposure = job.exposure ?? 1;
+  const env = BABYLON.CubeTexture.CreateFromPrefilteredData(job.env, scene);
+  scene.environmentTexture = env;
+  if (job.skyHdr) {
+    const sky = new BABYLON.HDRCubeTexture(job.skyHdr, scene, 1024, false, false, false, false);
+    const box = scene.createDefaultSkybox(sky, true, 2000, 0.0, false);
+  }
+  if (job.skyJpg) {
+    const dome = new BABYLON.PhotoDome('dome', job.skyJpg, { resolution: 64, size: 1000 }, scene);
+    dome.mesh.material.disableLighting = true;
+    dome.mesh.material.imageProcessingConfiguration = new BABYLON.ImageProcessingConfiguration();
+    dome.mesh.material.imageProcessingConfiguration.applyByPostProcess = false;
+    dome.mesh.material.imageProcessingConfiguration.isEnabled = false;
+  }
+  let sun = null, shadow = null;
+  if (job.sun) {
+    sun = new BABYLON.DirectionalLight('sun', V(job.sun.dir).scale(-1), scene);
+    sun.intensity = job.sun.intensity; sun.diffuse = BABYLON.Color3.FromHexString(job.sun.color || '#ffffff');
+    shadow = new BABYLON.ShadowGenerator(2048, sun);
+    shadow.usePercentageCloserFiltering = true; shadow.filteringQuality = BABYLON.ShadowGenerator.QUALITY_HIGH;
+    shadow.bias = 0.0005; shadow.normalBias = 0.01;
+  }
+  const meshes = [];
+  for (const m of job.models || []) {
+    const r = await BABYLON.SceneLoader.ImportMeshAsync('', '', m.url, scene);
+    const root = r.meshes[0];
+    root.position = V(m.pos || [0, 0, 0]);
+    root.rotation = new BABYLON.Vector3(0, (m.yaw || 0) * Math.PI / 180, 0);
+    if (m.scale) root.scaling.scaleInPlace(m.scale);
+    for (const x of r.meshes) { if (x.getTotalVertices() > 0) { meshes.push(x); x.receiveShadows = true; if (shadow) shadow.addShadowCaster(x); } }
+    for (const mat of r.materials || scene.materials) { if (mat.transparencyMode === 1 || mat.needAlphaTesting?.()) { mat.useAlphaFromAlbedoTexture = true; } }
+  }
+  for (const s of job.spheres || []) {
+    const sp = BABYLON.MeshBuilder.CreateSphere('s', { diameter: s.d || 1, segments: 64 }, scene);
+    sp.position = V(s.pos);
+    const mat = new BABYLON.PBRMaterial('m', scene);
+    mat.albedoColor = BABYLON.Color3.FromHexString(s.color || '#ffffff'); mat.metallic = s.metal ?? 0; mat.roughness = s.rough ?? 0.5;
+    if (s.tex) {
+      const t = (u) => { const x = new BABYLON.Texture(u, scene, false, false); x.uScale = x.vScale = s.tile || 1; return x; };
+      mat.albedoTexture = t(s.tex.albedo); mat.bumpTexture = t(s.tex.normal);
+      mat.metallicTexture = t(s.tex.arm); mat.useAmbientOcclusionFromMetallicTextureRed = true;
+      mat.useRoughnessFromMetallicTextureGreen = true; mat.useMetallnessFromMetallicTextureBlue = true; mat.metallic = 1; mat.roughness = 1;
+      mat.albedoColor = BABYLON.Color3.White();
+    }
+    sp.material = mat; sp.receiveShadows = true; if (shadow) shadow.addShadowCaster(sp); meshes.push(sp);
+  }
+  if (job.ground) {
+    const g = BABYLON.MeshBuilder.CreateGround('g', { width: job.ground.size, height: job.ground.size }, scene);
+    const mat = new BABYLON.PBRMaterial('gm', scene);
+    if (job.ground.tex) {
+      const t = (u) => { const x = new BABYLON.Texture(u, scene); x.uScale = x.vScale = job.ground.tile; return x; };
+      mat.albedoTexture = t(job.ground.tex.albedo); mat.bumpTexture = t(job.ground.tex.normal); mat.metallicTexture = t(job.ground.tex.arm);
+      mat.useAmbientOcclusionFromMetallicTextureRed = true; mat.useRoughnessFromMetallicTextureGreen = true; mat.useMetallnessFromMetallicTextureBlue = true;
+      mat.metallic = 1; mat.roughness = 1;
+    } else { mat.albedoColor = new BABYLON.Color3(0.4, 0.4, 0.4); mat.metallic = 0; mat.roughness = 0.9; }
+    g.material = mat; g.receiveShadows = true;
+  }
+  // camera frames the union of model bounds from a three-quarter view
+  let min = new BABYLON.Vector3(-0.5, 0, -0.5), max = new BABYLON.Vector3(0.5, 1, 0.5);
+  if (meshes.length) {
+    min = new BABYLON.Vector3(Infinity, Infinity, Infinity); max = min.scale(-1);
+    for (const m of meshes) { m.computeWorldMatrix(true); const b = m.getBoundingInfo().boundingBox; min = BABYLON.Vector3.Minimize(min, b.minimumWorld); max = BABYLON.Vector3.Maximize(max, b.maximumWorld); }
+  }
+  const c = job.camera || {};
+  const center = min.add(max).scale(0.5);
+  const radius = max.subtract(min).length() * (c.dist || 1.15);
+  const cam = new BABYLON.ArcRotateCamera('cam', (c.alpha ?? -60) * Math.PI / 180, (c.beta ?? 72) * Math.PI / 180, radius, center, scene);
+  cam.fov = (c.fov ?? 35) * Math.PI / 180; cam.minZ = radius / 200; cam.maxZ = 5000;
+  if (shadow) { sun.position = center.subtract(sun.direction.scale(radius * 3)); sun.autoCalcShadowZBounds = true; }
+  await scene.whenReadyAsync();
+  engine.runRenderLoop(() => scene.render());
+  await frames(scene, 8);
+  const tris = meshes.reduce((a, m) => a + (m.getTotalIndices() / 3 | 0), 0);
+  window._scene = scene;
+  return { tris, bounds: [min.asArray(), max.asArray()] };
+};
+window.disposeJob = () => { engine.stopRenderLoop(); window._scene.dispose(); };
+</script></body></html>
