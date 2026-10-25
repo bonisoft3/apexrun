@@ -9,7 +9,7 @@
 // owner saw "a ghost version of the car before the controls appear". Every
 // animation frame of the boot is sampled.
 
-import { baseUrl } from "/omnishell/base-url.ts";
+import { baseUrl } from "./platform.ts";
 import { openArena, start } from "./arena.ts";
 
 const APP = Deno.args[0] ?? ".";

@@ -1,12 +1,9 @@
 // Apex Run's Mecha machines compiled from what the app declares and stepped
 // in the executor PLV8 runs, as Truco's online tests step its own.
 import { fileURLToPath } from "node:url";
-import { compileHybrid, type HybridMachine } from "/pronto/hybrid.ts";
-import { executeHybrid } from "/pronto/hybrid-local.ts";
-import { readCheckInputs } from "/pronto/check-inputs.ts";
-import { instrument } from "/omnishell/instrument.ts";
+import { compileHybrid, type HybridMachine, executeHybrid, readCheckInputs, instrument, ses } from "./platform.ts";
 
-const terminal = { instrument, ses: await Deno.readTextFile(new URL(import.meta.resolve("/omnishell/interpreter/vendor/ses.umd.min.js"))) };
+const terminal = { instrument, ses };
 const APP_DIR = fileURLToPath(new URL("../", import.meta.url)).replace(/[/\\]$/, "");
 const hybrids = readCheckInputs<unknown, unknown, unknown, HybridMachine>(APP_DIR).then((inputs) => inputs.hybrids);
 

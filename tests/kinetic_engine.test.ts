@@ -1,6 +1,6 @@
 import { assertEquals, assert, assertThrows } from "jsr:@std/assert@1";
 import { apexrunEngine } from "../shell/engine/simulation.js";
-import { createKineticHost } from "/omnishell/interpreter/kinetic.js";
+import { createKineticHost } from "./platform.ts";
 
 Deno.test("kinetic-engine: saveState and loadState satisfy algebraic isomorphism", () => {
   const state0 = apexrunEngine.initState(0x1337);

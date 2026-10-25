@@ -26,7 +26,7 @@
               "priority": 0,
               "cmds": [
                 {
-                  "do": "use integrate.nu; integrate --bake --no-up --with-buildx --target ci-boot,ci-duel,ci-finish,ci-leaderboard-access,ci-online"
+                  "do": "use integrate.nu; integrate --bake --no-up --with-buildx --target ci-boot,ci-duel,ci-finish,ci-leaderboard-access,ci-online,ci-touch"
                 }
               ]
             },
@@ -236,57 +236,49 @@
             "simulation": {
               "cmds": [
                 {
-                  "do": "deno test --config tests/deno.json --allow-read --allow-env tests/simulation.test.ts tests/kinetic_engine.test.ts tests/sync.test.ts tests/milestones.test.ts"
+                  "do": "deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/simulation.test.ts tests/kinetic_engine.test.ts tests/sync.test.ts tests/milestones.test.ts"
                 }
               ]
             },
             "assets": {
               "cmds": [
                 {
-                  "do": "deno test --config tests/deno.json --allow-read tests/assets.test.ts tests/art.test.ts"
+                  "do": "deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read tests/assets.test.ts tests/art.test.ts"
                 }
               ]
             },
             "scenery": {
               "cmds": [
                 {
-                  "do": "deno test --config tests/deno.json --allow-read --allow-env tests/scenery.test.ts tests/scatter.test.ts"
+                  "do": "deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/scenery.test.ts tests/scatter.test.ts"
                 }
               ]
             },
             "renderer": {
               "cmds": [
                 {
-                  "do": "deno test --config tests/deno.json --allow-read --allow-env tests/renderer.test.ts"
+                  "do": "deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/renderer.test.ts"
                 }
               ]
             },
             "run": {
               "cmds": [
                 {
-                  "do": "deno test --config tests/deno.json --allow-read --allow-env tests/run.test.ts"
+                  "do": "deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/run.test.ts"
                 }
               ]
             },
             "online_machine": {
               "cmds": [
                 {
-                  "do": "deno test --config tests/deno.json --no-lock --allow-read --allow-env tests/online-machine.test.ts tests/lobby.test.ts"
+                  "do": "deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/online-machine.test.ts tests/lobby.test.ts"
                 }
               ]
             },
             "audio": {
               "cmds": [
                 {
-                  "do": "deno test --config tests/deno.json --allow-read --allow-env tests/audio.test.ts"
-                }
-              ]
-            },
-            "test-config": {
-              "priority": -1,
-              "cmds": [
-                {
-                  "do": "use tools.nu [run-mise]; let pronto = (run-mise where github:bonisoft3/pronto | str trim); run-mise exec -- deno run --config ($pronto | path join deno.json) --allow-read --allow-write=tests --allow-run=mise ($pronto | path join test-config.ts) ."
+                  "do": "deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/audio.test.ts"
                 }
               ]
             },
@@ -1688,7 +1680,7 @@
         "manual": true,
         "build": {
           "additional_contexts": {
-            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.19.0@sha256:c29f0e6ba82bcf2872ede2b21c871adfe1106f6d02d3bbaf6f421b0614e0d071}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
           },
           "secrets": [],
           "args": {}
@@ -2549,7 +2541,7 @@
           "name": "builtin",
           "priority": 0,
           "shell": "sh",
-          "do": "set -eu\nexport DOCKER_HOST_TCP=\"$DOCKER_HOST\"\nexport DEPOT_DISABLE_OTEL=1\ndocker compose --profile '*' config -o /tmp/ci-compose.yaml\ndocker buildx bake --allow=fs.read=/ -f /tmp/ci-compose.yaml --print ci-visual ci-replay ci-finish ci-boot ci-online ci-duel ci-leaderboard-access > /tmp/ci-bake.json\nfor target in ci-visual ci-replay ci-finish ci-boot ci-online ci-duel ci-leaderboard-access; do\n docker buildx bake -f /tmp/ci-bake.json --progress plain --set '*.output=type=cacheonly' ${SAYT_NO_CACHE:+--no-cache --set \"*.cache-from=\" --set \"*.cache-to=\"} ${SAYT_NO_CACHE_FROM:+--set \"*.cache-from=\"} ${SAYT_NO_CACHE_TO:+--set \"*.cache-to=\"} \"$target\"\ndone",
+          "do": "set -eu\nexport DOCKER_HOST_TCP=\"$DOCKER_HOST\"\nexport DEPOT_DISABLE_OTEL=1\ndocker compose --profile '*' config -o /tmp/ci-compose.yaml\ndocker buildx bake --allow=fs.read=/ -f /tmp/ci-compose.yaml --print ci-visual ci-replay ci-finish ci-boot ci-online ci-duel ci-touch ci-leaderboard-access > /tmp/ci-bake.json\nfor target in ci-visual ci-replay ci-finish ci-boot ci-online ci-duel ci-touch ci-leaderboard-access; do\n docker buildx bake -f /tmp/ci-bake.json --progress plain --set '*.output=type=cacheonly' ${SAYT_NO_CACHE:+--no-cache --set \"*.cache-from=\" --set \"*.cache-to=\"} ${SAYT_NO_CACHE_FROM:+--set \"*.cache-from=\"} ${SAYT_NO_CACHE_TO:+--set \"*.cache-to=\"} \"$target\"\ndone",
           "stop": false,
           "srcs": {
             "globs": [],
@@ -2749,6 +2741,8 @@
         ":ci-online:bayt",
         ":ci-duel:srcs",
         ":ci-duel:bayt",
+        ":ci-touch:srcs",
+        ":ci-touch:bayt",
         ":ci-leaderboard-access:srcs",
         ":ci-leaderboard-access:bayt"
       ],
@@ -3202,7 +3196,7 @@
       "visibility": "internal",
       "cmds": [
         {
-          "do": "set -eu\nexport DOCKER_HOST_TCP=\"$DOCKER_HOST\"\nexport DEPOT_DISABLE_OTEL=1\ndocker compose --profile '*' config -o /tmp/ci-compose.yaml\ndocker buildx bake --allow=fs.read=/ -f /tmp/ci-compose.yaml --print ci-visual ci-replay ci-finish ci-boot ci-online ci-duel ci-leaderboard-access > /tmp/ci-bake.json\nfor target in ci-visual ci-replay ci-finish ci-boot ci-online ci-duel ci-leaderboard-access; do\n docker buildx bake -f /tmp/ci-bake.json --progress plain --set '*.output=type=cacheonly' ${SAYT_NO_CACHE:+--no-cache --set \"*.cache-from=\" --set \"*.cache-to=\"} ${SAYT_NO_CACHE_FROM:+--set \"*.cache-from=\"} ${SAYT_NO_CACHE_TO:+--set \"*.cache-to=\"} \"$target\"\ndone",
+          "do": "set -eu\nexport DOCKER_HOST_TCP=\"$DOCKER_HOST\"\nexport DEPOT_DISABLE_OTEL=1\ndocker compose --profile '*' config -o /tmp/ci-compose.yaml\ndocker buildx bake --allow=fs.read=/ -f /tmp/ci-compose.yaml --print ci-visual ci-replay ci-finish ci-boot ci-online ci-duel ci-touch ci-leaderboard-access > /tmp/ci-bake.json\nfor target in ci-visual ci-replay ci-finish ci-boot ci-online ci-duel ci-touch ci-leaderboard-access; do\n docker buildx bake -f /tmp/ci-bake.json --progress plain --set '*.output=type=cacheonly' ${SAYT_NO_CACHE:+--no-cache --set \"*.cache-from=\" --set \"*.cache-to=\"} ${SAYT_NO_CACHE_FROM:+--set \"*.cache-from=\"} ${SAYT_NO_CACHE_TO:+--set \"*.cache-to=\"} \"$target\"\ndone",
           "shell": "sh",
           "dockerfile": {
             "inject": {
@@ -3424,7 +3418,7 @@
         "manual": true,
         "build": {
           "additional_contexts": {
-            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.19.0@sha256:c29f0e6ba82bcf2872ede2b21c871adfe1106f6d02d3bbaf6f421b0614e0d071}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
           },
           "secrets": [],
           "args": {}
@@ -3435,7 +3429,7 @@
           "--",
           "sh",
           "-c",
-          "for f in tests/*.app.json; do [ ! -e \"$$f\" ] || cp \"$$f\" \"$${f%.app.json}.json\"; done && deno run --config tests/deno.json --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/finish.ts ."
+          "deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/finish.ts ."
         ],
         "depends_on": {
           "apexrun-launch": {
@@ -4336,7 +4330,7 @@
         "manual": true,
         "build": {
           "additional_contexts": {
-            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.19.0@sha256:c29f0e6ba82bcf2872ede2b21c871adfe1106f6d02d3bbaf6f421b0614e0d071}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
           },
           "secrets": [],
           "args": {}
@@ -4347,7 +4341,7 @@
           "--",
           "sh",
           "-c",
-          "for f in tests/*.app.json; do [ ! -e \"$$f\" ] || cp \"$$f\" \"$${f%.app.json}.json\"; done && deno run --config tests/deno.json --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/boot.ts ."
+          "deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/boot.ts ."
         ],
         "depends_on": {
           "apexrun-launch": {
@@ -5246,7 +5240,7 @@
         "manual": true,
         "build": {
           "additional_contexts": {
-            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.19.0@sha256:c29f0e6ba82bcf2872ede2b21c871adfe1106f6d02d3bbaf6f421b0614e0d071}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
           },
           "secrets": [],
           "args": {}
@@ -5257,7 +5251,7 @@
           "--",
           "sh",
           "-c",
-          "for f in tests/*.app.json; do [ ! -e \"$$f\" ] || cp \"$$f\" \"$${f%.app.json}.json\"; done && deno test --config tests/deno.json --allow-env --allow-net --allow-read tests/online-access.ts"
+          "deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-env --allow-net --allow-read tests/online-access.ts"
         ],
         "depends_on": {
           "apexrun-launch": {
@@ -6157,7 +6151,7 @@
         "manual": true,
         "build": {
           "additional_contexts": {
-            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.19.0@sha256:c29f0e6ba82bcf2872ede2b21c871adfe1106f6d02d3bbaf6f421b0614e0d071}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
           },
           "secrets": [],
           "args": {}
@@ -6168,7 +6162,7 @@
           "--",
           "sh",
           "-c",
-          "for f in tests/*.app.json; do [ ! -e \"$$f\" ] || cp \"$$f\" \"$${f%.app.json}.json\"; done && deno run --config tests/deno.json --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/duel.ts ."
+          "deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/duel.ts ."
         ],
         "depends_on": {
           "apexrun-launch": {
@@ -7005,6 +6999,918 @@
         "similar": false
       }
     },
+    "check-touch": {
+      "name": "check-touch",
+      "project": "apexrun",
+      "dir": ".",
+      "cmd": {},
+      "deps": [
+        ":browser",
+        ":launch:outs"
+      ],
+      "env": {},
+      "outs": {
+        "globs": [],
+        "exclude": []
+      },
+      "srcs": {
+        "globs": [
+          "tests/**"
+        ],
+        "defaultGlobs": null,
+        "exclude": [],
+        "defaultExclude": null
+      },
+      "state": {
+        "globs": []
+      },
+      "visibility": "internal",
+      "dockerfile": {
+        "from": {
+          "ref": ":browser",
+          "name": "apexrun-browser"
+        },
+        "preamble": [],
+        "defaultPreamble": null,
+        "add": [],
+        "mounts": [],
+        "secrets": {},
+        "extra_hosts": [],
+        "epilogue": [],
+        "copy": [
+          {
+            "from": {
+              "name": "plugins_omnishell-runtime-image"
+            },
+            "srcs": [
+              "/"
+            ],
+            "dst": "/omnishell",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          }
+        ],
+        "defaultCopy": null,
+        "healthcheck": null,
+        "expose": [],
+        "entrypoint": null,
+        "incremental": false,
+        "cmd": null
+      },
+      "compose": {
+        "up": true,
+        "manual": true,
+        "build": {
+          "additional_contexts": {
+            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.19.0@sha256:c29f0e6ba82bcf2872ede2b21c871adfe1106f6d02d3bbaf6f421b0614e0d071}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+          },
+          "secrets": [],
+          "args": {}
+        },
+        "command": [
+          "mise",
+          "x",
+          "--",
+          "sh",
+          "-c",
+          "deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/touch.ts ."
+        ],
+        "depends_on": {
+          "apexrun-launch": {
+            "condition": "service_healthy"
+          }
+        },
+        "environment": {
+          "APP_URL": "https://caddy:8443",
+          "DATABASE_URL": "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-apexrun}",
+          "ORIGIN": "${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT}}",
+          "PGRST_JWT_SECRET": "${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}",
+          "SETTLE_TIMEOUT_MS": "50000"
+        },
+        "ports": [],
+        "volumes": []
+      },
+      "taskfile": {
+        "run": "once",
+        "incremental": true,
+        "preconditions": []
+      },
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      }
+    },
+    "ci-touch": {
+      "name": "ci-touch",
+      "project": "apexrun",
+      "dir": ".",
+      "srcs": {
+        "globs": [],
+        "defaultGlobs": null,
+        "exclude": [],
+        "defaultExclude": null
+      },
+      "outs": {
+        "globs": [],
+        "exclude": []
+      },
+      "state": {
+        "globs": []
+      },
+      "visibility": "internal",
+      "activate": "",
+      "cmd": {
+        "builtin": {
+          "name": "builtin",
+          "priority": 0,
+          "shell": "sh",
+          "do": "if [ -n \"$BUILDKIT_SYNTAX\" ]; then\n  # depot frontend-pin workaround (full rationale in stacks/sayt/sayt.cue)\n  find /monorepo -path '*/.bayt/Dockerfile.*' -type f -exec sed -i \"1i # syntax=$BUILDKIT_SYNTAX\" {} \\;\nfi\n[ -n \"$BKID_PROJECT\" ] || { echo \"bkid: BKID_PROJECT is unset; sayt integrate names the inner stack\" >&2; exit 1; }\np=\"${BKID_PROJECT}_touch\"\nf=.bayt/compose.check-touch.closure.yaml\n[ -n \"$DEPOT_TOKEN\" ] && bake=\"depot bake --project $DEPOT_PROJECT_ID\" || bake=\"docker buildx bake\"\ndocker compose -p \"$p\" --profile '*' -f \"$f\" config | docker buildx bake --allow=fs.read=/monorepo -f - --print bayt | $bake -f - ${SAYT_NO_CACHE:+--no-cache --set \"*.cache-from=\" --set \"*.cache-to=\"} ${SAYT_NO_CACHE_FROM:+--set \"*.cache-from=\"} ${SAYT_NO_CACHE_TO:+--set \"*.cache-to=\"} bayt\ndocker compose -p \"$p\" --profile '*' -f \"$f\" down -v --timeout 0 --remove-orphans\ns=0\ndocker compose -p \"$p\" --profile '*' -f \"$f\" up bayt --build --abort-on-container-failure --exit-code-from bayt --remove-orphans --attach-dependencies || s=$?\ndocker compose -p \"$p\" --profile '*' -f \"$f\" down -v --timeout 0 --remove-orphans\nexit \"$s\"",
+          "stop": false,
+          "srcs": {
+            "globs": [],
+            "defaultGlobs": null,
+            "exclude": [],
+            "defaultExclude": null
+          },
+          "dockerfile": {
+            "inject": {
+              "secrets": [
+                {
+                  "id": "docker_host",
+                  "var": {
+                    "contents": "DOCKER_HOST"
+                  }
+                },
+                {
+                  "id": "buildx_builder",
+                  "var": {
+                    "contents": "BUILDX_BUILDER"
+                  }
+                },
+                {
+                  "id": "testcontainers_host",
+                  "var": {
+                    "contents": "TESTCONTAINERS_HOST_OVERRIDE"
+                  }
+                },
+                {
+                  "id": "cache_scope",
+                  "var": {
+                    "contents": "CACHE_SCOPE"
+                  }
+                },
+                {
+                  "id": "cache_scope_fallback",
+                  "var": {
+                    "contents": "CACHE_SCOPE_FALLBACK"
+                  }
+                },
+                {
+                  "id": "sayt_buildkit_syntax",
+                  "var": {
+                    "contents": "BUILDKIT_SYNTAX"
+                  }
+                },
+                {
+                  "id": "sayt_no_cache",
+                  "var": {
+                    "contents": "SAYT_NO_CACHE"
+                  }
+                },
+                {
+                  "id": "bayt_image_tag",
+                  "var": {
+                    "contents": "BAYT_IMAGE_TAG"
+                  }
+                },
+                {
+                  "id": "bayt_pull_policy",
+                  "var": {
+                    "contents": "BAYT_PULL_POLICY"
+                  }
+                },
+                {
+                  "id": "sayt_no_cache_from",
+                  "var": {
+                    "contents": "SAYT_NO_CACHE_FROM"
+                  }
+                },
+                {
+                  "id": "sayt_no_cache_to",
+                  "var": {
+                    "contents": "SAYT_NO_CACHE_TO"
+                  }
+                },
+                {
+                  "id": "depot_token",
+                  "var": {
+                    "contents": "DEPOT_TOKEN"
+                  }
+                },
+                {
+                  "id": "depot_project_id",
+                  "var": {
+                    "contents": "DEPOT_PROJECT_ID"
+                  }
+                },
+                {
+                  "id": "depot_org_id",
+                  "var": {
+                    "contents": "DEPOT_ORG_ID"
+                  }
+                },
+                {
+                  "id": "depot_disable_otel",
+                  "var": {
+                    "contents": "DEPOT_DISABLE_OTEL"
+                  }
+                },
+                {
+                  "id": "actions_results_url",
+                  "var": {
+                    "contents": "ACTIONS_RESULTS_URL"
+                  }
+                },
+                {
+                  "id": "actions_runtime_token",
+                  "var": {
+                    "contents": "ACTIONS_RUNTIME_TOKEN"
+                  }
+                },
+                {
+                  "id": "bkid_project",
+                  "var": {
+                    "contents": "BKID_PROJECT"
+                  }
+                },
+                {
+                  "id": "buildx_instance",
+                  "var": {
+                    "contents": "BUILDX_INSTANCE"
+                  }
+                },
+                {
+                  "id": "docker_config",
+                  "var": {
+                    "contents": "DOCKER_AUTH_CONFIG",
+                    "path": "/root/.docker/config.json"
+                  },
+                  "mode": "0600"
+                }
+              ],
+              "defaultSteps": {
+                "buildx-instance": {
+                  "name": "buildx-instance",
+                  "priority": 11,
+                  "pre": "if [ -n \"$BUILDX_BUILDER\" ] && [ -n \"$BUILDX_INSTANCE\" ]; then\n  install -d -m 0700 /root/.docker/buildx/instances\n  printf '%s' \"$BUILDX_INSTANCE\" > \"/root/.docker/buildx/instances/$BUILDX_BUILDER\"\n  chmod 0600 \"/root/.docker/buildx/instances/$BUILDX_BUILDER\"\nfi"
+                },
+                "unix-socket-forward": {
+                  "name": "unix-socket-forward",
+                  "priority": 10,
+                  "pre": "if [ -n \"$DOCKER_HOST\" ] && [ ! -e /var/run/docker.sock ]; then\n  ulimit -n 1048576 2>/dev/null || true\n  addr=${DOCKER_HOST#tcp://}\n  [ -n \"$addr\" ] || { echo \"bkid: DOCKER_HOST=$DOCKER_HOST has no tcp:// address\" >&2; exit 1; }\n  socat -d0 -t 86400 UNIX-LISTEN:/var/run/docker.sock,fork,backlog=1024,reuseaddr \"TCP:$addr,keepalive,keepidle=30,keepintvl=15,keepcnt=4\" &\n  SOCAT_PID=$!\n  trap 'kill $SOCAT_PID 2>/dev/null || true' EXIT INT TERM\n  socat -u OPEN:/dev/null UNIX-CONNECT:/var/run/docker.sock,retry=20,interval=0.2 >/dev/null 2>&1 \\\n    || { echo \"bkid: socat bridge to /var/run/docker.sock not ready\" >&2; exit 1; }\nfi"
+                }
+              },
+              "steps": []
+            }
+          }
+        }
+      },
+      "compose": {
+        "up": false,
+        "manual": false,
+        "build": {
+          "additional_contexts": {
+            "workspaceroot-pronto-sources_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:workspaceroot-pronto-sources_srcs}",
+            "libraries_mecha-airlock-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-airlock-image_bayt}",
+            "libraries_mecha-auth-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-auth-image_bayt}",
+            "libraries_mecha-clock-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-clock-image_bayt}",
+            "libraries_mecha-compute-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-compute-image_bayt}",
+            "libraries_mecha-conduit-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-conduit-image_bayt}",
+            "libraries_mecha-database-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image_bayt}",
+            "libraries_mecha-mesh-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-mesh-image_bayt}",
+            "libraries_mecha-ticker-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-ticker-image_bayt}",
+            "libraries_mecha-database-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image_srcs}",
+            "libraries_mecha-mesh-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-mesh-image_srcs}",
+            "libraries_mecha-auth-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-auth-image_srcs}",
+            "libraries_mecha-ticker-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-ticker-image_srcs}",
+            "libraries_mecha-clock-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-clock-image_srcs}",
+            "libraries_mecha-compute-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-compute-image_srcs}",
+            "libraries_mecha-airlock-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-airlock-image_srcs}",
+            "plugins_omnishell-runtime-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image_srcs}",
+            "plugins_omnishell-runtime-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image_bayt}",
+            "workspaceroot-pronto-sources_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:workspaceroot-pronto-sources_bayt}"
+          },
+          "secrets": [],
+          "args": {
+            "MONOREPO_COMPOSE_MODE": "${MONOREPO_COMPOSE_MODE:-}",
+            "BAYT_RUNTIME": "${BAYT_RUNTIME:-}"
+          }
+        },
+        "environment": {},
+        "ports": [],
+        "volumes": [],
+        "depends_on": {}
+      },
+      "deps": [
+        ":check-touch:srcs",
+        ":check-touch:bayt",
+        ":database:srcs",
+        ":caddy:srcs",
+        ":assets:srcs",
+        ":served:srcs",
+        ":render:srcs"
+      ],
+      "dockerfile": {
+        "from": {
+          "name": "docker:29.9.1-cli@sha256:6fae2214c3121a28d5aa639d09032f61310b7c9c75ffbad1025f261a1b621800"
+        },
+        "preamble": [
+          "ARG MONOREPO_COMPOSE_MODE",
+          "ENV MONOREPO_COMPOSE_MODE=$MONOREPO_COMPOSE_MODE",
+          "ARG BAYT_RUNTIME",
+          "ENV BAYT_RUNTIME=$BAYT_RUNTIME"
+        ],
+        "defaultPreamble": {
+          "bayt-runtime": {
+            "name": "bayt-runtime",
+            "priority": -6,
+            "copy": {
+              "from": {
+                "name": "bayt",
+                "image": "bonitao/bayt-runtime:1.2.2@sha256:a2e08b0fd123349e30e28843665ab2a2fde9fe25fddf82919fe499f3f01f1b8f"
+              },
+              "srcs": [
+                "."
+              ],
+              "dst": "/monorepo/plugins/bayt/runtime",
+              "link": true,
+              "parents": false,
+              "exclude": []
+            }
+          },
+          "bayt-path": {
+            "name": "bayt-path",
+            "priority": -5,
+            "line": "ENV PATH=/monorepo/plugins/bayt/runtime:${PATH}"
+          },
+          "socat": {
+            "name": "socat",
+            "priority": -10,
+            "copy": {
+              "from": {
+                "name": "alpine/socat:1.8.0.0@sha256:a6be4c0262b339c53ddad723cdd178a1a13271e1137c65e27f90a08c16de02b8"
+              },
+              "srcs": [
+                "/usr/bin/socat1"
+              ],
+              "dst": "/usr/local/bin/socat",
+              "link": true,
+              "parents": false,
+              "exclude": []
+            }
+          },
+          "socat-libs": {
+            "name": "socat-libs",
+            "priority": -9,
+            "copy": {
+              "from": {
+                "name": "alpine/socat:1.8.0.0@sha256:a6be4c0262b339c53ddad723cdd178a1a13271e1137c65e27f90a08c16de02b8"
+              },
+              "srcs": [
+                "/usr/lib/libreadline.so.8",
+                "/usr/lib/libncursesw.so.6"
+              ],
+              "dst": "/usr/lib/",
+              "link": true,
+              "parents": false,
+              "exclude": []
+            }
+          },
+          "lazybox-copy": {
+            "name": "lazybox-copy",
+            "priority": -11,
+            "line": "COPY --from=bonitao/lazybox:0.8.5@sha256:091a3b63ba222777000acc3bf8327faebfea4870e23ee07c6eb42431dadb2ac6 /lazybox/ /root/.local/share/lazybox/"
+          },
+          "path-env": {
+            "name": "path-env",
+            "priority": -8,
+            "line": "ENV PATH=$PATH:/root/.local/bin:/root/.local/share/lazybox/bin"
+          },
+          "toolchain-config": {
+            "name": "toolchain-config",
+            "priority": -7,
+            "line": "COPY <<'BKID_MISE' /opt/bkid/mise.toml\n[settings]\nexperimental = true\ngithub_attestations = false\nlocked = true\nlockfile = true\nslsa = false\n\n[settings.github]\ngithub_attestations = false\nslsa = false\n\n[tools]\n'github:depot/cli' = '2.102.25'\n'github:go-task/task' = 'v3.54.0'\nBKID_MISE\nCOPY <<'BKID_LOCK' /opt/bkid/mise.lock\n[tools]\n[[tools.'github:depot/cli']]\nbackend = 'github:depot/cli'\nversion = '2.102.25'\n\n[tools.'github:depot/cli'.platforms]\n[tools.'github:depot/cli'.platforms.linux-arm64]\nchecksum = 'sha256:52abe04ef24cd06f2ed37e15dbaa1d52d282db26ead04ff2493faf181347d6eb'\nurl = 'https://github.com/depot/cli/releases/download/v2.102.25/depot_2.102.25_linux_arm64.tar.gz'\nurl_api = 'https://api.github.com/repos/depot/cli/releases/assets/660782767'\n\n[tools.'github:depot/cli'.platforms.linux-arm64-musl]\nchecksum = 'sha256:52abe04ef24cd06f2ed37e15dbaa1d52d282db26ead04ff2493faf181347d6eb'\nurl = 'https://github.com/depot/cli/releases/download/v2.102.25/depot_2.102.25_linux_arm64.tar.gz'\nurl_api = 'https://api.github.com/repos/depot/cli/releases/assets/660782767'\n\n[tools.'github:depot/cli'.platforms.linux-x64]\nchecksum = 'sha256:b62952f5951a0bcd4f48597b59fe29a4b7d84cac4e82710ee19d79262bf271af'\nurl = 'https://github.com/depot/cli/releases/download/v2.102.25/depot_2.102.25_linux_amd64.tar.gz'\nurl_api = 'https://api.github.com/repos/depot/cli/releases/assets/660782770'\n\n[tools.'github:depot/cli'.platforms.linux-x64-musl]\nchecksum = 'sha256:b62952f5951a0bcd4f48597b59fe29a4b7d84cac4e82710ee19d79262bf271af'\nurl = 'https://github.com/depot/cli/releases/download/v2.102.25/depot_2.102.25_linux_amd64.tar.gz'\nurl_api = 'https://api.github.com/repos/depot/cli/releases/assets/660782770'\n\n[[tools.'github:go-task/task']]\nbackend = 'github:go-task/task'\nversion = 'v3.54.0'\n\n[tools.'github:go-task/task'.platforms]\n[tools.'github:go-task/task'.platforms.linux-arm64]\nchecksum = 'sha256:d7189d439d4a6058e39e1b2acd7c8b27acd4856691b408f23b242e4294e1df5b'\nurl = 'https://github.com/go-task/task/releases/download/v3.54.0/task_linux_arm64.tar.gz'\nurl_api = 'https://api.github.com/repos/go-task/task/releases/assets/604090041'\n\n[tools.'github:go-task/task'.platforms.linux-arm64-musl]\nchecksum = 'sha256:d7189d439d4a6058e39e1b2acd7c8b27acd4856691b408f23b242e4294e1df5b'\nurl = 'https://github.com/go-task/task/releases/download/v3.54.0/task_linux_arm64.tar.gz'\nurl_api = 'https://api.github.com/repos/go-task/task/releases/assets/604090041'\n\n[tools.'github:go-task/task'.platforms.linux-x64]\nchecksum = 'sha256:680859dbb4d881a9c72d4d9a8f510825450849af8567deacd7302c01124416fb'\nurl = 'https://github.com/go-task/task/releases/download/v3.54.0/task_linux_amd64.tar.gz'\nurl_api = 'https://api.github.com/repos/go-task/task/releases/assets/604090073'\n\n[tools.'github:go-task/task'.platforms.linux-x64-musl]\nchecksum = 'sha256:680859dbb4d881a9c72d4d9a8f510825450849af8567deacd7302c01124416fb'\nurl = 'https://github.com/go-task/task/releases/download/v3.54.0/task_linux_amd64.tar.gz'\nurl_api = 'https://api.github.com/repos/go-task/task/releases/assets/604090073'\nBKID_LOCK"
+          },
+          "toolchain-install": {
+            "name": "toolchain-install",
+            "priority": -6,
+            "line": "RUN cd /opt/bkid && mise trust -y && mise install && mise exec -- sh -c 'cp \"$(mise which task)\" /usr/local/bin/task && cp \"$(mise which depot)\" /usr/local/bin/depot'"
+          }
+        },
+        "add": [],
+        "mounts": [],
+        "secrets": {
+          "docker_host": {
+            "environment": "DOCKER_HOST_TCP"
+          },
+          "buildx_builder": {
+            "environment": "BUILDX_BUILDER"
+          },
+          "buildx_instance": {
+            "environment": "BUILDX_INSTANCE"
+          },
+          "docker_config": {
+            "environment": "DOCKER_AUTH_CONFIG"
+          },
+          "testcontainers_host": {
+            "environment": "TESTCONTAINERS_HOST_OVERRIDE"
+          },
+          "cache_scope": {
+            "environment": "CACHE_SCOPE"
+          },
+          "cache_scope_fallback": {
+            "environment": "CACHE_SCOPE_FALLBACK"
+          },
+          "sayt_buildkit_syntax": {
+            "environment": "BUILDKIT_SYNTAX"
+          },
+          "sayt_no_cache": {
+            "environment": "SAYT_NO_CACHE"
+          },
+          "bayt_image_tag": {
+            "environment": "BAYT_IMAGE_TAG"
+          },
+          "bayt_pull_policy": {
+            "environment": "BAYT_PULL_POLICY"
+          },
+          "sayt_no_cache_from": {
+            "environment": "SAYT_NO_CACHE_FROM"
+          },
+          "sayt_no_cache_to": {
+            "environment": "SAYT_NO_CACHE_TO"
+          },
+          "depot_token": {
+            "environment": "DEPOT_TOKEN"
+          },
+          "depot_project_id": {
+            "environment": "DEPOT_PROJECT_ID"
+          },
+          "depot_org_id": {
+            "environment": "DEPOT_ORG_ID"
+          },
+          "depot_disable_otel": {
+            "environment": "DEPOT_DISABLE_OTEL"
+          },
+          "actions_results_url": {
+            "environment": "ACTIONS_RESULTS_URL"
+          },
+          "actions_runtime_token": {
+            "environment": "ACTIONS_RUNTIME_TOKEN"
+          },
+          "bkid_project": {
+            "environment": "BKID_PROJECT"
+          }
+        },
+        "extra_hosts": [],
+        "epilogue": [],
+        "copy": [
+          {
+            "from": null,
+            "srcs": [
+              "monorepo/*.yaml"
+            ],
+            "dst": "./",
+            "link": true,
+            "parents": true,
+            "exclude": []
+          }
+        ],
+        "defaultCopy": {
+          "workspaceroot-pronto-sources_srcs": {
+            "from": {
+              "name": "workspaceroot-pronto-sources_srcs"
+            },
+            "name": "workspaceroot-pronto-sources_srcs",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-airlock-image_bayt": {
+            "from": {
+              "name": "libraries_mecha-airlock-image_bayt"
+            },
+            "name": "libraries_mecha-airlock-image_bayt",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-auth-image_bayt": {
+            "from": {
+              "name": "libraries_mecha-auth-image_bayt"
+            },
+            "name": "libraries_mecha-auth-image_bayt",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-clock-image_bayt": {
+            "from": {
+              "name": "libraries_mecha-clock-image_bayt"
+            },
+            "name": "libraries_mecha-clock-image_bayt",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-compute-image_bayt": {
+            "from": {
+              "name": "libraries_mecha-compute-image_bayt"
+            },
+            "name": "libraries_mecha-compute-image_bayt",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-conduit-image_bayt": {
+            "from": {
+              "name": "libraries_mecha-conduit-image_bayt"
+            },
+            "name": "libraries_mecha-conduit-image_bayt",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-database-image_bayt": {
+            "from": {
+              "name": "libraries_mecha-database-image_bayt"
+            },
+            "name": "libraries_mecha-database-image_bayt",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-mesh-image_bayt": {
+            "from": {
+              "name": "libraries_mecha-mesh-image_bayt"
+            },
+            "name": "libraries_mecha-mesh-image_bayt",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-ticker-image_bayt": {
+            "from": {
+              "name": "libraries_mecha-ticker-image_bayt"
+            },
+            "name": "libraries_mecha-ticker-image_bayt",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-database-image_srcs": {
+            "from": {
+              "name": "libraries_mecha-database-image_srcs"
+            },
+            "name": "libraries_mecha-database-image_srcs",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-mesh-image_srcs": {
+            "from": {
+              "name": "libraries_mecha-mesh-image_srcs"
+            },
+            "name": "libraries_mecha-mesh-image_srcs",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-auth-image_srcs": {
+            "from": {
+              "name": "libraries_mecha-auth-image_srcs"
+            },
+            "name": "libraries_mecha-auth-image_srcs",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-ticker-image_srcs": {
+            "from": {
+              "name": "libraries_mecha-ticker-image_srcs"
+            },
+            "name": "libraries_mecha-ticker-image_srcs",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-clock-image_srcs": {
+            "from": {
+              "name": "libraries_mecha-clock-image_srcs"
+            },
+            "name": "libraries_mecha-clock-image_srcs",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-compute-image_srcs": {
+            "from": {
+              "name": "libraries_mecha-compute-image_srcs"
+            },
+            "name": "libraries_mecha-compute-image_srcs",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "libraries_mecha-airlock-image_srcs": {
+            "from": {
+              "name": "libraries_mecha-airlock-image_srcs"
+            },
+            "name": "libraries_mecha-airlock-image_srcs",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "plugins_omnishell-runtime-image_srcs": {
+            "from": {
+              "name": "plugins_omnishell-runtime-image_srcs"
+            },
+            "name": "plugins_omnishell-runtime-image_srcs",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "plugins_omnishell-runtime-image_bayt": {
+            "from": {
+              "name": "plugins_omnishell-runtime-image_bayt"
+            },
+            "name": "plugins_omnishell-runtime-image_bayt",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          },
+          "workspaceroot-pronto-sources_bayt": {
+            "from": {
+              "name": "workspaceroot-pronto-sources_bayt"
+            },
+            "name": "workspaceroot-pronto-sources_bayt",
+            "srcs": [
+              "/monorep[o]"
+            ],
+            "dst": "/monorepo/",
+            "link": true,
+            "parents": false,
+            "exclude": []
+          }
+        },
+        "healthcheck": null,
+        "expose": [],
+        "entrypoint": null,
+        "incremental": true,
+        "cmd": null
+      },
+      "env": {
+        "BUILDX_BAKE_ENTITLEMENTS_FS": "0",
+        "COMPOSE_BAKE": "true"
+      },
+      "taskfile": {
+        "run": "once",
+        "incremental": false,
+        "preconditions": []
+      },
+      "cmds": [
+        {
+          "shell": "sh",
+          "do": "if [ -n \"$BUILDKIT_SYNTAX\" ]; then\n  # depot frontend-pin workaround (full rationale in stacks/sayt/sayt.cue)\n  find /monorepo -path '*/.bayt/Dockerfile.*' -type f -exec sed -i \"1i # syntax=$BUILDKIT_SYNTAX\" {} \\;\nfi\n[ -n \"$BKID_PROJECT\" ] || { echo \"bkid: BKID_PROJECT is unset; sayt integrate names the inner stack\" >&2; exit 1; }\np=\"${BKID_PROJECT}_touch\"\nf=.bayt/compose.check-touch.closure.yaml\n[ -n \"$DEPOT_TOKEN\" ] && bake=\"depot bake --project $DEPOT_PROJECT_ID\" || bake=\"docker buildx bake\"\ndocker compose -p \"$p\" --profile '*' -f \"$f\" config | docker buildx bake --allow=fs.read=/monorepo -f - --print bayt | $bake -f - ${SAYT_NO_CACHE:+--no-cache --set \"*.cache-from=\" --set \"*.cache-to=\"} ${SAYT_NO_CACHE_FROM:+--set \"*.cache-from=\"} ${SAYT_NO_CACHE_TO:+--set \"*.cache-to=\"} bayt\ndocker compose -p \"$p\" --profile '*' -f \"$f\" down -v --timeout 0 --remove-orphans\ns=0\ndocker compose -p \"$p\" --profile '*' -f \"$f\" up bayt --build --abort-on-container-failure --exit-code-from bayt --remove-orphans --attach-dependencies || s=$?\ndocker compose -p \"$p\" --profile '*' -f \"$f\" down -v --timeout 0 --remove-orphans\nexit \"$s\"",
+          "dockerfile": {
+            "inject": {
+              "secrets": [
+                {
+                  "id": "docker_host",
+                  "var": {
+                    "contents": "DOCKER_HOST"
+                  }
+                },
+                {
+                  "id": "buildx_builder",
+                  "var": {
+                    "contents": "BUILDX_BUILDER"
+                  }
+                },
+                {
+                  "id": "testcontainers_host",
+                  "var": {
+                    "contents": "TESTCONTAINERS_HOST_OVERRIDE"
+                  }
+                },
+                {
+                  "id": "cache_scope",
+                  "var": {
+                    "contents": "CACHE_SCOPE"
+                  }
+                },
+                {
+                  "id": "cache_scope_fallback",
+                  "var": {
+                    "contents": "CACHE_SCOPE_FALLBACK"
+                  }
+                },
+                {
+                  "id": "sayt_buildkit_syntax",
+                  "var": {
+                    "contents": "BUILDKIT_SYNTAX"
+                  }
+                },
+                {
+                  "id": "sayt_no_cache",
+                  "var": {
+                    "contents": "SAYT_NO_CACHE"
+                  }
+                },
+                {
+                  "id": "bayt_image_tag",
+                  "var": {
+                    "contents": "BAYT_IMAGE_TAG"
+                  }
+                },
+                {
+                  "id": "bayt_pull_policy",
+                  "var": {
+                    "contents": "BAYT_PULL_POLICY"
+                  }
+                },
+                {
+                  "id": "sayt_no_cache_from",
+                  "var": {
+                    "contents": "SAYT_NO_CACHE_FROM"
+                  }
+                },
+                {
+                  "id": "sayt_no_cache_to",
+                  "var": {
+                    "contents": "SAYT_NO_CACHE_TO"
+                  }
+                },
+                {
+                  "id": "depot_token",
+                  "var": {
+                    "contents": "DEPOT_TOKEN"
+                  }
+                },
+                {
+                  "id": "depot_project_id",
+                  "var": {
+                    "contents": "DEPOT_PROJECT_ID"
+                  }
+                },
+                {
+                  "id": "depot_org_id",
+                  "var": {
+                    "contents": "DEPOT_ORG_ID"
+                  }
+                },
+                {
+                  "id": "depot_disable_otel",
+                  "var": {
+                    "contents": "DEPOT_DISABLE_OTEL"
+                  }
+                },
+                {
+                  "id": "actions_results_url",
+                  "var": {
+                    "contents": "ACTIONS_RESULTS_URL"
+                  }
+                },
+                {
+                  "id": "actions_runtime_token",
+                  "var": {
+                    "contents": "ACTIONS_RUNTIME_TOKEN"
+                  }
+                },
+                {
+                  "id": "bkid_project",
+                  "var": {
+                    "contents": "BKID_PROJECT"
+                  }
+                },
+                {
+                  "id": "buildx_instance",
+                  "var": {
+                    "contents": "BUILDX_INSTANCE"
+                  }
+                },
+                {
+                  "id": "docker_config",
+                  "var": {
+                    "contents": "DOCKER_AUTH_CONFIG",
+                    "path": "/root/.docker/config.json"
+                  },
+                  "mode": "0600"
+                }
+              ],
+              "defaultSteps": {
+                "buildx-instance": {
+                  "name": "buildx-instance",
+                  "priority": 11,
+                  "pre": "if [ -n \"$BUILDX_BUILDER\" ] && [ -n \"$BUILDX_INSTANCE\" ]; then\n  install -d -m 0700 /root/.docker/buildx/instances\n  printf '%s' \"$BUILDX_INSTANCE\" > \"/root/.docker/buildx/instances/$BUILDX_BUILDER\"\n  chmod 0600 \"/root/.docker/buildx/instances/$BUILDX_BUILDER\"\nfi"
+                },
+                "unix-socket-forward": {
+                  "name": "unix-socket-forward",
+                  "priority": 10,
+                  "pre": "if [ -n \"$DOCKER_HOST\" ] && [ ! -e /var/run/docker.sock ]; then\n  ulimit -n 1048576 2>/dev/null || true\n  addr=${DOCKER_HOST#tcp://}\n  [ -n \"$addr\" ] || { echo \"bkid: DOCKER_HOST=$DOCKER_HOST has no tcp:// address\" >&2; exit 1; }\n  socat -d0 -t 86400 UNIX-LISTEN:/var/run/docker.sock,fork,backlog=1024,reuseaddr \"TCP:$addr,keepalive,keepidle=30,keepintvl=15,keepcnt=4\" &\n  SOCAT_PID=$!\n  trap 'kill $SOCAT_PID 2>/dev/null || true' EXIT INT TERM\n  socat -u OPEN:/dev/null UNIX-CONNECT:/var/run/docker.sock,retry=20,interval=0.2 >/dev/null 2>&1 \\\n    || { echo \"bkid: socat bridge to /var/run/docker.sock not ready\" >&2; exit 1; }\nfi"
+                }
+              },
+              "steps": []
+            }
+          },
+          "name": "builtin",
+          "stop": false,
+          "srcs": {
+            "globs": [],
+            "defaultGlobs": null,
+            "exclude": [],
+            "defaultExclude": null
+          }
+        }
+      ],
+      "cache": {
+        "full": false,
+        "similar": false
+      }
+    },
     "check-leaderboard-access": {
       "name": "check-leaderboard-access",
       "project": "apexrun",
@@ -7069,7 +7975,7 @@
         "manual": true,
         "build": {
           "additional_contexts": {
-            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.19.0@sha256:c29f0e6ba82bcf2872ede2b21c871adfe1106f6d02d3bbaf6f421b0614e0d071}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
           },
           "secrets": [],
           "args": {}
@@ -7080,7 +7986,7 @@
           "--",
           "sh",
           "-c",
-          "for f in tests/*.app.json; do [ ! -e \"$$f\" ] || cp \"$$f\" \"$${f%.app.json}.json\"; done && deno test --config tests/deno.json --allow-env --allow-net --allow-read --unsafely-ignore-certificate-errors=caddy tests/leaderboard-access.ts"
+          "deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-env --allow-net --allow-read --unsafely-ignore-certificate-errors=caddy tests/leaderboard-access.ts"
         ],
         "depends_on": {
           "apexrun-launch": {
@@ -7959,6 +8865,13 @@
           "brief.md",
           "journal_assets/stitch_outrun_vision.png",
           "journal_assets/stitch_hud_telemetry.png",
+          "journal_assets/t42_phone_race.jpg",
+          "journal_assets/t42_phone_title.jpg",
+          "journal_assets/t42_phone_initials.jpg",
+          "journal_assets/t42_portrait_race.jpg",
+          "journal_assets/t42_tablet_race.jpg",
+          "journal_assets/t42_tablet_duel.jpg",
+          "journal_assets/t42_tablet_paused.jpg",
           "journal_assets/t41_castle_arrival.jpg",
           "journal_assets/t41_oasis_arrival.jpg",
           "journal_assets/t41_aerodrome_arrival.jpg",
@@ -8141,7 +9054,7 @@
           }
         ],
         "epilogue": [
-          "RUN set -e; install -D -m 644 '/omnishell/interpreter/shell.js' '/served/omnishell/interpreter/shell.js'; install -D -m 644 '/omnishell/interpreter/chrome.js' '/served/omnishell/interpreter/chrome.js'; install -D -m 644 '/omnishell/interpreter/screen.js' '/served/omnishell/interpreter/screen.js'; install -D -m 644 '/omnishell/interpreter/fragment.js' '/served/omnishell/interpreter/fragment.js'; install -D -m 644 '/omnishell/interpreter/data-sync.js' '/served/omnishell/interpreter/data-sync.js'; install -D -m 644 '/omnishell/interpreter/validate.js' '/served/omnishell/interpreter/validate.js'; install -D -m 644 '/omnishell/interpreter/render.js' '/served/omnishell/interpreter/render.js'; install -D -m 644 '/omnishell/interpreter/release-plan.js' '/served/omnishell/interpreter/release-plan.js'; install -D -m 644 '/omnishell/interpreter/preloads.js' '/served/omnishell/interpreter/preloads.js'; install -D -m 644 '/omnishell/interpreter/link-prefetch.js' '/served/omnishell/interpreter/link-prefetch.js'; install -D -m 644 '/omnishell/interpreter/markup.js' '/served/omnishell/interpreter/markup.js'; install -D -m 644 '/omnishell/interpreter/script-url.js' '/served/omnishell/interpreter/script-url.js'; install -D -m 644 '/omnishell/interpreter/deferred-boot.js' '/served/omnishell/interpreter/deferred-boot.js'; install -D -m 644 '/omnishell/interpreter/host-dom.js' '/served/omnishell/interpreter/host-dom.js'; install -D -m 644 '/omnishell/interpreter/hatch.js' '/served/omnishell/interpreter/hatch.js'; install -D -m 644 '/omnishell/interpreter/hatch-worker.js' '/served/omnishell/interpreter/hatch-worker.js'; install -D -m 644 '/omnishell/interpreter/hatch-presenter.js' '/served/omnishell/interpreter/hatch-presenter.js'; install -D -m 644 '/omnishell/interpreter/presenter-realm.js' '/served/omnishell/interpreter/presenter-realm.js'; install -D -m 644 '/omnishell/interpreter/presenter.js' '/served/omnishell/interpreter/presenter.js'; install -D -m 644 '/omnishell/interpreter/storybook.js' '/served/omnishell/interpreter/storybook.js'; install -D -m 644 '/omnishell/interpreter/jessie.js' '/served/omnishell/interpreter/jessie.js'; install -D -m 644 '/omnishell/interpreter/kinetic.js' '/served/omnishell/interpreter/kinetic.js'; install -D -m 644 '/omnishell/interpreter/kinetic-milestones.js' '/served/omnishell/interpreter/kinetic-milestones.js'; install -D -m 644 '/omnishell/interpreter/kinetic-session.js' '/served/omnishell/interpreter/kinetic-session.js'; install -D -m 644 '/omnishell/interpreter/kinetic-sound.js' '/served/omnishell/interpreter/kinetic-sound.js'; install -D -m 644 '/omnishell/interpreter/kinetic-mount.js' '/served/omnishell/interpreter/kinetic-mount.js'; install -D -m 644 '/omnishell/interpreter/rtc-channel.js' '/served/omnishell/interpreter/rtc-channel.js'; install -D -m 644 '/omnishell/interpreter/prng.js' '/served/omnishell/interpreter/prng.js'; install -D -m 644 '/omnishell/interpreter/vendor/mecha-client.js' '/served/omnishell/interpreter/vendor/mecha-client.js'; install -D -m 644 '/omnishell/interpreter/vendor/js-yaml.js' '/served/omnishell/interpreter/vendor/js-yaml.js'; install -D -m 644 '/omnishell/interpreter/vendor/ses.umd.min.js' '/served/omnishell/interpreter/vendor/ses.umd.min.js'; install -D -m 644 '/omnishell/interpreter/vendor/morphlex.js' '/served/omnishell/interpreter/vendor/morphlex.js'; install -D -m 644 '/omnishell/interpreter/vendor/messages.js' '/served/omnishell/interpreter/vendor/messages.js'; install -D -m 644 '/omnishell/interpreter/vendor/game-inputs.js' '/served/omnishell/interpreter/vendor/game-inputs.js'; install -D -m 644 '/omnishell/interpreter/vendor/ggrs/ggrs_wasm.js' '/served/omnishell/interpreter/vendor/ggrs/ggrs_wasm.js'; install -D -m 644 '/omnishell/interpreter/vendor/ggrs/ggrs_wasm_bg.wasm' '/served/omnishell/interpreter/vendor/ggrs/ggrs_wasm_bg.wasm'; install -D -m 644 '/omnishell/components/wallclock.js' '/served/omnishell/components/wallclock.js'; install -D -m 644 '/app/shell/index.html' '/served/shell/index.html'; install -D -m 644 '/app/shell/shell.css' '/served/shell/shell.css'; install -D -m 644 '/app/shell/boot.js' '/served/shell/boot.js'; install -D -m 644 '/app/offline-first-sw.js' '/served/offline-first-sw.js'; install -D -m 644 '/app/shell/shell.yaml' '/served/shell/shell.yaml'; install -D -m 644 '/app/shell/shell.json' '/served/shell/shell.json'; install -D -m 644 '/app/shell/design.css' '/served/shell/design.css'; install -D -m 644 '/app/shell/screens/arena.html' '/served/shell/screens/arena.html'; install -D -m 644 '/app/shell/screens/arena.css' '/served/shell/screens/arena.css'; install -D -m 644 '/app/shell/handlers/lease.js' '/served/shell/handlers/lease.js'; install -D -m 644 '/app/shell/handlers/lobby.js' '/served/shell/handlers/lobby.js'; install -D -m 644 '/app/shell/handlers/run.js' '/served/shell/handlers/run.js'; install -D -m 644 '/app/shell/renderers/ending.js' '/served/shell/renderers/ending.js'; install -D -m 644 '/app/shell/renderers/run_time.js' '/served/shell/renderers/run_time.js'; install -D -m 644 '/app/shell/renderers/stage.js' '/served/shell/renderers/stage.js'; install -D -m 644 '/app/shell/engines/apexrun.json' '/served/shell/engines/apexrun.json'; install -D -m 644 '/app/shell/engines/sound.json' '/served/shell/engines/sound.json'; install -D -m 644 '/app/assets/manifest.json' '/served/assets/manifest.json'; install -D -m 644 '/app/shell/engine/art.js' '/served/shell/engine/art.js'; install -D -m 644 '/app/shell/engine/effects.js' '/served/shell/engine/effects.js'; install -D -m 644 '/app/shell/engine/hud.js' '/served/shell/engine/hud.js'; install -D -m 644 '/app/shell/engine/present.js' '/served/shell/engine/present.js'; install -D -m 644 '/app/shell/engine/prng.js' '/served/shell/engine/prng.js'; install -D -m 644 '/app/shell/engine/renderer.js' '/served/shell/engine/renderer.js'; install -D -m 644 '/app/shell/engine/scatter.js' '/served/shell/engine/scatter.js'; install -D -m 644 '/app/shell/engine/scenery.js' '/served/shell/engine/scenery.js'; install -D -m 644 '/app/shell/engine/simulation.js' '/served/shell/engine/simulation.js'; install -D -m 644 '/app/shell/engine/stage_look.js' '/served/shell/engine/stage_look.js'; install -D -m 644 '/app/journal.html' '/served/journal.html'; install -D -m 644 '/app/ir.html' '/served/ir.html'; install -D -m 644 '/app/ir/card.css' '/served/ir/card.css'; install -D -m 644 '/app/ir/neighbourhood-app.svg' '/served/ir/neighbourhood-app.svg'; install -D -m 644 '/app/ir/neighbourhood-arena.svg' '/served/ir/neighbourhood-arena.svg'; install -D -m 644 '/app/brief.html' '/served/brief.html'; install -D -m 644 '/app/brief.md' '/served/brief.md'; install -D -m 644 '/app/journal_assets/stitch_outrun_vision.png' '/served/journal_assets/stitch_outrun_vision.png'; install -D -m 644 '/app/journal_assets/stitch_hud_telemetry.png' '/served/journal_assets/stitch_hud_telemetry.png'; install -D -m 644 '/app/journal_assets/t41_castle_arrival.jpg' '/served/journal_assets/t41_castle_arrival.jpg'; install -D -m 644 '/app/journal_assets/t41_oasis_arrival.jpg' '/served/journal_assets/t41_oasis_arrival.jpg'; install -D -m 644 '/app/journal_assets/t41_aerodrome_arrival.jpg' '/served/journal_assets/t41_aerodrome_arrival.jpg'; install -D -m 644 '/app/journal_assets/t41_trip_helicopter.jpg' '/served/journal_assets/t41_trip_helicopter.jpg'; install -D -m 644 '/app/journal_assets/t41_trip_pull.jpg' '/served/journal_assets/t41_trip_pull.jpg'; install -D -m 644 '/app/journal_assets/t41_trip_roadside.jpg' '/served/journal_assets/t41_trip_roadside.jpg'; install -D -m 644 '/app/journal_assets/t41_goal.jpg' '/served/journal_assets/t41_goal.jpg'; install -D -m 644 '/app/journal_assets/t40_lobby.jpg' '/served/journal_assets/t40_lobby.jpg'; install -D -m 644 '/app/journal_assets/t40_challenged.jpg' '/served/journal_assets/t40_challenged.jpg'; install -D -m 644 '/app/journal_assets/t40_racing_a.jpg' '/served/journal_assets/t40_racing_a.jpg'; install -D -m 644 '/app/journal_assets/t40_racing_b.jpg' '/served/journal_assets/t40_racing_b.jpg'; install -D -m 644 '/app/journal_assets/t40_result_a.jpg' '/served/journal_assets/t40_result_a.jpg'; install -D -m 644 '/app/journal_assets/t40_result_b.jpg' '/served/journal_assets/t40_result_b.jpg'; install -D -m 644 '/app/journal_assets/t39_checkpoint_before.jpg' '/served/journal_assets/t39_checkpoint_before.jpg'; install -D -m 644 '/app/journal_assets/t39_checkpoint_after.jpg' '/served/journal_assets/t39_checkpoint_after.jpg'; install -D -m 644 '/app/journal_assets/t39_go_before.jpg' '/served/journal_assets/t39_go_before.jpg'; install -D -m 644 '/app/journal_assets/t39_go_after.jpg' '/served/journal_assets/t39_go_after.jpg'; install -D -m 644 '/app/journal_assets/t39_result_before.jpg' '/served/journal_assets/t39_result_before.jpg'; install -D -m 644 '/app/journal_assets/t39_result_after.jpg' '/served/journal_assets/t39_result_after.jpg'; install -D -m 644 '/app/journal_assets/t39_initials.jpg' '/served/journal_assets/t39_initials.jpg'; install -D -m 644 '/app/journal_assets/t39_duel_end.jpg' '/served/journal_assets/t39_duel_end.jpg'; install -D -m 644 '/app/journal_assets/turn38-cluster-dom.png' '/served/journal_assets/turn38-cluster-dom.png'; install -D -m 644 '/app/journal_assets/turn38-cluster-layers.png' '/served/journal_assets/turn38-cluster-layers.png'; install -D -m 644 '/app/journal_assets/turn38-hud-dom.png' '/served/journal_assets/turn38-hud-dom.png'; install -D -m 644 '/app/journal_assets/turn38-hud-layers.png' '/served/journal_assets/turn38-hud-layers.png'; install -D -m 644 '/app/journal_assets/t37_duel_racing.jpg' '/served/journal_assets/t37_duel_racing.jpg'; install -D -m 644 '/app/journal_assets/t37_duel_online.jpg' '/served/journal_assets/t37_duel_online.jpg'; install -D -m 644 '/app/journal_assets/t36_firefox.jpg' '/served/journal_assets/t36_firefox.jpg'; install -D -m 644 '/app/journal_assets/t36_webkit.jpg' '/served/journal_assets/t36_webkit.jpg'; install -D -m 644 '/app/journal_assets/t35_presenter.jpg' '/served/journal_assets/t35_presenter.jpg'; install -D -m 644 '/app/journal_assets/t34_transition.jpg' '/served/journal_assets/t34_transition.jpg'; install -D -m 644 '/app/journal_assets/t34_transition_before.jpg' '/served/journal_assets/t34_transition_before.jpg'; install -D -m 644 '/app/journal_assets/t34_loading.jpg' '/served/journal_assets/t34_loading.jpg'; install -D -m 644 '/app/journal_assets/t34_pull.jpg' '/served/journal_assets/t34_pull.jpg'; install -D -m 644 '/app/journal_assets/t33_arm.jpg' '/served/journal_assets/t33_arm.jpg'; install -D -m 644 '/app/journal_assets/t33_approach.jpg' '/served/journal_assets/t33_approach.jpg'; install -D -m 644 '/app/journal_assets/t33_landmarks.jpg' '/served/journal_assets/t33_landmarks.jpg'; install -D -m 644 '/app/journal_assets/t33_compare.jpg' '/served/journal_assets/t33_compare.jpg'; install -D -m 644 '/app/journal_assets/t32_closeups.jpg' '/served/journal_assets/t32_closeups.jpg'; install -D -m 644 '/app/journal_assets/t32_compare.jpg' '/served/journal_assets/t32_compare.jpg'; install -D -m 644 '/app/journal_assets/t31_compare.jpg' '/served/journal_assets/t31_compare.jpg'; install -D -m 644 '/app/journal_assets/t31_tulip.jpg' '/served/journal_assets/t31_tulip.jpg'; install -D -m 644 '/app/journal_assets/t30_compare.jpg' '/served/journal_assets/t30_compare.jpg'; install -D -m 644 '/app/journal_assets/t30_cliffs.jpg' '/served/journal_assets/t30_cliffs.jpg'; install -D -m 644 '/app/journal_assets/t29_compare.jpg' '/served/journal_assets/t29_compare.jpg'; install -D -m 644 '/app/journal_assets/t29_desert.jpg' '/served/journal_assets/t29_desert.jpg'; install -D -m 644 '/app/journal_assets/t28_compare.jpg' '/served/journal_assets/t28_compare.jpg'; install -D -m 644 '/app/journal_assets/t28_coconut.jpg' '/served/journal_assets/t28_coconut.jpg'; install -D -m 644 '/app/journal_assets/t28_phone.jpg' '/served/journal_assets/t28_phone.jpg'; install -D -m 644 '/app/journal_assets/t27_coconut.jpg' '/served/journal_assets/t27_coconut.jpg'; install -D -m 644 '/app/journal_assets/t27_desert.jpg' '/served/journal_assets/t27_desert.jpg'; install -D -m 644 '/app/journal_assets/t27_riders.jpg' '/served/journal_assets/t27_riders.jpg'; install -D -m 644 '/app/journal_assets/t26_coconut.jpg' '/served/journal_assets/t26_coconut.jpg'; install -D -m 644 '/app/journal_assets/t26_desert.jpg' '/served/journal_assets/t26_desert.jpg'; install -D -m 644 '/app/journal_assets/t25_desert.jpg' '/served/journal_assets/t25_desert.jpg'; install -D -m 644 '/app/journal_assets/t25_alpine.jpg' '/served/journal_assets/t25_alpine.jpg'; install -D -m 644 '/app/journal_assets/t24_coconut.jpg' '/served/journal_assets/t24_coconut.jpg'; install -D -m 644 '/app/journal_assets/t24_tulip.jpg' '/served/journal_assets/t24_tulip.jpg'; install -D -m 644 '/app/journal_assets/t23_railway_desert.jpg' '/served/journal_assets/t23_railway_desert.jpg'; install -D -m 644 '/app/journal_assets/t23_railway_alpine.jpg' '/served/journal_assets/t23_railway_alpine.jpg'; install -D -m 644 '/app/journal_assets/t22_roll.jpg' '/served/journal_assets/t22_roll.jpg'; install -D -m 644 '/app/journal_assets/t22_dive.jpg' '/served/journal_assets/t22_dive.jpg'; install -D -m 644 '/app/journal_assets/t21_granite.jpg' '/served/journal_assets/t21_granite.jpg'; install -D -m 644 '/app/journal_assets/t21_sandstone.jpg' '/served/journal_assets/t21_sandstone.jpg'; install -D -m 644 '/app/journal_assets/t20_gantry.jpg' '/served/journal_assets/t20_gantry.jpg'; install -D -m 644 '/app/journal_assets/t20_metro_climb.jpg' '/served/journal_assets/t20_metro_climb.jpg'; install -D -m 644 '/app/journal_assets/t19_cartoon.jpg' '/served/journal_assets/t19_cartoon.jpg'; install -D -m 644 '/app/journal_assets/t18_field.jpg' '/served/journal_assets/t18_field.jpg'; install -D -m 644 '/app/journal_assets/t17_world.jpg' '/served/journal_assets/t17_world.jpg'; install -D -m 644 '/app/journal_assets/t16_hero.jpg' '/served/journal_assets/t16_hero.jpg'; install -D -m 644 '/app/journal_assets/t15_handover.jpg' '/served/journal_assets/t15_handover.jpg'; install -D -m 644 '/app/journal_assets/t15_goal.jpg' '/served/journal_assets/t15_goal.jpg'; install -D -m 644 '/app/journal_assets/t14_desert.jpg' '/served/journal_assets/t14_desert.jpg'; install -D -m 644 '/app/journal_assets/t14_alpine.jpg' '/served/journal_assets/t14_alpine.jpg'; install -D -m 644 '/app/journal_assets/t14_wilderness.jpg' '/served/journal_assets/t14_wilderness.jpg'; install -D -m 644 '/app/journal_assets/t14_night.jpg' '/served/journal_assets/t14_night.jpg'; install -D -m 644 '/app/journal_assets/t14_trial.jpg' '/served/journal_assets/t14_trial.jpg'; install -D -m 644 '/app/journal_assets/t13_climb.jpg' '/served/journal_assets/t13_climb.jpg'; install -D -m 644 '/app/journal_assets/t13_boost.jpg' '/served/journal_assets/t13_boost.jpg'; install -D -m 644 '/app/journal_assets/t13_hood.jpg' '/served/journal_assets/t13_hood.jpg'; install -D -m 644 '/app/journal_assets/t13_gauge.png' '/served/journal_assets/t13_gauge.png'; install -D -m 644 '/app/journal_assets/t12_ao.jpg' '/served/journal_assets/t12_ao.jpg'; install -D -m 644 '/app/journal_assets/t11_speed.jpg' '/served/journal_assets/t11_speed.jpg'; install -D -m 644 '/app/journal_assets/t11_night.jpg' '/served/journal_assets/t11_night.jpg'; install -D -m 644 '/app/journal_assets/t11_hood.jpg' '/served/journal_assets/t11_hood.jpg'; install -D -m 644 '/app/journal_assets/t10_swoop.jpg' '/served/journal_assets/t10_swoop.jpg'; install -D -m 644 '/app/journal_assets/t10_countdown.jpg' '/served/journal_assets/t10_countdown.jpg'; install -D -m 644 '/app/journal_assets/t10_extended.jpg' '/served/journal_assets/t10_extended.jpg'; install -D -m 644 '/app/journal_assets/t10_depart.jpg' '/served/journal_assets/t10_depart.jpg'; install -D -m 644 '/app/journal_assets/t9_coconut.jpg' '/served/journal_assets/t9_coconut.jpg'; install -D -m 644 '/app/journal_assets/t9_alpine.jpg' '/served/journal_assets/t9_alpine.jpg'; install -D -m 644 '/app/journal_assets/t9_castle.jpg' '/served/journal_assets/t9_castle.jpg'; install -D -m 644 '/app/journal_assets/t9_webgl2.jpg' '/served/journal_assets/t9_webgl2.jpg'; install -D -m 644 '/app/journal_assets/t8_traffic.jpg' '/served/journal_assets/t8_traffic.jpg'; install -D -m 644 '/app/journal_assets/t8_crash.jpg' '/served/journal_assets/t8_crash.jpg'; install -D -m 644 '/app/journal_assets/t6_steer.jpg' '/served/journal_assets/t6_steer.jpg'; install -D -m 644 '/app/journal_assets/t7_coconut-beach.jpg' '/served/journal_assets/t7_coconut-beach.jpg'; install -D -m 644 '/app/journal_assets/t7_desert-canyons.jpg' '/served/journal_assets/t7_desert-canyons.jpg'; install -D -m 644 '/app/journal_assets/t7_alpine-peaks.jpg' '/served/journal_assets/t7_alpine-peaks.jpg'; install -D -m 644 '/app/journal_assets/t7_castle.jpg' '/served/journal_assets/t7_castle.jpg'; install -D -m 644 '/app/journal_assets/t6_hood.jpg' '/served/journal_assets/t6_hood.jpg'; install -D -m 644 '/app/journal_assets/t4_rival.jpg' '/served/journal_assets/t4_rival.jpg'; install -D -m 644 '/app/journal_assets/t5_chase.jpg' '/served/journal_assets/t5_chase.jpg'; install -D -m 644 '/app/journal_assets/t5_hood.jpg' '/served/journal_assets/t5_hood.jpg'; install -D -m 644 '/app/journal_assets/t4_timeover.jpg' '/served/journal_assets/t4_timeover.jpg'; install -D -m 644 '/app/journal_assets/t4_saved.jpg' '/served/journal_assets/t4_saved.jpg'; install -D -m 644 '/app/journal_assets/t4_phone_saved.jpg' '/served/journal_assets/t4_phone_saved.jpg'; install -D -m 644 '/app/journal_assets/t3_tuner.jpg' '/served/journal_assets/t3_tuner.jpg'; install -D -m 644 '/app/journal_assets/t3_title.jpg' '/served/journal_assets/t3_title.jpg'; install -D -m 644 '/app/journal_assets/t2_before_wall.jpg' '/served/journal_assets/t2_before_wall.jpg'; install -D -m 644 '/app/journal_assets/t2_before_rival_finish.jpg' '/served/journal_assets/t2_before_rival_finish.jpg'; install -D -m 644 '/app/journal_assets/t2_live_coconut.jpg' '/served/journal_assets/t2_live_coconut.jpg'; install -D -m 644 '/app/journal_assets/t2_desert.jpg' '/served/journal_assets/t2_desert.jpg'; install -D -m 644 '/app/journal_assets/t2_alpine.jpg' '/served/journal_assets/t2_alpine.jpg'; install -D -m 644 '/app/journal_assets/t2_metropolis.jpg' '/served/journal_assets/t2_metropolis.jpg'; install -D -m 644 '/app/journal_assets/t2_tulip.jpg' '/served/journal_assets/t2_tulip.jpg'; install -D -m 644 '/app/journal_assets/t2_coastal.jpg' '/served/journal_assets/t2_coastal.jpg'; install -D -m 644 '/app/journal_assets/t2_marina.jpg' '/served/journal_assets/t2_marina.jpg'; install -D -m 644 '/app/journal_assets/t2_fork_left.jpg' '/served/journal_assets/t2_fork_left.jpg'; install -D -m 644 '/app/journal_assets/t2_fork_right.jpg' '/served/journal_assets/t2_fork_right.jpg'; install -D -m 644 '/app/journal_assets/t2_hood.jpg' '/served/journal_assets/t2_hood.jpg'; install -D -m 644 '/app/journal_assets/t2_title.jpg' '/served/journal_assets/t2_title.jpg'; install -D -m 644 '/app/journal_assets/t2_paused.jpg' '/served/journal_assets/t2_paused.jpg'; install -D -m 644 '/app/journal_assets/t2_cdn_down.jpg' '/served/journal_assets/t2_cdn_down.jpg'; install -D -m 644 '/app/journal_assets/t2_arena.jpg' '/served/journal_assets/t2_arena.jpg'; install -D -m 644 '/app/journal_assets/traffic_overtaking.png' '/served/journal_assets/traffic_overtaking.png'; install -D -m 644 '/app/journal_assets/traffic_closepass.png' '/served/journal_assets/traffic_closepass.png'; install -D -m 644 '/app/journal_assets/traffic_cockpit.png' '/served/journal_assets/traffic_cockpit.png'; install -D -m 644 '/app/journal_assets/outrun_chase_gameplay.png' '/served/journal_assets/outrun_chase_gameplay.png'; install -D -m 644 '/app/journal_assets/outrun_cockpit_gameplay.png' '/served/journal_assets/outrun_cockpit_gameplay.png'; install -D -m 644 '/app/brief.html' '/served/docs/brief.html'; install -D -m 644 '/app/ir.html' '/served/docs/ir.html'; install -D -m 644 '/app/ir/card.css' '/served/docs/ir/card.css'; install -D -m 644 '/app/acceptance.md' '/served/docs/acceptance.md'; install -D -m 644 '/app/DESIGN.md' '/served/docs/DESIGN.md'; install -D -m 644 '/app/robots.txt' '/served/robots.txt'; install -D -m 644 '/app/sitemap.xml' '/served/sitemap.xml'; deno cache --frozen --config /omnishell/server/deno.json /omnishell/server/address.ts && deno run --frozen --cached-only --config /omnishell/server/deno.json --allow-read=/served --allow-write=/served,/served.scripts /omnishell/server/address.ts /served /served.scripts"
+          "RUN set -e; install -D -m 644 '/omnishell/interpreter/shell.js' '/served/omnishell/interpreter/shell.js'; install -D -m 644 '/omnishell/interpreter/chrome.js' '/served/omnishell/interpreter/chrome.js'; install -D -m 644 '/omnishell/interpreter/screen.js' '/served/omnishell/interpreter/screen.js'; install -D -m 644 '/omnishell/interpreter/fragment.js' '/served/omnishell/interpreter/fragment.js'; install -D -m 644 '/omnishell/interpreter/data-sync.js' '/served/omnishell/interpreter/data-sync.js'; install -D -m 644 '/omnishell/interpreter/validate.js' '/served/omnishell/interpreter/validate.js'; install -D -m 644 '/omnishell/interpreter/render.js' '/served/omnishell/interpreter/render.js'; install -D -m 644 '/omnishell/interpreter/release-plan.js' '/served/omnishell/interpreter/release-plan.js'; install -D -m 644 '/omnishell/interpreter/preloads.js' '/served/omnishell/interpreter/preloads.js'; install -D -m 644 '/omnishell/interpreter/link-prefetch.js' '/served/omnishell/interpreter/link-prefetch.js'; install -D -m 644 '/omnishell/interpreter/markup.js' '/served/omnishell/interpreter/markup.js'; install -D -m 644 '/omnishell/interpreter/script-url.js' '/served/omnishell/interpreter/script-url.js'; install -D -m 644 '/omnishell/interpreter/deferred-boot.js' '/served/omnishell/interpreter/deferred-boot.js'; install -D -m 644 '/omnishell/interpreter/host-dom.js' '/served/omnishell/interpreter/host-dom.js'; install -D -m 644 '/omnishell/interpreter/hatch.js' '/served/omnishell/interpreter/hatch.js'; install -D -m 644 '/omnishell/interpreter/hatch-worker.js' '/served/omnishell/interpreter/hatch-worker.js'; install -D -m 644 '/omnishell/interpreter/hatch-presenter.js' '/served/omnishell/interpreter/hatch-presenter.js'; install -D -m 644 '/omnishell/interpreter/presenter-realm.js' '/served/omnishell/interpreter/presenter-realm.js'; install -D -m 644 '/omnishell/interpreter/presenter.js' '/served/omnishell/interpreter/presenter.js'; install -D -m 644 '/omnishell/interpreter/storybook.js' '/served/omnishell/interpreter/storybook.js'; install -D -m 644 '/omnishell/interpreter/jessie.js' '/served/omnishell/interpreter/jessie.js'; install -D -m 644 '/omnishell/interpreter/kinetic.js' '/served/omnishell/interpreter/kinetic.js'; install -D -m 644 '/omnishell/interpreter/kinetic-milestones.js' '/served/omnishell/interpreter/kinetic-milestones.js'; install -D -m 644 '/omnishell/interpreter/kinetic-session.js' '/served/omnishell/interpreter/kinetic-session.js'; install -D -m 644 '/omnishell/interpreter/kinetic-sound.js' '/served/omnishell/interpreter/kinetic-sound.js'; install -D -m 644 '/omnishell/interpreter/kinetic-mount.js' '/served/omnishell/interpreter/kinetic-mount.js'; install -D -m 644 '/omnishell/interpreter/rtc-channel.js' '/served/omnishell/interpreter/rtc-channel.js'; install -D -m 644 '/omnishell/interpreter/prng.js' '/served/omnishell/interpreter/prng.js'; install -D -m 644 '/omnishell/interpreter/vendor/mecha-client.js' '/served/omnishell/interpreter/vendor/mecha-client.js'; install -D -m 644 '/omnishell/interpreter/vendor/js-yaml.js' '/served/omnishell/interpreter/vendor/js-yaml.js'; install -D -m 644 '/omnishell/interpreter/vendor/ses.umd.min.js' '/served/omnishell/interpreter/vendor/ses.umd.min.js'; install -D -m 644 '/omnishell/interpreter/vendor/morphlex.js' '/served/omnishell/interpreter/vendor/morphlex.js'; install -D -m 644 '/omnishell/interpreter/vendor/messages.js' '/served/omnishell/interpreter/vendor/messages.js'; install -D -m 644 '/omnishell/interpreter/vendor/game-inputs.js' '/served/omnishell/interpreter/vendor/game-inputs.js'; install -D -m 644 '/omnishell/interpreter/vendor/ggrs/ggrs_wasm.js' '/served/omnishell/interpreter/vendor/ggrs/ggrs_wasm.js'; install -D -m 644 '/omnishell/interpreter/vendor/ggrs/ggrs_wasm_bg.wasm' '/served/omnishell/interpreter/vendor/ggrs/ggrs_wasm_bg.wasm'; install -D -m 644 '/omnishell/components/wallclock.js' '/served/omnishell/components/wallclock.js'; install -D -m 644 '/app/shell/index.html' '/served/shell/index.html'; install -D -m 644 '/app/shell/shell.css' '/served/shell/shell.css'; install -D -m 644 '/app/shell/boot.js' '/served/shell/boot.js'; install -D -m 644 '/app/offline-first-sw.js' '/served/offline-first-sw.js'; install -D -m 644 '/app/shell/shell.yaml' '/served/shell/shell.yaml'; install -D -m 644 '/app/shell/shell.json' '/served/shell/shell.json'; install -D -m 644 '/app/shell/design.css' '/served/shell/design.css'; install -D -m 644 '/app/shell/screens/arena.html' '/served/shell/screens/arena.html'; install -D -m 644 '/app/shell/screens/arena.css' '/served/shell/screens/arena.css'; install -D -m 644 '/app/shell/handlers/lease.js' '/served/shell/handlers/lease.js'; install -D -m 644 '/app/shell/handlers/lobby.js' '/served/shell/handlers/lobby.js'; install -D -m 644 '/app/shell/handlers/run.js' '/served/shell/handlers/run.js'; install -D -m 644 '/app/shell/renderers/ending.js' '/served/shell/renderers/ending.js'; install -D -m 644 '/app/shell/renderers/run_time.js' '/served/shell/renderers/run_time.js'; install -D -m 644 '/app/shell/renderers/stage.js' '/served/shell/renderers/stage.js'; install -D -m 644 '/app/shell/engines/apexrun.json' '/served/shell/engines/apexrun.json'; install -D -m 644 '/app/shell/engines/sound.json' '/served/shell/engines/sound.json'; install -D -m 644 '/app/assets/manifest.json' '/served/assets/manifest.json'; install -D -m 644 '/app/shell/engine/art.js' '/served/shell/engine/art.js'; install -D -m 644 '/app/shell/engine/effects.js' '/served/shell/engine/effects.js'; install -D -m 644 '/app/shell/engine/hud.js' '/served/shell/engine/hud.js'; install -D -m 644 '/app/shell/engine/present.js' '/served/shell/engine/present.js'; install -D -m 644 '/app/shell/engine/prng.js' '/served/shell/engine/prng.js'; install -D -m 644 '/app/shell/engine/renderer.js' '/served/shell/engine/renderer.js'; install -D -m 644 '/app/shell/engine/scatter.js' '/served/shell/engine/scatter.js'; install -D -m 644 '/app/shell/engine/scenery.js' '/served/shell/engine/scenery.js'; install -D -m 644 '/app/shell/engine/simulation.js' '/served/shell/engine/simulation.js'; install -D -m 644 '/app/shell/engine/stage_look.js' '/served/shell/engine/stage_look.js'; install -D -m 644 '/app/journal.html' '/served/journal.html'; install -D -m 644 '/app/ir.html' '/served/ir.html'; install -D -m 644 '/app/ir/card.css' '/served/ir/card.css'; install -D -m 644 '/app/ir/neighbourhood-app.svg' '/served/ir/neighbourhood-app.svg'; install -D -m 644 '/app/ir/neighbourhood-arena.svg' '/served/ir/neighbourhood-arena.svg'; install -D -m 644 '/app/brief.html' '/served/brief.html'; install -D -m 644 '/app/brief.md' '/served/brief.md'; install -D -m 644 '/app/journal_assets/stitch_outrun_vision.png' '/served/journal_assets/stitch_outrun_vision.png'; install -D -m 644 '/app/journal_assets/stitch_hud_telemetry.png' '/served/journal_assets/stitch_hud_telemetry.png'; install -D -m 644 '/app/journal_assets/t42_phone_race.jpg' '/served/journal_assets/t42_phone_race.jpg'; install -D -m 644 '/app/journal_assets/t42_phone_title.jpg' '/served/journal_assets/t42_phone_title.jpg'; install -D -m 644 '/app/journal_assets/t42_phone_initials.jpg' '/served/journal_assets/t42_phone_initials.jpg'; install -D -m 644 '/app/journal_assets/t42_portrait_race.jpg' '/served/journal_assets/t42_portrait_race.jpg'; install -D -m 644 '/app/journal_assets/t42_tablet_race.jpg' '/served/journal_assets/t42_tablet_race.jpg'; install -D -m 644 '/app/journal_assets/t42_tablet_duel.jpg' '/served/journal_assets/t42_tablet_duel.jpg'; install -D -m 644 '/app/journal_assets/t42_tablet_paused.jpg' '/served/journal_assets/t42_tablet_paused.jpg'; install -D -m 644 '/app/journal_assets/t41_castle_arrival.jpg' '/served/journal_assets/t41_castle_arrival.jpg'; install -D -m 644 '/app/journal_assets/t41_oasis_arrival.jpg' '/served/journal_assets/t41_oasis_arrival.jpg'; install -D -m 644 '/app/journal_assets/t41_aerodrome_arrival.jpg' '/served/journal_assets/t41_aerodrome_arrival.jpg'; install -D -m 644 '/app/journal_assets/t41_trip_helicopter.jpg' '/served/journal_assets/t41_trip_helicopter.jpg'; install -D -m 644 '/app/journal_assets/t41_trip_pull.jpg' '/served/journal_assets/t41_trip_pull.jpg'; install -D -m 644 '/app/journal_assets/t41_trip_roadside.jpg' '/served/journal_assets/t41_trip_roadside.jpg'; install -D -m 644 '/app/journal_assets/t41_goal.jpg' '/served/journal_assets/t41_goal.jpg'; install -D -m 644 '/app/journal_assets/t40_lobby.jpg' '/served/journal_assets/t40_lobby.jpg'; install -D -m 644 '/app/journal_assets/t40_challenged.jpg' '/served/journal_assets/t40_challenged.jpg'; install -D -m 644 '/app/journal_assets/t40_racing_a.jpg' '/served/journal_assets/t40_racing_a.jpg'; install -D -m 644 '/app/journal_assets/t40_racing_b.jpg' '/served/journal_assets/t40_racing_b.jpg'; install -D -m 644 '/app/journal_assets/t40_result_a.jpg' '/served/journal_assets/t40_result_a.jpg'; install -D -m 644 '/app/journal_assets/t40_result_b.jpg' '/served/journal_assets/t40_result_b.jpg'; install -D -m 644 '/app/journal_assets/t39_checkpoint_before.jpg' '/served/journal_assets/t39_checkpoint_before.jpg'; install -D -m 644 '/app/journal_assets/t39_checkpoint_after.jpg' '/served/journal_assets/t39_checkpoint_after.jpg'; install -D -m 644 '/app/journal_assets/t39_go_before.jpg' '/served/journal_assets/t39_go_before.jpg'; install -D -m 644 '/app/journal_assets/t39_go_after.jpg' '/served/journal_assets/t39_go_after.jpg'; install -D -m 644 '/app/journal_assets/t39_result_before.jpg' '/served/journal_assets/t39_result_before.jpg'; install -D -m 644 '/app/journal_assets/t39_result_after.jpg' '/served/journal_assets/t39_result_after.jpg'; install -D -m 644 '/app/journal_assets/t39_initials.jpg' '/served/journal_assets/t39_initials.jpg'; install -D -m 644 '/app/journal_assets/t39_duel_end.jpg' '/served/journal_assets/t39_duel_end.jpg'; install -D -m 644 '/app/journal_assets/turn38-cluster-dom.png' '/served/journal_assets/turn38-cluster-dom.png'; install -D -m 644 '/app/journal_assets/turn38-cluster-layers.png' '/served/journal_assets/turn38-cluster-layers.png'; install -D -m 644 '/app/journal_assets/turn38-hud-dom.png' '/served/journal_assets/turn38-hud-dom.png'; install -D -m 644 '/app/journal_assets/turn38-hud-layers.png' '/served/journal_assets/turn38-hud-layers.png'; install -D -m 644 '/app/journal_assets/t37_duel_racing.jpg' '/served/journal_assets/t37_duel_racing.jpg'; install -D -m 644 '/app/journal_assets/t37_duel_online.jpg' '/served/journal_assets/t37_duel_online.jpg'; install -D -m 644 '/app/journal_assets/t36_firefox.jpg' '/served/journal_assets/t36_firefox.jpg'; install -D -m 644 '/app/journal_assets/t36_webkit.jpg' '/served/journal_assets/t36_webkit.jpg'; install -D -m 644 '/app/journal_assets/t35_presenter.jpg' '/served/journal_assets/t35_presenter.jpg'; install -D -m 644 '/app/journal_assets/t34_transition.jpg' '/served/journal_assets/t34_transition.jpg'; install -D -m 644 '/app/journal_assets/t34_transition_before.jpg' '/served/journal_assets/t34_transition_before.jpg'; install -D -m 644 '/app/journal_assets/t34_loading.jpg' '/served/journal_assets/t34_loading.jpg'; install -D -m 644 '/app/journal_assets/t34_pull.jpg' '/served/journal_assets/t34_pull.jpg'; install -D -m 644 '/app/journal_assets/t33_arm.jpg' '/served/journal_assets/t33_arm.jpg'; install -D -m 644 '/app/journal_assets/t33_approach.jpg' '/served/journal_assets/t33_approach.jpg'; install -D -m 644 '/app/journal_assets/t33_landmarks.jpg' '/served/journal_assets/t33_landmarks.jpg'; install -D -m 644 '/app/journal_assets/t33_compare.jpg' '/served/journal_assets/t33_compare.jpg'; install -D -m 644 '/app/journal_assets/t32_closeups.jpg' '/served/journal_assets/t32_closeups.jpg'; install -D -m 644 '/app/journal_assets/t32_compare.jpg' '/served/journal_assets/t32_compare.jpg'; install -D -m 644 '/app/journal_assets/t31_compare.jpg' '/served/journal_assets/t31_compare.jpg'; install -D -m 644 '/app/journal_assets/t31_tulip.jpg' '/served/journal_assets/t31_tulip.jpg'; install -D -m 644 '/app/journal_assets/t30_compare.jpg' '/served/journal_assets/t30_compare.jpg'; install -D -m 644 '/app/journal_assets/t30_cliffs.jpg' '/served/journal_assets/t30_cliffs.jpg'; install -D -m 644 '/app/journal_assets/t29_compare.jpg' '/served/journal_assets/t29_compare.jpg'; install -D -m 644 '/app/journal_assets/t29_desert.jpg' '/served/journal_assets/t29_desert.jpg'; install -D -m 644 '/app/journal_assets/t28_compare.jpg' '/served/journal_assets/t28_compare.jpg'; install -D -m 644 '/app/journal_assets/t28_coconut.jpg' '/served/journal_assets/t28_coconut.jpg'; install -D -m 644 '/app/journal_assets/t28_phone.jpg' '/served/journal_assets/t28_phone.jpg'; install -D -m 644 '/app/journal_assets/t27_coconut.jpg' '/served/journal_assets/t27_coconut.jpg'; install -D -m 644 '/app/journal_assets/t27_desert.jpg' '/served/journal_assets/t27_desert.jpg'; install -D -m 644 '/app/journal_assets/t27_riders.jpg' '/served/journal_assets/t27_riders.jpg'; install -D -m 644 '/app/journal_assets/t26_coconut.jpg' '/served/journal_assets/t26_coconut.jpg'; install -D -m 644 '/app/journal_assets/t26_desert.jpg' '/served/journal_assets/t26_desert.jpg'; install -D -m 644 '/app/journal_assets/t25_desert.jpg' '/served/journal_assets/t25_desert.jpg'; install -D -m 644 '/app/journal_assets/t25_alpine.jpg' '/served/journal_assets/t25_alpine.jpg'; install -D -m 644 '/app/journal_assets/t24_coconut.jpg' '/served/journal_assets/t24_coconut.jpg'; install -D -m 644 '/app/journal_assets/t24_tulip.jpg' '/served/journal_assets/t24_tulip.jpg'; install -D -m 644 '/app/journal_assets/t23_railway_desert.jpg' '/served/journal_assets/t23_railway_desert.jpg'; install -D -m 644 '/app/journal_assets/t23_railway_alpine.jpg' '/served/journal_assets/t23_railway_alpine.jpg'; install -D -m 644 '/app/journal_assets/t22_roll.jpg' '/served/journal_assets/t22_roll.jpg'; install -D -m 644 '/app/journal_assets/t22_dive.jpg' '/served/journal_assets/t22_dive.jpg'; install -D -m 644 '/app/journal_assets/t21_granite.jpg' '/served/journal_assets/t21_granite.jpg'; install -D -m 644 '/app/journal_assets/t21_sandstone.jpg' '/served/journal_assets/t21_sandstone.jpg'; install -D -m 644 '/app/journal_assets/t20_gantry.jpg' '/served/journal_assets/t20_gantry.jpg'; install -D -m 644 '/app/journal_assets/t20_metro_climb.jpg' '/served/journal_assets/t20_metro_climb.jpg'; install -D -m 644 '/app/journal_assets/t19_cartoon.jpg' '/served/journal_assets/t19_cartoon.jpg'; install -D -m 644 '/app/journal_assets/t18_field.jpg' '/served/journal_assets/t18_field.jpg'; install -D -m 644 '/app/journal_assets/t17_world.jpg' '/served/journal_assets/t17_world.jpg'; install -D -m 644 '/app/journal_assets/t16_hero.jpg' '/served/journal_assets/t16_hero.jpg'; install -D -m 644 '/app/journal_assets/t15_handover.jpg' '/served/journal_assets/t15_handover.jpg'; install -D -m 644 '/app/journal_assets/t15_goal.jpg' '/served/journal_assets/t15_goal.jpg'; install -D -m 644 '/app/journal_assets/t14_desert.jpg' '/served/journal_assets/t14_desert.jpg'; install -D -m 644 '/app/journal_assets/t14_alpine.jpg' '/served/journal_assets/t14_alpine.jpg'; install -D -m 644 '/app/journal_assets/t14_wilderness.jpg' '/served/journal_assets/t14_wilderness.jpg'; install -D -m 644 '/app/journal_assets/t14_night.jpg' '/served/journal_assets/t14_night.jpg'; install -D -m 644 '/app/journal_assets/t14_trial.jpg' '/served/journal_assets/t14_trial.jpg'; install -D -m 644 '/app/journal_assets/t13_climb.jpg' '/served/journal_assets/t13_climb.jpg'; install -D -m 644 '/app/journal_assets/t13_boost.jpg' '/served/journal_assets/t13_boost.jpg'; install -D -m 644 '/app/journal_assets/t13_hood.jpg' '/served/journal_assets/t13_hood.jpg'; install -D -m 644 '/app/journal_assets/t13_gauge.png' '/served/journal_assets/t13_gauge.png'; install -D -m 644 '/app/journal_assets/t12_ao.jpg' '/served/journal_assets/t12_ao.jpg'; install -D -m 644 '/app/journal_assets/t11_speed.jpg' '/served/journal_assets/t11_speed.jpg'; install -D -m 644 '/app/journal_assets/t11_night.jpg' '/served/journal_assets/t11_night.jpg'; install -D -m 644 '/app/journal_assets/t11_hood.jpg' '/served/journal_assets/t11_hood.jpg'; install -D -m 644 '/app/journal_assets/t10_swoop.jpg' '/served/journal_assets/t10_swoop.jpg'; install -D -m 644 '/app/journal_assets/t10_countdown.jpg' '/served/journal_assets/t10_countdown.jpg'; install -D -m 644 '/app/journal_assets/t10_extended.jpg' '/served/journal_assets/t10_extended.jpg'; install -D -m 644 '/app/journal_assets/t10_depart.jpg' '/served/journal_assets/t10_depart.jpg'; install -D -m 644 '/app/journal_assets/t9_coconut.jpg' '/served/journal_assets/t9_coconut.jpg'; install -D -m 644 '/app/journal_assets/t9_alpine.jpg' '/served/journal_assets/t9_alpine.jpg'; install -D -m 644 '/app/journal_assets/t9_castle.jpg' '/served/journal_assets/t9_castle.jpg'; install -D -m 644 '/app/journal_assets/t9_webgl2.jpg' '/served/journal_assets/t9_webgl2.jpg'; install -D -m 644 '/app/journal_assets/t8_traffic.jpg' '/served/journal_assets/t8_traffic.jpg'; install -D -m 644 '/app/journal_assets/t8_crash.jpg' '/served/journal_assets/t8_crash.jpg'; install -D -m 644 '/app/journal_assets/t6_steer.jpg' '/served/journal_assets/t6_steer.jpg'; install -D -m 644 '/app/journal_assets/t7_coconut-beach.jpg' '/served/journal_assets/t7_coconut-beach.jpg'; install -D -m 644 '/app/journal_assets/t7_desert-canyons.jpg' '/served/journal_assets/t7_desert-canyons.jpg'; install -D -m 644 '/app/journal_assets/t7_alpine-peaks.jpg' '/served/journal_assets/t7_alpine-peaks.jpg'; install -D -m 644 '/app/journal_assets/t7_castle.jpg' '/served/journal_assets/t7_castle.jpg'; install -D -m 644 '/app/journal_assets/t6_hood.jpg' '/served/journal_assets/t6_hood.jpg'; install -D -m 644 '/app/journal_assets/t4_rival.jpg' '/served/journal_assets/t4_rival.jpg'; install -D -m 644 '/app/journal_assets/t5_chase.jpg' '/served/journal_assets/t5_chase.jpg'; install -D -m 644 '/app/journal_assets/t5_hood.jpg' '/served/journal_assets/t5_hood.jpg'; install -D -m 644 '/app/journal_assets/t4_timeover.jpg' '/served/journal_assets/t4_timeover.jpg'; install -D -m 644 '/app/journal_assets/t4_saved.jpg' '/served/journal_assets/t4_saved.jpg'; install -D -m 644 '/app/journal_assets/t4_phone_saved.jpg' '/served/journal_assets/t4_phone_saved.jpg'; install -D -m 644 '/app/journal_assets/t3_tuner.jpg' '/served/journal_assets/t3_tuner.jpg'; install -D -m 644 '/app/journal_assets/t3_title.jpg' '/served/journal_assets/t3_title.jpg'; install -D -m 644 '/app/journal_assets/t2_before_wall.jpg' '/served/journal_assets/t2_before_wall.jpg'; install -D -m 644 '/app/journal_assets/t2_before_rival_finish.jpg' '/served/journal_assets/t2_before_rival_finish.jpg'; install -D -m 644 '/app/journal_assets/t2_live_coconut.jpg' '/served/journal_assets/t2_live_coconut.jpg'; install -D -m 644 '/app/journal_assets/t2_desert.jpg' '/served/journal_assets/t2_desert.jpg'; install -D -m 644 '/app/journal_assets/t2_alpine.jpg' '/served/journal_assets/t2_alpine.jpg'; install -D -m 644 '/app/journal_assets/t2_metropolis.jpg' '/served/journal_assets/t2_metropolis.jpg'; install -D -m 644 '/app/journal_assets/t2_tulip.jpg' '/served/journal_assets/t2_tulip.jpg'; install -D -m 644 '/app/journal_assets/t2_coastal.jpg' '/served/journal_assets/t2_coastal.jpg'; install -D -m 644 '/app/journal_assets/t2_marina.jpg' '/served/journal_assets/t2_marina.jpg'; install -D -m 644 '/app/journal_assets/t2_fork_left.jpg' '/served/journal_assets/t2_fork_left.jpg'; install -D -m 644 '/app/journal_assets/t2_fork_right.jpg' '/served/journal_assets/t2_fork_right.jpg'; install -D -m 644 '/app/journal_assets/t2_hood.jpg' '/served/journal_assets/t2_hood.jpg'; install -D -m 644 '/app/journal_assets/t2_title.jpg' '/served/journal_assets/t2_title.jpg'; install -D -m 644 '/app/journal_assets/t2_paused.jpg' '/served/journal_assets/t2_paused.jpg'; install -D -m 644 '/app/journal_assets/t2_cdn_down.jpg' '/served/journal_assets/t2_cdn_down.jpg'; install -D -m 644 '/app/journal_assets/t2_arena.jpg' '/served/journal_assets/t2_arena.jpg'; install -D -m 644 '/app/journal_assets/traffic_overtaking.png' '/served/journal_assets/traffic_overtaking.png'; install -D -m 644 '/app/journal_assets/traffic_closepass.png' '/served/journal_assets/traffic_closepass.png'; install -D -m 644 '/app/journal_assets/traffic_cockpit.png' '/served/journal_assets/traffic_cockpit.png'; install -D -m 644 '/app/journal_assets/outrun_chase_gameplay.png' '/served/journal_assets/outrun_chase_gameplay.png'; install -D -m 644 '/app/journal_assets/outrun_cockpit_gameplay.png' '/served/journal_assets/outrun_cockpit_gameplay.png'; install -D -m 644 '/app/brief.html' '/served/docs/brief.html'; install -D -m 644 '/app/ir.html' '/served/docs/ir.html'; install -D -m 644 '/app/ir/card.css' '/served/docs/ir/card.css'; install -D -m 644 '/app/acceptance.md' '/served/docs/acceptance.md'; install -D -m 644 '/app/DESIGN.md' '/served/docs/DESIGN.md'; install -D -m 644 '/app/robots.txt' '/served/robots.txt'; install -D -m 644 '/app/sitemap.xml' '/served/sitemap.xml'; deno cache --frozen --config /omnishell/server/deno.json /omnishell/server/address.ts && deno run --frozen --cached-only --config /omnishell/server/deno.json --allow-read=/served --allow-write=/served,/served.scripts /omnishell/server/address.ts /served /served.scripts"
         ],
         "defaultCopy": null,
         "healthcheck": null,
@@ -8155,7 +9068,7 @@
         "manual": false,
         "build": {
           "additional_contexts": {
-            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.19.0@sha256:c29f0e6ba82bcf2872ede2b21c871adfe1106f6d02d3bbaf6f421b0614e0d071}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
           },
           "secrets": [],
           "args": {}
@@ -8336,7 +9249,7 @@
         "manual": false,
         "build": {
           "additional_contexts": {
-            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.18.0@sha256:d9e29732173131baa7088e04c2e441fb07c7d3d70d9a1da6b189bd849c648e28}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+            "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.19.0@sha256:c29f0e6ba82bcf2872ede2b21c871adfe1106f6d02d3bbaf6f421b0614e0d071}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
           },
           "secrets": [],
           "args": {}
@@ -9479,6 +10392,41 @@
               "action": "rebuild",
               "path": "../journal_assets/stitch_hud_telemetry.png",
               "target": "/srv/journal_assets/stitch_hud_telemetry.png"
+            },
+            {
+              "action": "rebuild",
+              "path": "../journal_assets/t42_phone_race.jpg",
+              "target": "/srv/journal_assets/t42_phone_race.jpg"
+            },
+            {
+              "action": "rebuild",
+              "path": "../journal_assets/t42_phone_title.jpg",
+              "target": "/srv/journal_assets/t42_phone_title.jpg"
+            },
+            {
+              "action": "rebuild",
+              "path": "../journal_assets/t42_phone_initials.jpg",
+              "target": "/srv/journal_assets/t42_phone_initials.jpg"
+            },
+            {
+              "action": "rebuild",
+              "path": "../journal_assets/t42_portrait_race.jpg",
+              "target": "/srv/journal_assets/t42_portrait_race.jpg"
+            },
+            {
+              "action": "rebuild",
+              "path": "../journal_assets/t42_tablet_race.jpg",
+              "target": "/srv/journal_assets/t42_tablet_race.jpg"
+            },
+            {
+              "action": "rebuild",
+              "path": "../journal_assets/t42_tablet_duel.jpg",
+              "target": "/srv/journal_assets/t42_tablet_duel.jpg"
+            },
+            {
+              "action": "rebuild",
+              "path": "../journal_assets/t42_tablet_paused.jpg",
+              "target": "/srv/journal_assets/t42_tablet_paused.jpg"
             },
             {
               "action": "rebuild",

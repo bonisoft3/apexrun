@@ -1,5 +1,6 @@
 import { assert, assertEquals } from "jsr:@std/assert@1";
 import { createSound, engineVoice, scheduleStation, STATIONS, MIX } from "../shell/engine/sound.js";
+import { evaluateEngine } from "./platform.ts";
 
 // A WebAudio stand-in that records the graph it is asked to build.
 class FakeParam {
@@ -215,8 +216,6 @@ Deno.test("audio: flat out, the engine sits well under the radio", () => {
 // The terminal steps the role in an SES compartment endowed with nothing: the
 // context is the only authority it holds, and the factory hands it in.
 Deno.test("audio: the sound role runs in the terminal's cage on the context it is handed", async () => {
-  (0, eval)(await Deno.readTextFile(new URL(import.meta.resolve("/omnishell/interpreter/vendor/ses.umd.min.js"))));
-  const { evaluateEngine } = await import("/omnishell/interpreter/jessie.js");
   const graph = JSON.parse(await Deno.readTextFile(new URL("../shell/engines/sound.json", import.meta.url)));
   const caged = await evaluateEngine(graph, "sound");
   const ctx = new FakeContext();

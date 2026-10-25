@@ -4,11 +4,7 @@
 // to any of them. Loading a milestone the way scrubbing the rows' history
 // does lands on the forward run's own frame, checksum for checksum.
 import { assert, assertEquals } from "jsr:@std/assert@1";
-import { createKineticHost, canonical, checksum } from "/omnishell/interpreter/kinetic.js";
-import { unpackInputs } from "/omnishell/interpreter/kinetic-milestones.js";
-
-(0, eval)(await Deno.readTextFile(new URL(import.meta.resolve("/omnishell/interpreter/vendor/ses.umd.min.js"))));
-const { evaluateEngine } = await import("/omnishell/interpreter/jessie.js");
+import { createKineticHost, canonical, checksum, unpackInputs, ggrsWasm, evaluateEngine, createRollbackHost, loadMilestone } from "./platform.ts";
 const caged = await evaluateEngine(JSON.parse(await Deno.readTextFile(new URL("../shell/engines/apexrun.json", import.meta.url))));
 const solo = { width: 2, encode: caged.encodeCommand, decode: caged.decodeCommand, snapshots: caged.milestoneSnapshots };
 
@@ -67,13 +63,10 @@ for (const [name, kinds] of Object.entries(runs)) {
 // frame back seven: the finish lifts once, settled, with both seats' bytes,
 // and the rows replay the duel both cars raced.
 Deno.test("milestones: the recorded duel lifts its finish once through the rollback session", async () => {
-  const { createRollbackHost } = await import("/omnishell/interpreter/kinetic-session.js");
-  const { loadMilestone } = await import("/omnishell/interpreter/kinetic-milestones.js");
-  const module = await Deno.readFile(new URL(import.meta.resolve("/omnishell/interpreter/vendor/ggrs/ggrs_wasm_bg.wasm")));
   const run = JSON.parse(await Deno.readTextFile(new URL("runs/duel.json", import.meta.url)));
   const rows: any[] = [];
   const host = await createRollbackHost({
-    engine: caged, module, session: "synctest", checkDistance: 7, seed: run.seed, initOptions: run.initOptions,
+    engine: caged, module: ggrsWasm, session: "synctest", checkDistance: 7, seed: run.seed, initOptions: run.initOptions,
     encode: caged.encodeInput, decode: caged.decodeInputs, milestones: { onLift: (m: any) => rows.push(m) },
   });
   for (const [count, input] of run.inputs) for (let i = 0; i < count; i++) host.step(input);

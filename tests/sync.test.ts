@@ -14,10 +14,7 @@
 // so the cage changes nothing a frame computes.
 import { assertEquals } from "jsr:@std/assert@1";
 import { apexrunEngine } from "../shell/engine/simulation.js";
-import { createKineticHost } from "/omnishell/interpreter/kinetic.js";
-
-(0, eval)(await Deno.readTextFile(new URL(import.meta.resolve("/omnishell/interpreter/vendor/ses.umd.min.js"))));
-const { evaluateEngine } = await import("/omnishell/interpreter/jessie.js");
+import { createKineticHost, ggrsWasm, evaluateEngine, createRollbackHost } from "./platform.ts";
 const caged = await evaluateEngine(JSON.parse(await Deno.readTextFile(new URL("../shell/engines/apexrun.json", import.meta.url))));
 
 for (const name of ["title-left-fork-time-over", "right-fork-time-over", "castle-ending", "ruins-oasis-ending", "cliffs-aerodrome-ending", "duel"]) {
@@ -44,11 +41,9 @@ for (const name of ["title-left-fork-time-over", "right-fork-time-over", "castle
 // it, its inputs through the byte each seat sends, and the run still ends
 // where it was recorded.
 Deno.test("GGRS's sync test: the recorded duel through the rollback session ends where it was recorded", async () => {
-  const { createRollbackHost } = await import("/omnishell/interpreter/kinetic-session.js");
-  const module = await Deno.readFile(new URL(import.meta.resolve("/omnishell/interpreter/vendor/ggrs/ggrs_wasm_bg.wasm")));
   const run = JSON.parse(await Deno.readTextFile(new URL("runs/duel.json", import.meta.url)));
   const host = await createRollbackHost({
-    engine: caged, module, session: "synctest", checkDistance: 7, seed: run.seed, initOptions: run.initOptions,
+    engine: caged, module: ggrsWasm, session: "synctest", checkDistance: 7, seed: run.seed, initOptions: run.initOptions,
     encode: caged.encodeInput, decode: caged.decodeInputs,
   });
   for (const [count, input] of run.inputs) for (let i = 0; i < count; i++) host.step(input);

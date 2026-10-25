@@ -24,11 +24,11 @@ deps: {
 		default: true
 	}
 	"github.com/bonisoft3/omnishell@v0": {
-		v:       "v0.18.1"
+		v:       "v0.19.1"
 		default: true
 	}
 	"github.com/bonisoft3/pronto@v0": {
-		v:       "v0.22.1"
+		v:       "v0.24.1"
 		default: true
 	}
 	"github.com/bonisoft3/sayt@v0": {

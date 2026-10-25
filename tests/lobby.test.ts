@@ -3,9 +3,7 @@
 // once, the switch, a challenge on the picked stage keyed by its draws, and
 // the answers, each a row the machines' surface takes.
 import { assert, assertEquals } from "jsr:@std/assert@1";
-
-(0, eval)(await Deno.readTextFile(new URL(import.meta.resolve("/omnishell/interpreter/vendor/ses.umd.min.js"))));
-const { evaluateHandler } = await import("/omnishell/interpreter/jessie.js");
+import { evaluateHandler } from "./platform.ts";
 const read = (path: string) => Deno.readTextFile(new URL(path, import.meta.url));
 const lobby = await evaluateHandler(await read("../shell/handlers/lobby.js"));
 const html = await read("../shell/screens/arena.html");

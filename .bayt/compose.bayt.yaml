@@ -38,6 +38,10 @@ include:
   required: false
 - path: ./compose.ci-duel.yaml
   required: false
+- path: ./compose.check-touch.yaml
+  required: false
+- path: ./compose.ci-touch.yaml
+  required: false
 - path: ./compose.check-leaderboard-access.yaml
   required: false
 - path: ./compose.ci-leaderboard-access.yaml

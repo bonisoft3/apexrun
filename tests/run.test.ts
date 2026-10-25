@@ -2,16 +2,11 @@
 // store of its own tables: its phases from the title to the saved score, the
 // race's milestones as the rows it shows, and, through the arena's kinetic
 // child as the terminal wires it (omnishell's kinetic-mount.js, the bindings
-// shell.json carries), the initials a key and a gamepad both edit while
-// nothing reaches the car.
+// shell.json carries), the initials a key, a gamepad and the touch keypad
+// edit while nothing reaches the car.
 import { assert, assertEquals } from "jsr:@std/assert@1";
-import { kineticChild } from "/omnishell/interpreter/kinetic-mount.js";
-import { createKineticInput } from "/omnishell/interpreter/kinetic.js";
+import { kineticChild, attachTouch, createKineticInput, canonical, checksum, evaluateEngine, evaluateHandler } from "./platform.ts";
 import { ARCH_LEAD, OUTRUN_STAGES } from "../shell/engine/simulation.js";
-import { canonical, checksum } from "/omnishell/interpreter/kinetic.js";
-
-(0, eval)(await Deno.readTextFile(new URL(import.meta.resolve("/omnishell/interpreter/vendor/ses.umd.min.js"))));
-const { evaluateEngine, evaluateHandler } = await import("/omnishell/interpreter/jessie.js");
 const read = (path: string) => Deno.readTextFile(new URL(path, import.meta.url));
 const run = await evaluateHandler(await read("../shell/handlers/run.js"));
 const engine = await evaluateEngine(JSON.parse(await read("../shell/engines/apexrun.json")));
@@ -226,14 +221,16 @@ Deno.test("run: the board refuses the words program.cue denies", async () => {
 
 // Regression: the car and the initials read one keyboard. The race once kept
 // reading the keys after it ended, so a press meant for a letter steered.
-Deno.test("run: after the race a gamepad axis and a key both edit the letters, and nothing reaches the car", () => {
+Deno.test("run: after the race a gamepad axis, a key and the touch keypad edit the letters, and nothing reaches the car", () => {
   const a = arena();
   a.settle();
   const frames: ((t: number) => void)[] = [];
   const target = new EventTarget();
+  const fingers = screen();
   const el = {
     dataset: { kinetic: "race" } as Record<string, string>,
-    ownerDocument: { defaultView: { CustomEvent, addEventListener() {}, removeEventListener() {} } },
+    closest: () => fingers.root,
+    ownerDocument: { defaultView: { CustomEvent, matchMedia: () => ({ matches: false }), addEventListener() {}, removeEventListener() {} } },
     dispatchEvent: (e: Event) => target.dispatchEvent(e),
   };
   for (const type of ["milestone", "menu"]) target.addEventListener(type, (e) => a.raise({ type, detail: (e as CustomEvent).detail }));
@@ -249,6 +246,7 @@ Deno.test("run: after the race a gamepad axis and a key both edit the letters, a
       made.push(input);
       return input;
     },
+    track: fingers.track,
     schedule: (fn: (t: number) => void) => frames.push(fn),
     cancel: () => {},
   });
@@ -289,9 +287,94 @@ Deno.test("run: after the race a gamepad axis and a key both edit the letters, a
     Object.defineProperty(navigator, "getGamepads", { value: () => [], configurable: true });
   }
   assertEquals(a.row.initial_0, "A", "a gamepad axis edits it back");
+  fingers.tap(["menu-right"]);
+  fingers.tap(["menu-up"]);
+  assertEquals([a.row.cursor, a.row.initial_1], [1, "B"], "the keypad moves and edits");
+  fingers.down(1, ["drive", "left"]);
   child.host.stepTick();
-  assertEquals(child.host.getInputLog(child.host.getCurrentTick()).up, false, "the held key still reaches no car");
+  const after = child.host.getInputLog(child.host.getCurrentTick());
+  assertEquals([after.up, after.left], [false, false], "the held key and a thumb on the pad still reach no car");
   car.inputs._handleKeyEvent("ArrowUp", false, { code: "ArrowUp" });
+  child.destroy();
+});
+
+/** A touch screen as the test lays it out: each finger is over the zones it
+ * says, and its pointer events reach the screen as a phone's do. */
+function screen() {
+  const win = Object.assign(new EventTarget(), { CSSStyleSheet: class { replaceSync() {} } });
+  const doc = Object.assign(new EventTarget(), { defaultView: win, hidden: false, adoptedStyleSheets: [] });
+  const root = Object.assign(new EventTarget(), { ownerDocument: doc, dataset: {}, setAttribute() {}, setPointerCapture() {} });
+  const under = new Map<number, string[]>();
+  const fire = (type: string, id: number) => {
+    const ev = new Event(type, { cancelable: true }) as Event & { pointerId: number };
+    ev.pointerId = id;
+    root.dispatchEvent(ev);
+  };
+  const zonesAt = (ev: { pointerId: number }) => under.get(ev.pointerId) ?? [];
+  return {
+    root,
+    track: () => attachTouch(root as unknown as Parameters<typeof attachTouch>[0], { zonesAt }),
+    down(id: number, zones: string[]) {
+      under.set(id, zones);
+      fire("pointerdown", id);
+    },
+    up(id: number) {
+      fire("pointerup", id);
+      under.delete(id);
+    },
+    tap(zones: string[]) {
+      this.down(9, zones);
+      this.up(9);
+    },
+  };
+}
+
+// DESIGN.md "Touch": shell.json's bindings make the pad and pedals the car's
+// command bits, as the keys are, and a duel's two clusters each seat's.
+Deno.test("run: the pad and pedals drive the car through its bindings, and each duel seat drives on its own cluster", () => {
+  const fingers = screen();
+  const el = {
+    dataset: { kinetic: "race" } as Record<string, string>,
+    closest: () => fingers.root,
+    ownerDocument: { defaultView: { CustomEvent, matchMedia: () => ({ matches: false }), addEventListener() {}, removeEventListener() {} } },
+    dispatchEvent: () => true,
+  };
+  // deno-lint-ignore no-explicit-any
+  const child = kineticChild(el as any, {
+    decl: shell.kinetic.race,
+    engine,
+    sound: null,
+    presenter: { reading: 0, settled: () => Promise.resolve(), frame() {}, destroy() {} },
+    track: fingers.track,
+    schedule: () => 0,
+    cancel: () => {},
+  });
+  const last = () => child.host.getInputLog(child.host.getCurrentTick());
+  child.update({ seed: "7", phase: "race", mode: "", input: "car", clock: "hold" });
+  fingers.down(1, ["drive", "left"]);
+  fingers.down(2, ["nitro"]);
+  child.host.stepTick();
+  assertEquals([last().up, last().left, last().right, last().nitro, last().down], [true, true, false, true, false]);
+  fingers.up(2);
+  fingers.down(3, ["brake"]);
+  child.host.stepTick();
+  assertEquals([last().up, last().left, last().nitro, last().down], [true, true, false, true]);
+  fingers.up(1);
+  fingers.up(3);
+  child.host.stepTick();
+  assertEquals([last().up, last().down], [false, false], "lifted, the car coasts");
+  // Between the two races, the results card holds the input.
+  child.update({ seed: "7", phase: "result", mode: "", input: "menu", clock: "hold" });
+  child.host.stepTick();
+
+  child.update({ seed: "8", phase: "race", mode: "hotseat", input: "car", clock: "hold" });
+  fingers.down(1, ["drive", "right"]);
+  fingers.down(2, ["drive-2", "left-2"]);
+  fingers.down(3, ["brake-2"]);
+  child.host.stepTick();
+  const { 0: one, 1: two } = last();
+  assertEquals([one.up, one.right, one.left, one.down], [true, true, false, false], "the first seat");
+  assertEquals([two.up, two.left, two.right, two.down], [true, true, false, true], "the second seat");
   child.destroy();
 });
 
@@ -305,7 +388,8 @@ function child(a: ReturnType<typeof arena>, presenter: any) {
   const target = new EventTarget();
   const el = {
     dataset: { kinetic: "race" } as Record<string, string>,
-    ownerDocument: { defaultView: { CustomEvent, addEventListener() {}, removeEventListener() {} } },
+    closest: () => screen().root,
+    ownerDocument: { defaultView: { CustomEvent, matchMedia: () => ({ matches: false }), addEventListener() {}, removeEventListener() {} } },
     dispatchEvent: (e: Event) => target.dispatchEvent(e),
   };
   for (const type of ["milestone", "menu", "replayed"]) target.addEventListener(type, (e) => a.raise({ type, detail: (e as CustomEvent).detail }));

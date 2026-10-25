@@ -107,6 +107,27 @@ services:
         path: ../journal_assets/stitch_hud_telemetry.png
         target: /srv/journal_assets/stitch_hud_telemetry.png
       - action: rebuild
+        path: ../journal_assets/t42_phone_race.jpg
+        target: /srv/journal_assets/t42_phone_race.jpg
+      - action: rebuild
+        path: ../journal_assets/t42_phone_title.jpg
+        target: /srv/journal_assets/t42_phone_title.jpg
+      - action: rebuild
+        path: ../journal_assets/t42_phone_initials.jpg
+        target: /srv/journal_assets/t42_phone_initials.jpg
+      - action: rebuild
+        path: ../journal_assets/t42_portrait_race.jpg
+        target: /srv/journal_assets/t42_portrait_race.jpg
+      - action: rebuild
+        path: ../journal_assets/t42_tablet_race.jpg
+        target: /srv/journal_assets/t42_tablet_race.jpg
+      - action: rebuild
+        path: ../journal_assets/t42_tablet_duel.jpg
+        target: /srv/journal_assets/t42_tablet_duel.jpg
+      - action: rebuild
+        path: ../journal_assets/t42_tablet_paused.jpg
+        target: /srv/journal_assets/t42_tablet_paused.jpg
+      - action: rebuild
         path: ../journal_assets/t41_castle_arrival.jpg
         target: /srv/journal_assets/t41_castle_arrival.jpg
       - action: rebuild

@@ -8,7 +8,7 @@
 // candidates, which a second context does not resolve without STUN (pronto's
 // kinetic-machine record), so it is skipped and says so.
 
-import { baseUrl } from "/omnishell/base-url.ts";
+import { baseUrl } from "./platform.ts";
 import { openArena } from "./arena.ts";
 
 // deno-lint-ignore no-explicit-any

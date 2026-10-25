@@ -12,7 +12,7 @@ say:
         cmds:
         - do: >-
             use integrate.nu; integrate --bake --no-up --with-buildx --target
-            ci-boot,ci-duel,ci-finish,ci-leaderboard-access,ci-online
+            ci-boot,ci-duel,ci-finish,ci-leaderboard-access,ci-online,ci-touch
       visual:
         cmds:
         - do: use integrate.nu; integrate --bake --no-up --with-buildx --target ci-visual
@@ -167,42 +167,40 @@ say:
       simulation:
         cmds:
         - do: >-
-            deno test --config tests/deno.json --allow-read --allow-env
-            tests/simulation.test.ts tests/kinetic_engine.test.ts tests/sync.test.ts tests/milestones.test.ts
+            deno test --config tests/deno.json --lock tests/deno.lock --frozen
+            --unstable-raw-imports --allow-read --allow-env tests/simulation.test.ts
+            tests/kinetic_engine.test.ts tests/sync.test.ts tests/milestones.test.ts
       assets:
         cmds:
         - do: >-
-            deno test --config tests/deno.json --allow-read tests/assets.test.ts
-            tests/art.test.ts
+            deno test --config tests/deno.json --lock tests/deno.lock --frozen
+            --unstable-raw-imports --allow-read tests/assets.test.ts tests/art.test.ts
       scenery:
         cmds:
         - do: >-
-            deno test --config tests/deno.json --allow-read --allow-env
-            tests/scenery.test.ts tests/scatter.test.ts
+            deno test --config tests/deno.json --lock tests/deno.lock --frozen
+            --unstable-raw-imports --allow-read --allow-env tests/scenery.test.ts tests/scatter.test.ts
       renderer:
         cmds:
         - do: >-
-            deno test --config tests/deno.json --allow-read --allow-env
-            tests/renderer.test.ts
+            deno test --config tests/deno.json --lock tests/deno.lock --frozen
+            --unstable-raw-imports --allow-read --allow-env tests/renderer.test.ts
       run:
         cmds:
-        - do: deno test --config tests/deno.json --allow-read --allow-env tests/run.test.ts
+        - do: >-
+            deno test --config tests/deno.json --lock tests/deno.lock --frozen
+            --unstable-raw-imports --allow-read --allow-env tests/run.test.ts
       online_machine:
         cmds:
         - do: >-
-            deno test --config tests/deno.json --no-lock --allow-read --allow-env
-            tests/online-machine.test.ts tests/lobby.test.ts
+            deno test --config tests/deno.json --lock tests/deno.lock --frozen
+            --unstable-raw-imports --allow-read --allow-env tests/online-machine.test.ts
+            tests/lobby.test.ts
       audio:
         cmds:
-        - do: deno test --config tests/deno.json --allow-read --allow-env tests/audio.test.ts
-      test-config:
-        priority: -1
-        cmds:
         - do: >-
-            use tools.nu [run-mise]; let pronto = (run-mise where github:bonisoft3/pronto |
-            str trim); run-mise exec -- deno run --config ($pronto | path join deno.json)
-            --allow-read --allow-write=tests --allow-run=mise ($pronto | path join
-            test-config.ts) .
+            deno test --config tests/deno.json --lock tests/deno.lock --frozen
+            --unstable-raw-imports --allow-read --allow-env tests/audio.test.ts
       machines:
         cmds:
         - do: use tools.nu [run-mise]; run-mise exec -- omnishell check machines .

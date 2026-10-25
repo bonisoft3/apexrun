@@ -184,7 +184,7 @@
             </div>
           </div>
           <div class="hud-util-strip">
-            <button type="button" class="hud-slant hud-util-btn" id="stk-pause-btn" data-on-click="run">
+            <button type="button" class="hud-slant hud-util-btn keys-only" id="stk-pause-btn" data-on-click="run">
               <span class="hud-slant-content">PAUSE [ESC]</span>
             </button>
           </div>
@@ -239,11 +239,44 @@
     <canvas data-layer="effects" class="stk-layer stk-layer-over" aria-hidden="true"></canvas>
     <p class="stk-prompt arena-art-loading" role="status">LOADING THE ROAD AHEAD</p>
 
+    <!-- Touch controls: DESIGN.md "Touch". -->
+    <div class="touch-deck touch-only" aria-hidden="true">
+      <div class="touch-seat" data-seat="1">
+        <div class="touch-pad">
+          <span class="touch-pad-left" data-touch-zone="drive left">◀</span>
+          <span class="touch-pad-mid" data-touch-zone="drive"></span>
+          <span class="touch-pad-right" data-touch-zone="drive right">▶</span>
+        </div>
+        <div class="touch-pedals">
+          <span class="touch-nitro" data-touch-zone="nitro">NITRO</span>
+          <span class="touch-brake" data-touch-zone="brake">BRAKE</span>
+        </div>
+      </div>
+      <div class="touch-seat" data-seat="2">
+        <div class="touch-pedals">
+          <span class="touch-nitro" data-touch-zone="nitro-2">NITRO</span>
+          <span class="touch-brake" data-touch-zone="brake-2">BRAKE</span>
+        </div>
+        <div class="touch-pad">
+          <span class="touch-pad-left" data-touch-zone="drive-2 left-2">◀</span>
+          <span class="touch-pad-mid" data-touch-zone="drive-2"></span>
+          <span class="touch-pad-right" data-touch-zone="drive-2 right-2">▶</span>
+        </div>
+      </div>
+      <span class="touch-pause" data-touch-zone="pause" data-touch-tap></span>
+      <span class="touch-skip" data-touch-zone="skip" data-touch-tap>SKIP ▸▸</span>
+    </div>
+
     <div class="stk-modal-scrim">
       <div class="stk-modal-card stk-title-card">
         <h1 class="stk-modal-title">APEX RUN</h1>
         <p class="stk-title-sub">Branching Highway Simcade</p>
-        <div class="stk-title-keys">
+        <div class="stk-title-keys stk-title-touch touch-only">
+          <div><b>Left thumb</b> on the pad drives. Slide ◀ ▶ to steer, lift to coast.</div>
+          <div><b>Right thumb</b>: BRAKE, and NITRO for a burst.</div>
+          <div><b>❚❚</b> above the pad pauses.</div>
+        </div>
+        <div class="stk-title-keys keys-only">
           <div>🏎️ <b>W / ⬆️</b>: Accelerate</div>
           <div>⬅️ <b>A / D / ⬅️ ➡️</b>: Steer</div>
           <div>⚙️ <b>G</b>: Manual shift (low/high)</div>
@@ -262,8 +295,8 @@
           <span><span data-text="{volume}">70</span>%</span>
         </form>
         <div class="stk-title-actions">
-          <button type="button" class="stk-btn stk-btn-go" id="stk-btn-start" data-on-click="run">START RACE (ENTER)</button>
-          <button type="button" class="stk-btn" id="stk-btn-duel" data-on-click="run">DUEL · 2 PLAYERS (2)</button>
+          <button type="button" class="stk-btn stk-btn-go" id="stk-btn-start" data-on-click="run">START RACE<span class="keys-only"> (ENTER)</span></button>
+          <button type="button" class="stk-btn" id="stk-btn-duel" data-on-click="run">DUEL · 2 PLAYERS<span class="keys-only"> (2)</span></button>
           <button type="button" class="stk-btn" id="stk-btn-pit" data-on-click="run">TELEMETRY</button>
           <div class="stk-lobby-door" data-live="lobby_tab" data-filter="id=eq.the" data-empty-row='{"id":"the","lease":"","me":"","note":"","shown":"","open":"no","offer":"","stage":"coconut-beach","name":""}' data-reads="lobby_tab,apexrun_presence_lease,apexrun_presence_seat,apexrun_presence_command,apexrun_challenge_seat,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,run,run_signal,run_milestone">
             <button type="button" class="stk-btn stk-btn-online" id="stk-btn-lobby" data-on-click="lobby">ONLINE DUEL</button>
@@ -319,7 +352,7 @@
       <div class="stk-modal-card stk-pause-card">
         <h2 class="stk-modal-title">PAUSED</h2>
         <div class="stk-title-actions">
-          <button type="button" class="stk-btn" id="stk-pause-resume" data-on-click="run">RESUME (ESC)</button>
+          <button type="button" class="stk-btn" id="stk-pause-resume" data-on-click="run">RESUME<span class="keys-only"> (ESC)</span></button>
           <button type="button" class="stk-btn" id="stk-pause-restart" data-on-click="run">RESTART</button>
         </div>
       </div>
@@ -344,8 +377,15 @@
     <section class="arena-finish">
       <div class="arena-score">
         <p class="arena-finish-label">NEW HIGH SCORE · ENTER YOUR INITIALS</p>
-        <p class="arena-initials" role="group" aria-label="Initials"><span class="arena-initial" data-text="{initial_0}">A</span><span class="arena-initial" data-text="{initial_1}">A</span><span class="arena-initial" data-text="{initial_2}">A</span></p>
-        <p class="arena-finish-hint">Type three letters, or ▲▼ to change one and ◀▶ to move. Enter saves.</p>
+        <div class="arena-keypad">
+          <span class="arena-key arena-key-up touch-only" data-touch-zone="menu-up" data-touch-tap aria-hidden="true">▲</span>
+          <span class="arena-key arena-key-left touch-only" data-touch-zone="menu-left" data-touch-tap aria-hidden="true">◀</span>
+          <p class="arena-initials" role="group" aria-label="Initials"><span class="arena-initial" data-text="{initial_0}">A</span><span class="arena-initial" data-text="{initial_1}">A</span><span class="arena-initial" data-text="{initial_2}">A</span></p>
+          <span class="arena-key arena-key-right touch-only" data-touch-zone="menu-right" data-touch-tap aria-hidden="true">▶</span>
+          <span class="arena-key arena-key-down touch-only" data-touch-zone="menu-down" data-touch-tap aria-hidden="true">▼</span>
+        </div>
+        <p class="arena-finish-hint keys-only">Type three letters, or ▲▼ to change one and ◀▶ to move. Enter saves.</p>
+        <p class="arena-finish-hint touch-only">▲▼ change the letter, ◀▶ move to the next. Then save.</p>
         <p class="invalid">Three letters, A to Z, and not a word the board refuses.</p>
         <button type="button" class="arena-finish-save" id="arena-finish-save" data-on-click="run">SAVE</button>
         <p class="arena-finish-saved">SAVED · your run is on the board.</p>

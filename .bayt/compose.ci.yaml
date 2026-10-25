@@ -51,6 +51,7 @@ services:
         apexrun-ci-boot_bayt: service:apexrun-ci-boot_bayt
         apexrun-ci-online_bayt: service:apexrun-ci-online_bayt
         apexrun-ci-duel_bayt: service:apexrun-ci-duel_bayt
+        apexrun-ci-touch_bayt: service:apexrun-ci-touch_bayt
         apexrun-ci-leaderboard-access_bayt: service:apexrun-ci-leaderboard-access_bayt
         apexrun-database_srcs: service:apexrun-database_srcs
         apexrun-setup_srcs: service:apexrun-setup_srcs
@@ -158,6 +159,7 @@ services:
         apexrun-ci-boot_bayt: service:apexrun-ci-boot_bayt
         apexrun-ci-online_bayt: service:apexrun-ci-online_bayt
         apexrun-ci-duel_bayt: service:apexrun-ci-duel_bayt
+        apexrun-ci-touch_bayt: service:apexrun-ci-touch_bayt
         apexrun-ci-leaderboard-access_bayt: service:apexrun-ci-leaderboard-access_bayt
         apexrun-database_bayt: service:apexrun-database_bayt
         apexrun-setup_bayt: service:apexrun-setup_bayt

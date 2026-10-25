@@ -1793,3 +1793,375 @@ canvas.hud-layer-eq {
 /* An online duel is raced once: the lobby offers the next. */
 .arena-run[data-mode="online"] #stk-res-restart,
 .arena-run:not([data-mode="online"]) #stk-res-lobby { display: none; }
+
+/* Touch: DESIGN.md "Touch" is the layout, omnishell's docs/kinetic.md the
+   zones and the attributes the screen wears. */
+.screen:not([data-kinetic-touch]) .touch-only,
+.screen[data-kinetic-touch] .keys-only {
+  display: none;
+}
+
+.screen[data-screen="arena"] {
+  --touch-glass: rgba(10, 14, 24, 0.55);
+  --touch-rim: rgba(255, 255, 255, 0.3);
+  --touch-gold: #FFB347;
+  --touch-nitro: #FF5E00;
+  --touch-brake: #FF4D4D;
+  --touch-gut-l: max(16px, env(safe-area-inset-left));
+  --touch-gut-r: max(16px, env(safe-area-inset-right));
+  --touch-gut-b: max(14px, env(safe-area-inset-bottom));
+  /* A tablet is held at its sides: the thumbs rest a quarter up. */
+  --touch-y: 24%;
+  --touch-pad-w: 300px;
+  --touch-pad-h: 112px;
+  --touch-brake-size: 116px;
+  --touch-nitro-size: 92px;
+  --touch-gap: 18px;
+}
+
+/* A phone is held at its corners. */
+@media (max-width: 540px), (max-height: 540px) {
+  .screen[data-screen="arena"] {
+    --touch-y: var(--touch-gut-b);
+    --touch-pad-w: min(40vw, 250px);
+    --touch-pad-h: 86px;
+    --touch-brake-size: 88px;
+    --touch-nitro-size: 70px;
+    --touch-gap: 12px;
+  }
+}
+@media (max-width: 540px) {
+  .screen[data-screen="arena"] {
+    --touch-pad-w: 46vw;
+  }
+}
+
+.touch-deck {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  font: 700 13px/1 'Rajdhani', system-ui, sans-serif;
+  letter-spacing: 0.14em;
+  color: #F5F7FA;
+}
+
+[data-touch-zone] {
+  pointer-events: auto;
+}
+
+.touch-seat,
+.touch-pause,
+.touch-skip {
+  display: none;
+}
+
+.touch-seat {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* The left thumb's pad: throttle wherever it rests, steering on its halves,
+   straight in the notch between them. */
+.touch-pad {
+  position: absolute;
+  left: var(--touch-gut-l);
+  bottom: var(--touch-y);
+  width: var(--touch-pad-w);
+  height: var(--touch-pad-h);
+  display: grid;
+  grid-template-columns: 1fr 0.4fr 1fr;
+  border-radius: 999px;
+  background: var(--touch-glass);
+  border: 1.5px solid var(--touch-rim);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.touch-pad > span {
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--touch-pad-h) * 0.32);
+  color: rgba(255, 179, 71, 0.85);
+  transition: background 0.08s ease, color 0.08s ease;
+}
+
+.touch-pad-left { border-radius: 999px 0 0 999px; }
+.touch-pad-right { border-radius: 0 999px 999px 0; }
+/* Each zone reaches past the pad's rounded rim, so a thumb on its curved
+   ends, or just beyond them, still drives. */
+.touch-pad > span::before {
+  content: "";
+  position: absolute;
+  inset: -14px 0;
+}
+.touch-pad-left::before { left: -14px; }
+.touch-pad-right::before { right: -14px; }
+
+/* The notch: a rest for the thumb going straight. */
+.touch-pad-mid {
+  background: linear-gradient(90deg, transparent 46%, rgba(255, 255, 255, 0.28) 46%, rgba(255, 255, 255, 0.28) 54%, transparent 54%) center / 100% 44% no-repeat;
+}
+
+.touch-pedals {
+  position: absolute;
+  right: var(--touch-gut-r);
+  bottom: var(--touch-y);
+  display: flex;
+  align-items: flex-end;
+  gap: var(--touch-gap);
+  pointer-events: none;
+}
+
+.touch-brake,
+.touch-nitro {
+  display: grid;
+  place-items: center;
+  background: var(--touch-glass);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  transition: background 0.08s ease, transform 0.08s ease;
+}
+
+.touch-brake {
+  width: var(--touch-brake-size);
+  height: calc(var(--touch-brake-size) * 1.12);
+  border-radius: 20px;
+  border: 2px solid var(--touch-brake);
+  color: #FFD2D2;
+}
+
+/* Nitro sits up and inward of the brake, on the thumb's arc. */
+.touch-nitro {
+  width: var(--touch-nitro-size);
+  height: var(--touch-nitro-size);
+  margin-bottom: calc(var(--touch-brake-size) * 0.62);
+  border-radius: 50%;
+  border: 2px solid var(--touch-nitro);
+  color: #FFD9B8;
+  font-size: 12px;
+}
+
+.touch-pause {
+  position: absolute;
+  left: var(--touch-gut-l);
+  bottom: calc(var(--touch-y) + var(--touch-pad-h) + 22px);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background:
+    linear-gradient(90deg, transparent 36%, #F5F7FA 36%, #F5F7FA 45%, transparent 45%, transparent 55%, #F5F7FA 55%, #F5F7FA 64%, transparent 64%) center / 100% 38% no-repeat,
+    var(--touch-glass);
+  border: 1.5px solid var(--touch-rim);
+}
+
+.touch-skip {
+  position: absolute;
+  right: var(--touch-gut-r);
+  bottom: calc(var(--touch-gut-b) + 8px);
+  padding: 16px 26px;
+  border-radius: 999px;
+  background: var(--touch-glass);
+  border: 1.5px solid var(--touch-gold);
+  color: var(--touch-gold);
+  font-size: 16px;
+}
+
+/* What shows is the phase's: a run's pad and pedals, a duel's two clusters,
+   pause while a race can be held, SKIP over the road trip. */
+.arena-run[data-phase="race"] .touch-seat[data-seat="1"],
+.arena-run[data-phase="race"][data-mode="hotseat"] .touch-seat[data-seat="2"],
+.arena-run[data-phase="replay"] .touch-skip {
+  display: block;
+}
+.arena-run[data-phase="race"]:not([data-mode="online"]) .touch-pause {
+  display: block;
+}
+
+/* A duel on one screen: each seat's cluster a column on its own edge, the
+   pedals over the pad, every width taken from half the screen's, so the two
+   seats never meet on any screen. */
+.arena-run[data-mode="hotseat"] .touch-deck {
+  container-type: size;
+  --duel-w: min(var(--touch-pad-w), calc((100cqw - var(--touch-gut-l) - var(--touch-gut-r) - 24px) / 2));
+  --duel-pedal: min(var(--touch-brake-size), calc((var(--duel-w) - var(--touch-gap)) / 2));
+}
+.arena-run[data-mode="hotseat"] .touch-pad {
+  width: var(--duel-w);
+}
+.arena-run[data-mode="hotseat"] .touch-pedals {
+  width: var(--duel-w);
+  bottom: calc(var(--touch-y) + var(--touch-pad-h) + var(--touch-gap));
+  justify-content: space-between;
+}
+.arena-run[data-mode="hotseat"] .touch-brake {
+  width: var(--duel-pedal);
+  height: calc(var(--duel-pedal) * 1.12);
+}
+.arena-run[data-mode="hotseat"] .touch-nitro {
+  width: min(var(--touch-nitro-size), var(--duel-pedal));
+  height: min(var(--touch-nitro-size), var(--duel-pedal));
+  margin-bottom: 0;
+}
+.arena-run[data-mode="hotseat"] .touch-seat[data-seat="1"] .touch-pedals {
+  right: auto;
+  left: var(--touch-gut-l);
+}
+.arena-run[data-mode="hotseat"] .touch-seat[data-seat="2"] .touch-pad {
+  left: auto;
+  right: var(--touch-gut-r);
+}
+.arena-run[data-mode="hotseat"] .touch-seat[data-seat="2"] .touch-pedals {
+  flex-direction: row-reverse;
+}
+.arena-run[data-mode="hotseat"] .touch-pause {
+  bottom: calc(var(--touch-y) + var(--touch-pad-h) + 2 * var(--touch-gap) + var(--duel-pedal) * 1.12);
+}
+.arena-run[data-mode="hotseat"] .touch-seat[data-seat="2"] :is(.touch-pad, .touch-brake, .touch-nitro) {
+  border-color: #00F0FF;
+}
+.arena-run[data-mode="hotseat"] .touch-seat[data-seat="2"] .touch-pad > span {
+  color: rgba(0, 240, 255, 0.85);
+}
+
+/* Under a thumb: the pad's rim glows gold while it drives, the half it
+   steers by fills, a pedal fills and sinks. */
+.screen[data-touch-held~="drive"] .touch-seat[data-seat="1"] .touch-pad,
+.screen[data-touch-held~="drive-2"] .touch-seat[data-seat="2"] .touch-pad {
+  border-color: var(--touch-gold);
+  box-shadow: 0 0 0 1px var(--touch-gold), 0 0 22px rgba(255, 179, 71, 0.45);
+}
+.screen[data-touch-held~="left"] [data-touch-zone="drive left"],
+.screen[data-touch-held~="right"] [data-touch-zone="drive right"],
+.screen[data-touch-held~="left-2"] [data-touch-zone="drive-2 left-2"],
+.screen[data-touch-held~="right-2"] [data-touch-zone="drive-2 right-2"] {
+  background: rgba(255, 179, 71, 0.5);
+  color: #141A24;
+}
+.screen[data-touch-held~="brake"] [data-touch-zone="brake"],
+.screen[data-touch-held~="brake-2"] [data-touch-zone="brake-2"] {
+  background: rgba(255, 77, 77, 0.6);
+  transform: scale(0.95);
+}
+.screen[data-touch-held~="nitro"] [data-touch-zone="nitro"],
+.screen[data-touch-held~="nitro-2"] [data-touch-zone="nitro-2"] {
+  background: rgba(255, 94, 0, 0.7);
+  transform: scale(0.95);
+}
+.screen[data-touch-held~="pause"] .touch-pause,
+.screen[data-touch-held~="skip"] .touch-skip,
+.screen[data-touch-held~="menu-up"] .arena-key-up,
+.screen[data-touch-held~="menu-down"] .arena-key-down,
+.screen[data-touch-held~="menu-left"] .arena-key-left,
+.screen[data-touch-held~="menu-right"] .arena-key-right {
+  background-color: rgba(255, 179, 71, 0.55);
+}
+
+/* The initials' keypad: ▲▼ over and under the letters, ◀▶ beside them. */
+.arena-keypad {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: ". up ." "left letters right" ". down .";
+  align-items: center;
+  gap: 8px;
+}
+.arena-keypad .arena-initials { grid-area: letters; margin: 0; }
+.arena-key-up { grid-area: up; justify-self: center; }
+.arena-key-down { grid-area: down; justify-self: center; }
+.arena-key-left { grid-area: left; }
+.arena-key-right { grid-area: right; }
+.arena-key {
+  display: grid;
+  place-items: center;
+  min-width: 56px;
+  min-height: 48px;
+  border-radius: 10px;
+  background: #1E2633;
+  border: 1.5px solid #3A4658;
+  color: #FFB347;
+  font-size: 20px;
+}
+
+/* On a touch screen the cards' keyboard pause button gives way to the
+   glass one, the pit lane's badge to the road, and a tablet keeps every
+   panel but the ones its thumbs rest on. */
+.screen[data-kinetic-touch] :is(.pitlane-badge, .hud-telemetry-card, .hud-surface-pill) {
+  display: none;
+}
+
+/* A phone keeps the speed, beside its time, out from under the pedals:
+   at the top right held flat, under the rival held upright. */
+@media (max-width: 540px), (max-height: 540px) {
+  .screen[data-kinetic-touch] .hud-bottom-right {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+  }
+  .screen[data-kinetic-touch] :is(.hud-trans-header, .hud-tacho-box) {
+    display: none;
+  }
+}
+@media (max-width: 540px) {
+  .screen[data-kinetic-touch] .hud-bottom-right {
+    top: 250px;
+  }
+}
+
+/* A short screen scrolls its cards rather than cutting off their buttons. */
+@media (max-height: 540px) {
+  .stk-modal-scrim {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+  .stk-modal-card {
+    margin: auto;
+    padding: 16px 22px;
+    gap: 10px;
+  }
+  .stk-title-sub,
+  .stk-title-card .stk-title-pick {
+    display: none;
+  }
+  .stk-title-keys {
+    padding: 8px 12px;
+    line-height: 1.5;
+  }
+}
+
+/* A phone held flat: the result card on the left, the initials and the
+   board down the right, the keypad one row of five. */
+@media (max-height: 540px) and (min-width: 541px) {
+  .arena-run:is([data-phase="result"], [data-phase="initials"], [data-phase="saved"]) .stk-modal-scrim {
+    justify-content: flex-start;
+    padding-left: max(12px, env(safe-area-inset-left));
+  }
+  .arena-run:is([data-phase="result"], [data-phase="initials"], [data-phase="saved"]) .stk-results-card {
+    margin: auto 0;
+    width: min(46vw, 400px);
+    min-width: 0;
+  }
+  .arena-finish {
+    top: 8px;
+    right: max(8px, env(safe-area-inset-right));
+    bottom: 8px;
+    width: min(48vw, 420px);
+    max-height: none;
+  }
+  .arena-keypad {
+    grid-template-columns: auto auto 1fr auto auto;
+    grid-template-areas: "left down letters up right";
+  }
+  .arena-keypad {
+    gap: 6px;
+  }
+  .arena-key {
+    min-width: 44px;
+  }
+  .arena-initials {
+    gap: 0.25em;
+    padding: 4px 8px;
+    font-size: 30px;
+  }
+}

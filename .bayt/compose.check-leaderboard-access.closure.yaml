@@ -52,6 +52,8 @@ include:
   required: false
 - path: .././.bayt/compose.check-duel.yaml
   required: false
+- path: .././.bayt/compose.check-touch.yaml
+  required: false
 - path: .././.bayt/compose.check-leaderboard-access.yaml
   required: false
 - path: ../monorepo/${MONOREPO_COMPOSE_MODE:-docker-image}.yaml

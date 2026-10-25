@@ -3,7 +3,7 @@
 // save reaches a second player's live board; what the table refuses is said
 // on the panel rather than lost when it closes.
 
-import { baseUrl } from "/omnishell/base-url.ts";
+import { baseUrl } from "./platform.ts";
 import { openArena, phase, replay, start } from "./arena.ts";
 
 // deno-lint-ignore no-explicit-any

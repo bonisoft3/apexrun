@@ -5,6 +5,3 @@
 
 # Generated local preview proxy configuration.
 /.preview/
-
-# pronto writes the tests' configs where they run, from tests/*.app.json.
-/tests/deno.json

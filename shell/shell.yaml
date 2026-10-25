@@ -45,20 +45,24 @@ kinetic:
         - KeyW
         - ArrowUp
         - 'gamepad:axis:1:-'
+        - 'touch:drive'
       down:
         - KeyS
         - ArrowDown
         - 'gamepad:axis:1:+'
+        - 'touch:brake'
       left:
         - KeyA
         - ArrowLeft
         - KeyH
         - 'gamepad:axis:0:-'
+        - 'touch:left'
       right:
         - KeyD
         - ArrowRight
         - KeyL
         - 'gamepad:axis:0:+'
+        - 'touch:right'
       drift:
         - ShiftLeft
         - ShiftRight
@@ -69,6 +73,7 @@ kinetic:
         - Space
         - KeyX
         - 'gamepad:button:7'
+        - 'touch:nitro'
       enter:
         - Enter
         - NumpadEnter
@@ -81,18 +86,22 @@ kinetic:
         - ArrowUp
         - 'gamepad:axis:1:-'
         - 'gamepad:button:12'
+        - 'touch:menu-up'
       down:
         - ArrowDown
         - 'gamepad:axis:1:+'
         - 'gamepad:button:13'
+        - 'touch:menu-down'
       left:
         - ArrowLeft
         - 'gamepad:axis:0:-'
         - 'gamepad:button:14'
+        - 'touch:menu-left'
       right:
         - ArrowRight
         - 'gamepad:axis:0:+'
         - 'gamepad:button:15'
+        - 'touch:menu-right'
       back:
         - Backspace
       confirm:
@@ -100,6 +109,7 @@ kinetic:
         - NumpadEnter
         - 'gamepad:button:0'
         - 'gamepad:button:9'
+        - 'touch:skip'
       duel:
         - Digit2
       letter_a:
@@ -158,31 +168,42 @@ kinetic:
       - Escape
       - KeyP
       - 'gamepad:button:8'
+      - 'touch:pause'
     seats:
       - up:
           - KeyW
+          - 'touch:drive'
         down:
           - KeyS
+          - 'touch:brake'
         left:
           - KeyA
+          - 'touch:left'
         right:
           - KeyD
+          - 'touch:right'
         drift:
           - KeyE
         nitro:
           - KeyQ
+          - 'touch:nitro'
       - up:
           - ArrowUp
+          - 'touch:drive-2'
         down:
           - ArrowDown
+          - 'touch:brake-2'
         left:
           - ArrowLeft
+          - 'touch:left-2'
         right:
           - ArrowRight
+          - 'touch:right-2'
         drift:
           - Slash
         nitro:
           - ShiftRight
+          - 'touch:nitro-2'
     sound: shell/engines/sound.json
 iceServers: []
 local:

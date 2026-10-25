@@ -233,7 +233,7 @@ _arenaMarkup: #"""
             </div>
           </div>
           <div class="hud-util-strip">
-            <button type="button" class="hud-slant hud-util-btn" id="stk-pause-btn" data-on-click="run">
+            <button type="button" class="hud-slant hud-util-btn keys-only" id="stk-pause-btn" data-on-click="run">
               <span class="hud-slant-content">PAUSE [ESC]</span>
             </button>
           </div>
@@ -288,11 +288,44 @@ _arenaMarkup: #"""
     <canvas data-layer="effects" class="stk-layer stk-layer-over" aria-hidden="true"></canvas>
     <p class="stk-prompt arena-art-loading" role="status">LOADING THE ROAD AHEAD</p>
 
+    <!-- Touch controls: DESIGN.md "Touch". -->
+    <div class="touch-deck touch-only" aria-hidden="true">
+      <div class="touch-seat" data-seat="1">
+        <div class="touch-pad">
+          <span class="touch-pad-left" data-touch-zone="drive left">◀</span>
+          <span class="touch-pad-mid" data-touch-zone="drive"></span>
+          <span class="touch-pad-right" data-touch-zone="drive right">▶</span>
+        </div>
+        <div class="touch-pedals">
+          <span class="touch-nitro" data-touch-zone="nitro">NITRO</span>
+          <span class="touch-brake" data-touch-zone="brake">BRAKE</span>
+        </div>
+      </div>
+      <div class="touch-seat" data-seat="2">
+        <div class="touch-pedals">
+          <span class="touch-nitro" data-touch-zone="nitro-2">NITRO</span>
+          <span class="touch-brake" data-touch-zone="brake-2">BRAKE</span>
+        </div>
+        <div class="touch-pad">
+          <span class="touch-pad-left" data-touch-zone="drive-2 left-2">◀</span>
+          <span class="touch-pad-mid" data-touch-zone="drive-2"></span>
+          <span class="touch-pad-right" data-touch-zone="drive-2 right-2">▶</span>
+        </div>
+      </div>
+      <span class="touch-pause" data-touch-zone="pause" data-touch-tap></span>
+      <span class="touch-skip" data-touch-zone="skip" data-touch-tap>SKIP ▸▸</span>
+    </div>
+
     <div class="stk-modal-scrim">
       <div class="stk-modal-card stk-title-card">
         <h1 class="stk-modal-title">APEX RUN</h1>
         <p class="stk-title-sub">Branching Highway Simcade</p>
-        <div class="stk-title-keys">
+        <div class="stk-title-keys stk-title-touch touch-only">
+          <div><b>Left thumb</b> on the pad drives. Slide ◀ ▶ to steer, lift to coast.</div>
+          <div><b>Right thumb</b>: BRAKE, and NITRO for a burst.</div>
+          <div><b>❚❚</b> above the pad pauses.</div>
+        </div>
+        <div class="stk-title-keys keys-only">
           <div>🏎️ <b>W / ⬆️</b>: Accelerate</div>
           <div>⬅️ <b>A / D / ⬅️ ➡️</b>: Steer</div>
           <div>⚙️ <b>G</b>: Manual shift (low/high)</div>
@@ -311,8 +344,8 @@ _arenaMarkup: #"""
           <span><span data-text="{volume}">70</span>%</span>
         </form>
         <div class="stk-title-actions">
-          <button type="button" class="stk-btn stk-btn-go" id="stk-btn-start" data-on-click="run">START RACE (ENTER)</button>
-          <button type="button" class="stk-btn" id="stk-btn-duel" data-on-click="run">DUEL · 2 PLAYERS (2)</button>
+          <button type="button" class="stk-btn stk-btn-go" id="stk-btn-start" data-on-click="run">START RACE<span class="keys-only"> (ENTER)</span></button>
+          <button type="button" class="stk-btn" id="stk-btn-duel" data-on-click="run">DUEL · 2 PLAYERS<span class="keys-only"> (2)</span></button>
           <button type="button" class="stk-btn" id="stk-btn-pit" data-on-click="run">TELEMETRY</button>
           <div class="stk-lobby-door" data-live="lobby_tab" data-filter="id=eq.the" data-empty-row='\#(_lobbyEmpty)' \#(_lobbyReads)>
             <button type="button" class="stk-btn stk-btn-online" id="stk-btn-lobby" data-on-click="lobby">ONLINE DUEL</button>
@@ -359,7 +392,7 @@ _arenaMarkup: #"""
       <div class="stk-modal-card stk-pause-card">
         <h2 class="stk-modal-title">PAUSED</h2>
         <div class="stk-title-actions">
-          <button type="button" class="stk-btn" id="stk-pause-resume" data-on-click="run">RESUME (ESC)</button>
+          <button type="button" class="stk-btn" id="stk-pause-resume" data-on-click="run">RESUME<span class="keys-only"> (ESC)</span></button>
           <button type="button" class="stk-btn" id="stk-pause-restart" data-on-click="run">RESTART</button>
         </div>
       </div>
@@ -384,8 +417,15 @@ _arenaMarkup: #"""
     <section class="arena-finish">
       <div class="arena-score">
         <p class="arena-finish-label">NEW HIGH SCORE · ENTER YOUR INITIALS</p>
-        <p class="arena-initials" role="group" aria-label="Initials"><span class="arena-initial" data-text="{initial_0}">A</span><span class="arena-initial" data-text="{initial_1}">A</span><span class="arena-initial" data-text="{initial_2}">A</span></p>
-        <p class="arena-finish-hint">Type three letters, or ▲▼ to change one and ◀▶ to move. Enter saves.</p>
+        <div class="arena-keypad">
+          <span class="arena-key arena-key-up touch-only" data-touch-zone="menu-up" data-touch-tap aria-hidden="true">▲</span>
+          <span class="arena-key arena-key-left touch-only" data-touch-zone="menu-left" data-touch-tap aria-hidden="true">◀</span>
+          <p class="arena-initials" role="group" aria-label="Initials"><span class="arena-initial" data-text="{initial_0}">A</span><span class="arena-initial" data-text="{initial_1}">A</span><span class="arena-initial" data-text="{initial_2}">A</span></p>
+          <span class="arena-key arena-key-right touch-only" data-touch-zone="menu-right" data-touch-tap aria-hidden="true">▶</span>
+          <span class="arena-key arena-key-down touch-only" data-touch-zone="menu-down" data-touch-tap aria-hidden="true">▼</span>
+        </div>
+        <p class="arena-finish-hint keys-only">Type three letters, or ▲▼ to change one and ◀▶ to move. Enter saves.</p>
+        <p class="arena-finish-hint touch-only">▲▼ change the letter, ◀▶ move to the next. Then save.</p>
         <p class="invalid">Three letters, A to Z, and not a word the board refuses.</p>
         <button type="button" class="arena-finish-save" id="arena-finish-save" data-on-click="run">SAVE</button>
         <p class="arena-finish-saved">SAVED · your run is on the board.</p>
@@ -674,34 +714,38 @@ code: pronto.#App & {
 			engine:    "apexrun"
 			sound:     "sound"
 			presenter: "renderer"
+			// `touch:` keys are the arena's zones (DESIGN.md "Touch").
 			bindings: {
-				up: ["KeyW", "ArrowUp", "gamepad:axis:1:-"]
-				down: ["KeyS", "ArrowDown", "gamepad:axis:1:+"]
-				left: ["KeyA", "ArrowLeft", "KeyH", "gamepad:axis:0:-"]
-				right: ["KeyD", "ArrowRight", "KeyL", "gamepad:axis:0:+"]
+				up: ["KeyW", "ArrowUp", "gamepad:axis:1:-", "touch:drive"]
+				down: ["KeyS", "ArrowDown", "gamepad:axis:1:+", "touch:brake"]
+				left: ["KeyA", "ArrowLeft", "KeyH", "gamepad:axis:0:-", "touch:left"]
+				right: ["KeyD", "ArrowRight", "KeyL", "gamepad:axis:0:+", "touch:right"]
 				drift: ["ShiftLeft", "ShiftRight", "KeyZ", "gamepad:button:4", "gamepad:button:5"]
-				nitro: ["Space", "KeyX", "gamepad:button:7"]
+				nitro: ["Space", "KeyX", "gamepad:button:7", "touch:nitro"]
 				enter: ["Enter", "NumpadEnter", "gamepad:button:9"]
 				gear: ["KeyG", "gamepad:button:3"]
 			}
-			// Two players on one keyboard: WASD, and the arrows.
+			// Two players on one keyboard, WASD and the arrows, or on one touch
+			// screen, the first seat's cluster on the left and the second's on
+			// the right.
 			seats: [
-				{up: ["KeyW"], down: ["KeyS"], left: ["KeyA"], right: ["KeyD"], drift: ["KeyE"], nitro: ["KeyQ"]},
-				{up: ["ArrowUp"], down: ["ArrowDown"], left: ["ArrowLeft"], right: ["ArrowRight"], drift: ["Slash"], nitro: ["ShiftRight"]},
+				{up: ["KeyW", "touch:drive"], down: ["KeyS", "touch:brake"], left: ["KeyA", "touch:left"], right: ["KeyD", "touch:right"], drift: ["KeyE"], nitro: ["KeyQ", "touch:nitro"]},
+				{up: ["ArrowUp", "touch:drive-2"], down: ["ArrowDown", "touch:brake-2"], left: ["ArrowLeft", "touch:left-2"], right: ["ArrowRight", "touch:right-2"], drift: ["Slash"], nitro: ["ShiftRight", "touch:nitro-2"]},
 			]
 			// Between races: the title, the initials (▲▼ a letter, ◀▶ a slot,
-			// or the letter typed) and the save.
+			// or the letter typed) and the save; on a touch screen the keypad
+			// around the letters, and SKIP over the road trip.
 			menu: {
-				up: ["ArrowUp", "gamepad:axis:1:-", "gamepad:button:12"]
-				down: ["ArrowDown", "gamepad:axis:1:+", "gamepad:button:13"]
-				left: ["ArrowLeft", "gamepad:axis:0:-", "gamepad:button:14"]
-				right: ["ArrowRight", "gamepad:axis:0:+", "gamepad:button:15"]
+				up: ["ArrowUp", "gamepad:axis:1:-", "gamepad:button:12", "touch:menu-up"]
+				down: ["ArrowDown", "gamepad:axis:1:+", "gamepad:button:13", "touch:menu-down"]
+				left: ["ArrowLeft", "gamepad:axis:0:-", "gamepad:button:14", "touch:menu-left"]
+				right: ["ArrowRight", "gamepad:axis:0:+", "gamepad:button:15", "touch:menu-right"]
 				back: ["Backspace"]
-				confirm: ["Enter", "NumpadEnter", "gamepad:button:0", "gamepad:button:9"]
+				confirm: ["Enter", "NumpadEnter", "gamepad:button:0", "gamepad:button:9", "touch:skip"]
 				duel: ["Digit2"]
 				for l in strings.Split("abcdefghijklmnopqrstuvwxyz", "") {"letter_\(l)": ["Key\(strings.ToUpper(l))"]}
 			}
-			pause: ["Escape", "KeyP", "gamepad:button:8"]
+			pause: ["Escape", "KeyP", "gamepad:button:8", "touch:pause"]
 		}
 	}
 
@@ -861,7 +905,7 @@ loop: (pronto.#DefaultLoop & {"code": code, "cluster": cluster, "terminal": term
 loop: surface: checks: "simulation": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --allow-read --allow-env tests/simulation.test.ts tests/kinetic_engine.test.ts tests/sync.test.ts tests/milestones.test.ts",
+		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/simulation.test.ts tests/kinetic_engine.test.ts tests/sync.test.ts tests/milestones.test.ts",
 	]
 	note: "the deterministic 60Hz highway step (drifting, nitro, traffic, forks, the clock), the rollback host's save, load, replay and rewind, its sync test over recorded runs, and the milestones a run lifts and loads back to"
 }
@@ -898,7 +942,7 @@ cluster: surface: targets: {
 loop: surface: checks: "assets": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --allow-read tests/assets.test.ts tests/art.test.ts",
+		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read tests/assets.test.ts tests/art.test.ts",
 	]
 	note: "the art pack: the seed refuses tampered bytes, and every stage maps to files the manifest has"
 }
@@ -906,7 +950,7 @@ loop: surface: checks: "assets": {
 loop: surface: checks: "scenery": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --allow-read --allow-env tests/scenery.test.ts tests/scatter.test.ts",
+		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/scenery.test.ts tests/scatter.test.ts",
 	]
 	note: "the generated scenery: noise, ridge shapes per stage, frond cut-outs, wave normals, ground detail, verge scatter"
 }
@@ -914,7 +958,7 @@ loop: surface: checks: "scenery": {
 loop: surface: checks: "renderer": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --allow-read --allow-env tests/renderer.test.ts",
+		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/renderer.test.ts",
 	]
 	note: "adaptive resolution scaling, hardware scaling levels, and Babylon.js 3D rendering pipeline"
 }
@@ -922,15 +966,15 @@ loop: surface: checks: "renderer": {
 loop: surface: checks: "run": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --allow-read --allow-env tests/run.test.ts",
+		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/run.test.ts",
 	]
-	note: "the run machine: its phases from the title to the saved score, the race's milestones as its rows, and the initials a key and a gamepad edit while nothing reaches the car"
+	note: "the run machine: its phases from the title to the saved score, the race's milestones as its rows, the initials a key, a gamepad and the touch keypad edit while nothing reaches the car, and the pad and pedals as the car's and each duel seat's bits"
 }
 
 loop: surface: checks: "online_machine": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --no-lock --allow-read --allow-env tests/online-machine.test.ts tests/lobby.test.ts",
+		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/online-machine.test.ts tests/lobby.test.ts",
 	]
 	note: "the lobby's presence and challenges and the duel machine through their rules: admissions, answers, deadlines, the desync dispute and the result; the lobby's fold over its rows"
 }
@@ -938,7 +982,7 @@ loop: surface: checks: "online_machine": {
 loop: surface: checks: "audio": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --allow-read --allow-env tests/audio.test.ts",
+		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/audio.test.ts",
 	]
 	note: "station sequencer, engine voice and the WebAudio mix built against a recording context, in the terminal's cage"
 }
@@ -948,7 +992,7 @@ build: (pronto.#DefaultBuild & {"code": code, "loop": loop, "cluster": cluster, 
 build: checks: "finish": {
 	browser:  true
 	database: true
-	cmds: ["deno run --config tests/deno.json --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/finish.ts ."]
+	cmds: ["deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/finish.ts ."]
 	note: "end of a run in the browser: a goal plays its set piece and Enter skips its road trip, run-ended fills the form, the save reaches a second player's live board, a refused save and denied initials are said on the form"
 }
 
@@ -956,25 +1000,32 @@ out: pronto.#emit & {"code": code, "cluster": cluster, "terminal": terminal, "lo
 
 build: checks: "boot": {
 	browser: true
-	cmds: ["deno run --config tests/deno.json --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/boot.ts ."]
+	cmds: ["deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/boot.ts ."]
 	note: "the game boots in the browser: the engine module loads, the scene builds and draws frames, no page error"
 }
 
 build: checks: "online": {
 	database: true
-	cmds: ["deno test --config tests/deno.json --allow-env --allow-net --allow-read tests/online-access.ts"]
+	cmds: ["deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-env --allow-net --allow-read tests/online-access.ts"]
 	note: "the lobby and the duel through their surface rows in the stack's Postgres: leases, challenge races and expiry, the duel's signalling, joined milestones, the desync dispute, the result and the disconnect timeout"
 }
 
 build: checks: "duel": {
 	browser:  true
 	database: true
-	cmds: ["deno run --config tests/deno.json --no-lock --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/duel.ts ."]
+	cmds: ["deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/duel.ts ."]
 	note: "two racers in the lobby, a challenge accepted, the duel raced over a real data channel the duel machine signalled, to an end card both read from its result, with the same milestones and checksums"
+}
+
+build: checks: "touch": {
+	browser:  true
+	database: true
+	cmds: ["deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/touch.ts ."]
+	note: "Apex Run by touch alone on an emulated phone held flat and upright and a tablet: a run driven on the pad and pedals, paused and resumed, ended, its initials edited on the keypad and saved to the board; a duel on one tablet, each seat on its own cluster; a desktop shows none of it"
 }
 
 build: checks: "leaderboard-access": {
 	database: true
-	cmds: ["deno test --config tests/deno.json --allow-env --allow-net --allow-read --unsafely-ignore-certificate-errors=caddy tests/leaderboard-access.ts"]
+	cmds: ["deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-env --allow-net --allow-read --unsafely-ignore-certificate-errors=caddy tests/leaderboard-access.ts"]
 	note: "high scores: a player inserts only their own, once per run, never edits; checks refuse what no run produces; a redelivered POST is one row"
 }

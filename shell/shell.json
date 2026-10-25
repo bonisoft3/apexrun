@@ -57,24 +57,28 @@
         "up": [
           "KeyW",
           "ArrowUp",
-          "gamepad:axis:1:-"
+          "gamepad:axis:1:-",
+          "touch:drive"
         ],
         "down": [
           "KeyS",
           "ArrowDown",
-          "gamepad:axis:1:+"
+          "gamepad:axis:1:+",
+          "touch:brake"
         ],
         "left": [
           "KeyA",
           "ArrowLeft",
           "KeyH",
-          "gamepad:axis:0:-"
+          "gamepad:axis:0:-",
+          "touch:left"
         ],
         "right": [
           "KeyD",
           "ArrowRight",
           "KeyL",
-          "gamepad:axis:0:+"
+          "gamepad:axis:0:+",
+          "touch:right"
         ],
         "drift": [
           "ShiftLeft",
@@ -86,7 +90,8 @@
         "nitro": [
           "Space",
           "KeyX",
-          "gamepad:button:7"
+          "gamepad:button:7",
+          "touch:nitro"
         ],
         "enter": [
           "Enter",
@@ -102,22 +107,26 @@
         "up": [
           "ArrowUp",
           "gamepad:axis:1:-",
-          "gamepad:button:12"
+          "gamepad:button:12",
+          "touch:menu-up"
         ],
         "down": [
           "ArrowDown",
           "gamepad:axis:1:+",
-          "gamepad:button:13"
+          "gamepad:button:13",
+          "touch:menu-down"
         ],
         "left": [
           "ArrowLeft",
           "gamepad:axis:0:-",
-          "gamepad:button:14"
+          "gamepad:button:14",
+          "touch:menu-left"
         ],
         "right": [
           "ArrowRight",
           "gamepad:axis:0:+",
-          "gamepad:button:15"
+          "gamepad:button:15",
+          "touch:menu-right"
         ],
         "back": [
           "Backspace"
@@ -126,7 +135,8 @@
           "Enter",
           "NumpadEnter",
           "gamepad:button:0",
-          "gamepad:button:9"
+          "gamepad:button:9",
+          "touch:skip"
         ],
         "duel": [
           "Digit2"
@@ -213,47 +223,58 @@
       "pause": [
         "Escape",
         "KeyP",
-        "gamepad:button:8"
+        "gamepad:button:8",
+        "touch:pause"
       ],
       "seats": [
         {
           "up": [
-            "KeyW"
+            "KeyW",
+            "touch:drive"
           ],
           "down": [
-            "KeyS"
+            "KeyS",
+            "touch:brake"
           ],
           "left": [
-            "KeyA"
+            "KeyA",
+            "touch:left"
           ],
           "right": [
-            "KeyD"
+            "KeyD",
+            "touch:right"
           ],
           "drift": [
             "KeyE"
           ],
           "nitro": [
-            "KeyQ"
+            "KeyQ",
+            "touch:nitro"
           ]
         },
         {
           "up": [
-            "ArrowUp"
+            "ArrowUp",
+            "touch:drive-2"
           ],
           "down": [
-            "ArrowDown"
+            "ArrowDown",
+            "touch:brake-2"
           ],
           "left": [
-            "ArrowLeft"
+            "ArrowLeft",
+            "touch:left-2"
           ],
           "right": [
-            "ArrowRight"
+            "ArrowRight",
+            "touch:right-2"
           ],
           "drift": [
             "Slash"
           ],
           "nitro": [
-            "ShiftRight"
+            "ShiftRight",
+            "touch:nitro-2"
           ]
         }
       ],

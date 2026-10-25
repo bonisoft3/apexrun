@@ -76,6 +76,14 @@ includes:
     taskfile: ./Taskfile.ci-duel.yaml
     dir: ../
     optional: true
+  check-touch:
+    taskfile: ./Taskfile.check-touch.yaml
+    dir: ../
+    optional: true
+  ci-touch:
+    taskfile: ./Taskfile.ci-touch.yaml
+    dir: ../
+    optional: true
   check-leaderboard-access:
     taskfile: ./Taskfile.check-leaderboard-access.yaml
     dir: ../
