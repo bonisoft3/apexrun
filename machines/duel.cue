@@ -73,7 +73,13 @@ duel: pronto.#Machine & {
 	setup: {
 		version: 1
 		guards: {
-			ready: reads: ["payload.seats"]
+			// Neither racer holds a seat in another duel still waiting, signalling or racing.
+			ready: {
+				rules:  "ready"
+				reads:  ["payload.seats"]
+				sql:    "NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.member o ON o.actor = m.actor AND o.instance_id <> m.instance_id JOIN hybrid_apexrun_duel.instance d ON d.id = o.instance_id WHERE m.instance_id = game.id AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'))"
+				reason: "racer_unavailable"
+			}
 			mayCancel: reads: ["actor"]
 			mayDescribe: reads: ["actor"]
 			mayLift: reads: ["actor", "payload.frame", "payload.kind"]

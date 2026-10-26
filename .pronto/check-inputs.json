@@ -4200,11 +4200,6 @@
             "deadline"
           ]
         },
-        "ready": {
-          "reads": [
-            "payload.seats"
-          ]
-        },
         "mayCancel": {
           "reads": [
             "actor"
@@ -4235,6 +4230,11 @@
         },
         "settled": {
           "reads": []
+        },
+        "ready": {
+          "reads": [
+            "payload.seats"
+          ]
         }
       },
       "events": {
@@ -4344,7 +4344,11 @@
             "start": {
               "target": "signalling",
               "guard": "ready",
-              "reduce": "start"
+              "reduce": "start",
+              "requires": {
+                "sql": "NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.member o ON o.actor = m.actor AND o.instance_id <> m.instance_id JOIN hybrid_apexrun_duel.instance d ON d.id = o.instance_id WHERE m.instance_id = game.id AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'))",
+                "reason": "racer_unavailable"
+              }
             },
             "cancel": {
               "target": "abandoned",
@@ -4427,7 +4431,17 @@
             "locks": "PERFORM 1 FROM \"hybrid_apexrun_presence\".\"instance\" WHERE \"id\" IN (current_actor) ORDER BY \"id\" FOR UPDATE;"
           }
         },
-        "transitions": []
+        "transitions": [
+          {
+            "phase": "waiting",
+            "event": "start",
+            "requires": {
+              "sql": "NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.member o ON o.actor = m.actor AND o.instance_id <> m.instance_id JOIN hybrid_apexrun_duel.instance d ON d.id = o.instance_id WHERE m.instance_id = game.id AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'))",
+              "reason": "racer_unavailable"
+            },
+            "sql": ""
+          }
+        ]
       }
     }
   },

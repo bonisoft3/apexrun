@@ -113,10 +113,13 @@ Deno.test("lobby: a challenge link opens a waiting duel on the picked stage, can
   assertEquals(l.tab.link, created.id);
   const waiting = { id: `${created.id}/a`, instance_id: created.id, seat: "a", revision: 1, phase: "waiting", stage: "sunset-highway" };
   l.store.apexrun_duel_seat = [waiting];
-  // Joining one's own waiting duel is refused before hitting the cluster.
+  // Joining one's own waiting duel or another link while waiting is refused before hitting the cluster.
   l.store.lobby_tab[0].join = `?challenge=${created.id}`;
   l.raise({ type: "mutation" });
   assertEquals([l.tab.join, l.tab.note], ["", "already_in_duel"]);
+  l.store.lobby_tab[0].join = "?challenge=00000000-0000-4000-8000-000000000099";
+  l.raise({ type: "mutation" });
+  assertEquals([l.tab.join, l.tab.note], ["", "racer_unavailable"]);
   // Cancelling a waiting link sends cancel to apexrun_duel.
   l.raise({ type: "click", from: `cancel-duel-${waiting.id}`, id: waiting.id });
   assertEquals(l.store.apexrun_duel_command.map((c) => [c.id, (c.request as Row).event]), [[`${created.id}/1/a/cancel`, { kind: "cancel", payload: {} }]]);

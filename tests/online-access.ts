@@ -183,6 +183,12 @@ Deno.test("a challenge link opens a waiting duel without listing in the lobby, a
   const waiting = (await seatOf(ana, "apexrun_duel", duel))!;
   assertEquals([waiting.seat, waiting.phase, waiting.view.stage, waiting.view.seed], ["a", "waiting", "sunset-highway", 777777]);
   assertEquals((await insert(ana, "apexrun_duel_open", { id: crypto.randomUUID(), instance_id: crypto.randomUUID(), kind: "create", input: { stage: "sunset-highway", seed: "1" } })).reason, "racer_unavailable");
+  // A racer already holding a waiting link cannot join another racer's waiting link.
+  const other = crypto.randomUUID();
+  assertEquals((await insert(cau, "apexrun_duel_open", { id: other, instance_id: other, kind: "create", input: { stage: "alpine-peaks", seed: "2" } })).kind, "accepted");
+  assertEquals(await refusal(as(ana, `INSERT INTO apexrun_duel_open (id, instance_id, kind, input) VALUES ('join/${other}/ana', '${other}', 'join', '{}')`)), "23514");
+  assertEquals(await seatOf(ana, "apexrun_duel", other), null);
+  assertEquals((await command(cau, "apexrun_duel", other, "cancel")).kind, "accepted");
   assertEquals((await insert(bia, "apexrun_duel_open", { id: `join/${duel}/1`, instance_id: duel, kind: "join", input: {} })).kind, "accepted");
   const [a, b] = [(await seatOf(ana, "apexrun_duel", duel))!, (await seatOf(bia, "apexrun_duel", duel))!];
   assertEquals([a.seat, a.phase, b.seat, b.phase], ["a", "signalling", "b", "signalling"]);

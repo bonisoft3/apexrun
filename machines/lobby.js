@@ -107,6 +107,9 @@
     if ((rows.apexrun_duel_seat ?? []).some(d => d.instance_id === joining)) {
       return {updates: [{op: "patch", entity: "lobby_tab", id: "the", row: {join: "", note: "already_in_duel"}}]};
     }
+    if ((rows.apexrun_duel_seat ?? []).some(d => ["waiting", "signalling", "racing"].includes(d.phase))) {
+      return {updates: [{op: "patch", entity: "lobby_tab", id: "the", row: {join: "", note: "racer_unavailable"}}]};
+    }
     return {updates: note(""), then: {type: "join", seed: true, with: {duel: joining}}};
   }
   // Who you are among the racers, so the list leaves you out.
