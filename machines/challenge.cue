@@ -69,6 +69,7 @@ challenge: pronto.#Machine & {
 			{spawn: {machine: "apexrun_duel", id: {raw: "(game.state->>'duel')::uuid"},
 				input: {stage: {raw: "game.state->>'stage'"}, seed: {raw: "(game.state->>'seed')::bigint"}},
 				members: {a: {raw: "game.state->>'inviter'"}, b: {raw: "game.state->>'target'"}}}},
+			{send: {machine: "apexrun_duel", id: {raw: "(game.state->>'duel')::uuid"}, event: "start", payload: seats: ["a", "b"]}},
 		]
 	}
 }

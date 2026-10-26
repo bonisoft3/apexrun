@@ -129,4 +129,17 @@ CREATE POLICY apexrun_duel_command_app_user_delete ON apexrun_duel_command FOR D
 DROP POLICY IF EXISTS apexrun_duel_command_service_all ON apexrun_duel_command;
 CREATE POLICY apexrun_duel_command_service_all ON apexrun_duel_command FOR ALL TO service USING (true) WITH CHECK (true);
 
+CALL rls_protect('apexrun_duel_open');
+ALTER TABLE apexrun_duel_open ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS apexrun_duel_open_app_user_select ON apexrun_duel_open;
+CREATE POLICY apexrun_duel_open_app_user_select ON apexrun_duel_open FOR SELECT TO app_user USING (apexrun_duel_open.actor = auth_uid());
+DROP POLICY IF EXISTS apexrun_duel_open_app_user_insert ON apexrun_duel_open;
+CREATE POLICY apexrun_duel_open_app_user_insert ON apexrun_duel_open FOR INSERT TO app_user WITH CHECK (apexrun_duel_open.actor = auth_uid());
+DROP POLICY IF EXISTS apexrun_duel_open_app_user_update ON apexrun_duel_open;
+CREATE POLICY apexrun_duel_open_app_user_update ON apexrun_duel_open FOR UPDATE TO app_user USING (apexrun_duel_open.actor = auth_uid());
+DROP POLICY IF EXISTS apexrun_duel_open_app_user_delete ON apexrun_duel_open;
+CREATE POLICY apexrun_duel_open_app_user_delete ON apexrun_duel_open FOR DELETE TO app_user USING (apexrun_duel_open.actor = auth_uid());
+DROP POLICY IF EXISTS apexrun_duel_open_service_all ON apexrun_duel_open;
+CREATE POLICY apexrun_duel_open_service_all ON apexrun_duel_open FOR ALL TO service USING (true) WITH CHECK (true);
+
 COMMIT;

@@ -48,26 +48,43 @@ Deno.test("a challenge carries the challenger's stage and seed, and only its tar
 
 type Lift = { frame: number; kind: string; checksum: string; inputs: string; winner: string; goal_a: number; goal_b: number };
 type Duel = {
-  phase: string; stage: string; seed: number; offer: string; answer: string; deadline: number; lifts: (Lift & { by: string[] })[];
+  phase: string; stage: string; seed: number; seats: string[]; offer: string; answer: string; deadline: number; lifts: (Lift & { by: string[] })[];
   winner: string; goal_a: number; goal_b: number; dispute: string; silent: string[];
 };
 const lift = (frame: number, kind: string, extra: Partial<Lift> = {}): Lift =>
   ({ frame, kind, checksum: `c${frame}`, inputs: "AAAA", winner: "", goal_a: -1, goal_b: -1, ...extra });
 const finish = (extra: Partial<Lift> = {}) => lift(4100, "duel-finish", { winner: "a", goal_a: 3784, goal_b: -1, ...extra });
 
+/** A duel with both seats filled, in `signalling`. */
+async function started() {
+  const { step, init } = await machine<Duel>("duel", ["a", "b"]);
+  const waiting = await init({ stage: "alpine-peaks", seed: 77 }, 900);
+  assertEquals([waiting.state.phase, waiting.state.seats, waiting.state.deadline], ["waiting", ["a", "b"], 30900]);
+  const opened = await step(waiting.state, "start", { seats: ["a", "b"] }, 1000);
+  assertEquals([opened.state.phase, opened.state.deadline], ["signalling", 31000]);
+  return { step, waiting: waiting.state, opened };
+}
+
 /** A duel through its signalling: both descriptions in, racing. */
 async function racing() {
-  const { step, init } = await machine<Duel>("duel", ["a", "b"]);
-  const opened = await init({ stage: "alpine-peaks", seed: 77 }, 1000);
-  assertEquals([opened.state.phase, opened.state.deadline], ["signalling", 31000]);
+  const { step, opened } = await started();
   const offered = await step(opened.state, "describe", { description: "offer-sdp" }, 1100, "a");
   const answered = await step(offered.state, "describe", { description: "answer-sdp" }, 1200, "b");
   return { step, answered };
 }
 
+Deno.test("a challenge link opens a duel in waiting until seat b joins, and only seat a can cancel it", async () => {
+  const { step, waiting } = await started();
+  assertEquals((await step(waiting, "start", { seats: ["a"] }, 1000)).reason, "waiting_for_players");
+  assertEquals((await step(waiting, "cancel", {}, 1000, "b")).reason, "not_inviter");
+  const cancelled = await step(waiting, "cancel", {}, 1000, "a");
+  assertEquals([cancelled.state.phase, cancelled.state.deadline], ["abandoned", 0]);
+  const timedOut = await step(waiting, "timeout", {}, 30900);
+  assertEquals([timedOut.state.phase, timedOut.state.silent, timedOut.state.deadline], ["abandoned", [], 0]);
+});
+
 Deno.test("a duel carries each side's description to the other, the challenger's first, then races", async () => {
-  const { step, init } = await machine<Duel>("duel", ["a", "b"]);
-  const opened = (await init({ stage: "alpine-peaks", seed: 77 }, 1000)).state;
+  const { step, opened: { state: opened } } = await started();
   assertEquals((await step(opened, "describe", { description: "answer-sdp" }, 1100, "b")).reason, "no_offer", "the target answers an offer");
   const offered = await step(opened, "describe", { description: "offer-sdp" }, 1100, "a");
   assertEquals(offered.views.find((v) => v.viewer === "b")!.value.peer, "offer-sdp");
@@ -102,8 +119,7 @@ Deno.test("two rows of one milestone that disagree are the duel's dispute, which
 });
 
 Deno.test("the ticker times out a duel whose racer fell silent, naming them", async () => {
-  const { step, init } = await machine<Duel>("duel", ["a", "b"]);
-  const opened = (await init({ stage: "alpine-peaks", seed: 77 }, 1000)).state;
+  const { step, opened: { state: opened } } = await started();
   const offered = (await step(opened, "describe", { description: "offer-sdp" }, 1100, "a")).state;
   assertEquals((await step(offered, "timeout", {}, 30999)).reason, "not_due");
   const unanswered = await step(offered, "timeout", {}, 31000);

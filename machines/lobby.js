@@ -19,8 +19,9 @@
     const hex = draws.map(n => (Number(n) >>> 0).toString(16).padStart(8, "0")).join("");
     return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-${"89ab"[parseInt(hex[16], 16) % 4]}${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
   };
-  // A challenge draws its id and, after it, the seed its duel is raced from.
-  const needed = {lease: 4, offer: 5}[event.type] ?? 0;
+  // A challenge or a challenge link draws its id and, after it, the seed its
+  // duel is raced from; joining a challenge link draws its open row's key.
+  const needed = {lease: 4, offer: 5, duel: 5, join: 1}[event.type] ?? 0;
   const draws = needed > 0 ? [...(event.with?.draws ?? []), event.seed] : [];
   if (draws.length < needed) return {updates: [], then: {type: event.type, seed: true, with: {...event.with, draws}}};
 
@@ -48,7 +49,7 @@
   if (event.type === "lease") {
     const id = uuidOf(draws);
     return {updates: [
-      {op: "put", entity: "lobby_tab", id: "the", row: {id: "the", lease: id, me: "", note: "", shown: "", open: "no", offer: "", stage: "coconut-beach", name: `RACER ${id.slice(0, 4).toUpperCase()}`}},
+      {op: "put", entity: "lobby_tab", id: "the", row: {id: "the", lease: id, me: "", note: "", shown: "", open: "no", offer: "", link: "", join: "", stage: "coconut-beach", name: `RACER ${id.slice(0, 4).toUpperCase()}`}},
       {op: "put", entity: "apexrun_presence_lease", id, row: {id, beat: 0}},
     ]};
   }
@@ -57,6 +58,20 @@
     return {updates: [
       {op: "put", entity: "apexrun_challenge_open", id, row: {id, instance_id: id, kind: "create", input: {target: event.with.target, stage: tab.stage, seed: (Number(draws[4]) >>> 0) >>> 1}}},
       {op: "patch", entity: "lobby_tab", id: "the", row: {offer: id}},
+    ]};
+  }
+  if (event.type === "duel") {
+    const id = uuidOf(draws.slice(0, 4));
+    return {updates: [
+      {op: "put", entity: "apexrun_duel_open", id, row: {id, instance_id: id, kind: "create", input: {stage: tab.stage, seed: (Number(draws[4]) >>> 0) >>> 1}}},
+      {op: "patch", entity: "lobby_tab", id: "the", row: {link: id}},
+    ]};
+  }
+  if (event.type === "join") {
+    const id = `join/${event.with.duel}/${Number(draws[0]) >>> 0}`;
+    return {updates: [
+      {op: "put", entity: "apexrun_duel_open", id, row: {id, instance_id: event.with.duel, kind: "join", input: {}}},
+      {op: "patch", entity: "lobby_tab", id: "the", row: {join: "", link: id}},
     ]};
   }
 
@@ -74,6 +89,11 @@
         command("apexrun_presence", presence.instance_id, presence.revision, presence.seat, visible ? "hide" : "show", visible ? {} : {name: tab.name}),
       ]};
     }
+    if (from === "btn-challenge-link") return {updates: note(""), then: {type: "duel", seed: true}};
+    if (from.startsWith("cancel-duel-")) {
+      const waitingDuel = (rows.apexrun_duel_seat ?? []).find(d => d.id === event.id && d.phase === "waiting");
+      return {updates: waitingDuel ? [command("apexrun_duel", waitingDuel.instance_id, waitingDuel.revision, waitingDuel.seat, "cancel", {})] : []};
+    }
     if (from.startsWith("challenge-")) return {updates: note(""), then: {type: "offer", seed: true, with: {target: event.id}}};
     const answer = ["accept", "decline", "cancel"].find(kind => from.startsWith(`${kind}-`));
     const offer = (rows.apexrun_challenge_seat ?? []).find(c => c.id === event.id);
@@ -82,6 +102,13 @@
   }
 
   if (tab === undefined || tab.lease === "") return {updates: [], then: {type: "lease", seed: true}};
+  const joining = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.exec(txt(tab.join ?? ""))?.[0]?.toLowerCase();
+  if (joining !== undefined) {
+    if ((rows.apexrun_duel_seat ?? []).some(d => d.instance_id === joining)) {
+      return {updates: [{op: "patch", entity: "lobby_tab", id: "the", row: {join: "", note: "already_in_duel"}}]};
+    }
+    return {updates: note(""), then: {type: "join", seed: true, with: {duel: joining}}};
+  }
   // Who you are among the racers, so the list leaves you out.
   const me = presence?.instance_id ?? "";
   // A lease renewal moves the revision under a click, so this tab's last
@@ -120,12 +147,15 @@
     : duel.phase === "signalling" && !duel.view.described && signal !== undefined ? [command("apexrun_duel", duel.instance_id, duel.revision, duel.seat, "describe", {description: signal.description})]
     : duel.phase === "racing" && owed !== undefined ? [command("apexrun_duel", duel.instance_id, duel.revision, duel.seat, "lift", lifted(owed))]
     : [];
-  // The challenge you last made, once the cluster answers it: a refusal says why.
+  // The challenge or challenge link you last made or joined, once the cluster
+  // answers it: a refusal says why.
   const made = (rows.apexrun_challenge_open ?? []).find(o => o.id === txt(tab.offer ?? "") && o.outcome);
+  const linked = (rows.apexrun_duel_open ?? []).find(o => o.id === txt(tab.link ?? "") && o.outcome);
   return {updates: [
     ...toDuel,
     ...relist,
     ...(made === undefined ? [] : [{op: "patch", entity: "lobby_tab", id: "the", row: {offer: "", note: made.outcome === "rejected" ? made.reason : ""}}]),
+    ...(linked === undefined ? [] : [{op: "patch", entity: "lobby_tab", id: "the", row: {link: "", note: linked.outcome === "rejected" ? linked.reason : ""}}]),
     ...(txt(tab.me ?? "") === me ? [] : [{op: "patch", entity: "lobby_tab", id: "the", row: {me}}]),
     ...(txt(tab.shown ?? "") === shown ? [] : [{op: "patch", entity: "lobby_tab", id: "the", row: {shown}}]),
     ...(unmet ? [command("apexrun_presence", presence.instance_id, presence.revision, presence.seat, last.kind, last.kind === "show" ? {name: tab.name} : {})] : []),

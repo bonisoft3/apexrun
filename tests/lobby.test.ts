@@ -18,7 +18,7 @@ type Update = { op: string; entity: string; id: string; row?: any };
 export function lobbyOf(tables: Record<string, Row[]> = {}) {
   const store: Record<string, Row[]> = {
     lobby_tab: [], apexrun_presence_lease: [], apexrun_presence_seat: [], apexrun_presence_command: [], apexrun_challenge_seat: [], apexrun_challenge_open: [],
-    apexrun_challenge_command: [], apexrun_duel_seat: [], apexrun_duel_command: [], run: [], run_signal: [], run_milestone: [], ...tables,
+    apexrun_challenge_command: [], apexrun_duel_seat: [], apexrun_duel_command: [], apexrun_duel_open: [], run: [], run_signal: [], run_milestone: [], ...tables,
   };
   let draws = 0;
   const apply = (updates: Update[] = []) => {
@@ -99,6 +99,38 @@ Deno.test("lobby: a challenge's answer is a command at the revision its seat hol
   l.raise({ type: "mutation" });
   l.raise({ type: "click", from: "accept-c1/target", id: "c1/target" });
   assertEquals(l.store.apexrun_challenge_command.map((c) => [c.id, (c.request as Row).event]), [["c1/1/target/accept", { kind: "accept", payload: {} }]]);
+});
+
+Deno.test("lobby: a challenge link opens a waiting duel on the picked stage, can be cancelled, and can be joined from a pasted link", () => {
+  const l = lobbyOf({ apexrun_presence_seat: [seat("hidden")] });
+  l.raise({ type: "mutation" });
+  l.raise({ type: "click", from: "stage-sunset-highway" });
+  l.raise({ type: "click", from: "btn-challenge-link" });
+  const [created] = l.store.apexrun_duel_open;
+  assertEquals(created.kind, "create");
+  assertEquals(created.id, created.instance_id);
+  assertEquals((created.input as Row).stage, "sunset-highway");
+  assertEquals(l.tab.link, created.id);
+  const waiting = { id: `${created.id}/a`, instance_id: created.id, seat: "a", revision: 1, phase: "waiting", stage: "sunset-highway" };
+  l.store.apexrun_duel_seat = [waiting];
+  // Joining one's own waiting duel is refused before hitting the cluster.
+  l.store.lobby_tab[0].join = `?challenge=${created.id}`;
+  l.raise({ type: "mutation" });
+  assertEquals([l.tab.join, l.tab.note], ["", "already_in_duel"]);
+  // Cancelling a waiting link sends cancel to apexrun_duel.
+  l.raise({ type: "click", from: `cancel-duel-${waiting.id}`, id: waiting.id });
+  assertEquals(l.store.apexrun_duel_command.map((c) => [c.id, (c.request as Row).event]), [[`${created.id}/1/a/cancel`, { kind: "cancel", payload: {} }]]);
+  // Another racer pasting the link writes a join row, and a cluster refusal is shown.
+  const b = lobbyOf({ apexrun_presence_seat: [seat("hidden")] });
+  b.raise({ type: "mutation" });
+  b.store.lobby_tab[0].join = `https://apexrun.bonisoft3.com/?challenge=${created.id}`;
+  b.raise({ type: "mutation" });
+  const [joined] = b.store.apexrun_duel_open;
+  assertEquals([joined.kind, joined.instance_id, b.tab.join, b.tab.link], ["join", created.id, "", joined.id]);
+  joined.outcome = "rejected";
+  joined.reason = "room_unavailable";
+  b.raise({ type: "mutation" });
+  assertEquals([b.tab.link, b.tab.note], ["", "room_unavailable"]);
 });
 
 /** The tab racing duel d1 from seat b, at the seat's `revision`. */

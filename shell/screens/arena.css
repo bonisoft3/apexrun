@@ -1538,10 +1538,12 @@ html body > nav .shell-me { display: none; }
 
 /* The presenter's layers (pronto's kinetic-machine record, "The HUD splits by
    refresh rate"): a canvas sits where the digits sat and takes their font,
-   colour and glow; one that fills a track takes the track's box. */
+   colour and glow; one that fills a track takes the track's box. Sized in
+   `em` rather than `ch`/`lh`, which WebKit scales by an ancestor's CSS `zoom`
+   twice. */
 canvas.hud-layer {
   display: inline-block;
-  height: 1lh;
+  height: 1.15em;
   vertical-align: bottom;
 }
 canvas.hud-layer-wide { width: 100%; }
@@ -1716,10 +1718,17 @@ canvas.hud-layer-eq {
 .arena-run:has(.stk-lobby-card[data-open="yes"]) .stk-title-card,
 .stk-lobby-card:not([data-shown="show"]) :is(.stk-lobby-when-on, .stk-lobby-racers, .stk-lobby-racers-label),
 .stk-lobby-card[data-shown="show"] .stk-lobby-when-off,
+.stk-lobby-links:empty,
+.stk-lobby-offers:empty,
 .stk-lobby-note:empty {
   display: none;
 }
-.stk-lobby-card { max-width: 520px; gap: 12px; }
+.stk-lobby-card {
+  max-width: 520px;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  gap: 12px;
+}
 .stk-lobby-you { font-size: 13px; letter-spacing: 0.12em; color: #81D4FA; }
 .stk-lobby-you b { color: #FFD54F; }
 .stk-lobby-card[data-shown="show"] .stk-lobby-toggle { background: #0F7A5F; }
@@ -1754,7 +1763,42 @@ canvas.hud-layer-eq {
   border-color: #FFB347;
   color: #FFFFFF;
 }
-.stk-lobby-racers, .stk-lobby-offers {
+.stk-lobby-link-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.stk-lobby-join {
+  display: flex;
+  flex: 1 1 240px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.stk-lobby-join-input {
+  flex: 1 1 150px;
+  min-width: 0;
+  min-height: 38px;
+  padding: 6px 10px;
+  font: 600 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #F5F7FA;
+  background: rgba(20, 26, 36, 0.9);
+  border: 1px solid #3A4658;
+  border-radius: 6px;
+}
+.stk-lobby-join-input:focus-visible {
+  outline: 2px solid #FFB347;
+  outline-offset: 1px;
+}
+.stk-lobby-join .invalid {
+  flex-basis: 100%;
+  font-size: 11px;
+  color: #FF4D4D;
+  text-align: left;
+}
+.stk-lobby-racers, .stk-lobby-links, .stk-lobby-offers {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1773,9 +1817,20 @@ canvas.hud-layer-eq {
   border: 1px solid #3A4658;
   border-radius: 8px;
 }
-.stk-lobby-racer > b, .stk-lobby-offer > span { flex: 1; }
+.stk-lobby-racer > b, .stk-lobby-offer > span { flex: 1; min-width: 0; }
 .stk-lobby-offer { border-color: #FFB347; }
 .stk-lobby-offer b { color: #FFD54F; }
+.stk-lobby-code {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 2px 6px;
+  font: 600 12px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #FFD54F;
+  background: rgba(255, 179, 71, 0.14);
+  border-radius: 4px;
+  user-select: all;
+}
 .stk-lobby-note { font-size: 12px; color: #FF4D4D; letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* An online duel's card says how its machine ended it. */

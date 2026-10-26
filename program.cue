@@ -38,14 +38,18 @@ _runReads: #"data-reads="run,run_input,run_milestone,apexrun_duel_seat" data-rea
 
 // The lobby's tab row before its lease is drawn: what the lobby's regions
 // bind until the fold first stores it (machines/lobby.js).
-_lobbyEmpty: json.Marshal({id: "the", lease: "", me: "", note: "", shown: "", open: "no", offer: "", stage: "coconut-beach", name: ""})
+_lobbyEmpty: json.Marshal({id: "the", lease: "", me: "", note: "", shown: "", open: "no", offer: "", link: "", join: "", stage: "coconut-beach", name: ""})
 // What the lobby's fold reads, declared alike on every region it is seated on.
-_lobbyReads: #"data-reads="lobby_tab,apexrun_presence_lease,apexrun_presence_seat,apexrun_presence_command,apexrun_challenge_seat,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,run,run_signal,run_milestone""#
+_lobbyReads: #"data-reads="lobby_tab,apexrun_presence_lease,apexrun_presence_seat,apexrun_presence_command,apexrun_challenge_seat,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,apexrun_duel_open,run,run_signal,run_milestone""#
 // The ten road stages a duel races (machines/challenge.cue #Stage).
 _duelStages: strings.Join([for id in online.#Stage.values {
 	let name = strings.Join([for w in strings.Split(id, "-") {strings.ToUpper(w)}], " ")
 	#"<button type="button" class="stk-lobby-stage" id="stage-\#(id)" data-on-click="lobby">\#(name)</button>"#
 }], "\n          ")
+// A challenge link carries a UUID; braced quantifiers inside a live region
+// would be read as column bindings by screen.js.
+_hex4: "[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]"
+_uuidPattern: ".*\(_hex4)\(_hex4)-\(_hex4)-\(_hex4)-\(_hex4)-\(_hex4)\(_hex4)\(_hex4).*"
 
 _arenaMarkup: #"""
 <div class="screen" data-screen="arena" data-theme="terminal">
@@ -71,21 +75,21 @@ _arenaMarkup: #"""
               <span class="hud-slant-content">STAGE <span data-text="{stage_num}">1</span></span>
             </div>
             <div class="hud-slant hud-badge-multiplier">
-              <span class="hud-slant-content"><canvas data-layer="drift" class="hud-layer" style="width: 16.5ch"></canvas></span>
+              <span class="hud-slant-content"><canvas data-layer="drift" class="hud-layer" style="width: 9.6em"></canvas></span>
             </div>
             <span class="hud-mono-sub">CHECKPOINT A-1</span>
           </div>
           <div class="hud-panel hud-stage-card">
             <div class="hud-card-row">
               <h1 class="hud-stage-title" data-text="{stage_name}">COCONUT BEACH</h1>
-              <span class="hud-fork-dist"><canvas data-layer="fork-dist" class="hud-layer" style="width: 17ch"></canvas></span>
+              <span class="hud-fork-dist"><canvas data-layer="fork-dist" class="hud-layer" style="width: 10.2em"></canvas></span>
             </div>
             <div class="hud-progress-track">
               <canvas data-layer="route-progress" class="hud-layer-fill"></canvas>
             </div>
             <div class="hud-score-row">
               <span class="hud-label-dim">SCORE</span>
-              <div class="hud-score-val"><canvas data-layer="score" class="hud-layer" style="width: 9ch"></canvas> <span class="hud-unit-gold">PTS</span></div>
+              <div class="hud-score-val"><canvas data-layer="score" class="hud-layer" style="width: 5em"></canvas> <span class="hud-unit-gold">PTS</span></div>
             </div>
           </div>
         </div>
@@ -94,8 +98,8 @@ _arenaMarkup: #"""
           <div class="hud-panel hud-panel-orange hud-timer-card">
             <span class="hud-timer-label">REMAINING TIME</span>
             <div class="hud-timer-digits">
-              <span class="hud-timer-main glow-text-gold"><canvas data-layer="timer" class="hud-layer" style="width: 2.8ch"></canvas></span>
-              <span class="hud-timer-dec"><canvas data-layer="timer-dec" class="hud-layer" style="width: 1.9ch"></canvas></span>
+              <span class="hud-timer-main glow-text-gold"><canvas data-layer="timer" class="hud-layer" style="width: 1.6em"></canvas></span>
+              <span class="hud-timer-dec"><canvas data-layer="timer-dec" class="hud-layer" style="width: 1.1em"></canvas></span>
               <span class="hud-timer-unit">SEC</span>
             </div>
             <div class="hud-timer-status">
@@ -117,7 +121,7 @@ _arenaMarkup: #"""
                 <span class="hud-cyan-dot"></span>
                 <span class="hud-matrix-title">SEGA ROUTE MATRIX</span>
               </div>
-              <span class="hud-fork-alert"><canvas data-layer="matrix-fork" class="hud-layer" style="width: 22ch"></canvas></span>
+              <span class="hud-fork-alert"><canvas data-layer="matrix-fork" class="hud-layer" style="width: 13.2em"></canvas></span>
             </div>
             <div class="hud-matrix-body">
               <div class="hud-branches-row">
@@ -205,24 +209,24 @@ _arenaMarkup: #"""
             <div class="hud-tel-rows">
               <div class="hud-tel-row">
                 <span class="hud-tel-dim"><span class="hud-red-ping"></span> TRAFFIC RADAR</span>
-                <span class="hud-tel-highlight"><canvas data-layer="radar" class="hud-layer" style="width: 20ch"></canvas></span>
+                <span class="hud-tel-highlight"><canvas data-layer="radar" class="hud-layer" style="width: 12em"></canvas></span>
               </div>
               <div class="hud-tel-row">
                 <span class="hud-tel-dim">RIVAL SPLIT</span>
-                <span class="hud-tel-cyan"><canvas data-layer="rival-split" class="hud-layer" style="width: 14ch"></canvas></span>
+                <span class="hud-tel-cyan"><canvas data-layer="rival-split" class="hud-layer" style="width: 7.8em"></canvas></span>
               </div>
               <div class="hud-tel-grid2">
                 <div class="hud-grid-cell">
                   <span class="cell-label">LATERAL G-FORCE</span>
-                  <span class="cell-val"><canvas data-layer="gforce" class="hud-layer" style="width: 6ch"></canvas> <span class="unit-orange">G</span></span>
+                  <span class="cell-val"><canvas data-layer="gforce" class="hud-layer" style="width: 3.6em"></canvas> <span class="unit-orange">G</span></span>
                 </div>
                 <div class="hud-grid-cell">
                   <span class="cell-label">SLIPSTREAM GAIN</span>
-                  <span class="cell-val"><canvas data-layer="slipstream" class="hud-layer" style="width: 5ch"></canvas> <span class="unit-white">KM/H</span></span>
+                  <span class="cell-val"><canvas data-layer="slipstream" class="hud-layer" style="width: 3em"></canvas> <span class="unit-white">KM/H</span></span>
                 </div>
               </div>
               <div class="hud-draft-status-row">
-                <span class="hud-draft-alert"><canvas data-layer="draft-status" class="hud-layer" style="width: 24ch"></canvas></span>
+                <span class="hud-draft-alert"><canvas data-layer="draft-status" class="hud-layer" style="width: 14.4em"></canvas></span>
                 <div class="hud-draft-meter">
                   <span class="draft-seg"></span>
                   <span class="draft-seg"></span>
@@ -258,24 +262,24 @@ _arenaMarkup: #"""
             <div class="hud-tacho-box">
               <div class="hud-tacho-top">
                 <span>TACHOMETER</span>
-                <span class="hud-rpm-val"><canvas data-layer="rpm" class="hud-layer" style="width: 12ch"></canvas></span>
+                <span class="hud-rpm-val"><canvas data-layer="rpm" class="hud-layer" style="width: 6.7em"></canvas></span>
               </div>
               <div class="hud-tacho-leds"><canvas data-layer="tacho" class="hud-layer-fill hud-layer-span"></canvas></div>
             </div>
             <div class="hud-velocity-row">
               <div class="hud-velo-meta">
                 <span class="hud-velo-label">VELOCITY</span>
-                <span class="hud-velo-mode"><canvas data-layer="velo-mode" class="hud-layer" style="width: 16ch"></canvas></span>
+                <span class="hud-velo-mode"><canvas data-layer="velo-mode" class="hud-layer" style="width: 9.6em"></canvas></span>
               </div>
               <div class="hud-velo-digits">
-                <span class="hud-speed-num glow-text-orange"><canvas data-layer="speed" class="hud-layer" style="width: 3.4ch"></canvas></span>
+                <span class="hud-speed-num glow-text-orange"><canvas data-layer="speed" class="hud-layer" style="width: 1.9em"></canvas></span>
                 <span class="hud-speed-unit">KM/H</span>
               </div>
             </div>
             <div class="hud-cluster-footer">
               <span>TOP SPEED: <strong class="text-white">315 KM/H</strong></span>
               <span class="hud-nitro">
-                <canvas data-layer="nitro-text" class="hud-layer" style="width: 12ch"></canvas>
+                <canvas data-layer="nitro-text" class="hud-layer" style="width: 5.5em"></canvas>
                 <span class="hud-nitro-bar"><canvas data-layer="nitro-bar" class="hud-layer-fill"></canvas></span>
               </span>
             </div>
@@ -366,6 +370,20 @@ _arenaMarkup: #"""
         <div class="stk-title-pick">THE STAGE YOU CHALLENGE ON</div>
         <div class="stk-lobby-stages" role="group" aria-label="Stage">
           \#(_duelStages)
+        </div>
+        <div class="stk-lobby-link-bar">
+          <button type="button" class="stk-btn stk-btn-online" id="btn-challenge-link" data-on-click="lobby">CHALLENGE LINK</button>
+          <form class="stk-lobby-join" data-entity="lobby_tab" data-action="update">
+            <input type="text" id="input-challenge-link" name="join" class="stk-lobby-join-input" data-value="{join}" placeholder="PASTE CHALLENGE LINK…" aria-label="Challenge link" required pattern="\#(_uuidPattern)" maxlength="128" aria-describedby="join-link-invalid">
+            <button type="submit" class="stk-btn stk-btn-go" id="btn-join-link">JOIN LINK</button>
+            <p class="invalid" id="join-link-invalid" hidden>Paste a challenge link.</p>
+          </form>
+        </div>
+        <div class="stk-lobby-links" data-live="apexrun_duel_seat" data-filter="phase=eq.waiting" data-order="id.asc" \#(_lobbyReads) data-empty="">
+          <template data-item>
+            <div class="stk-lobby-offer stk-lobby-link-row"><span>WAITING ON <b data-text="{stage}" data-text-format="stage"></b> · <code class="stk-lobby-code" id="challenge-link-{id}">?challenge=<span data-text="{instance_id}"></span></code></span>
+              <button type="button" class="stk-btn" id="cancel-duel-{id}" data-on-click="lobby">CANCEL</button></div>
+          </template>
         </div>
         <div class="stk-title-pick stk-lobby-racers-label">RACERS ONLINE</div>
         <div class="stk-lobby-racers" data-live="apexrun_presence_public" data-order="name.asc" data-project='{"me":{"eq":["id","{me}"]}}'
@@ -465,6 +483,7 @@ _arenaMarkup: #"""
   <span hidden data-live="apexrun_presence_command" data-on-mutation="lobby" \#(_lobbyReads) data-empty=""><template data-item><i></i></template></span>
   <span hidden data-live="apexrun_challenge_seat" data-on-mutation="lobby" \#(_lobbyReads) data-empty=""><template data-item><i></i></template></span>
   <span hidden data-live="apexrun_challenge_open" data-on-mutation="lobby" \#(_lobbyReads) data-empty=""><template data-item><i></i></template></span>
+  <span hidden data-live="apexrun_duel_open" data-on-mutation="lobby" \#(_lobbyReads) data-empty=""><template data-item><i></i></template></span>
 </div>
 """#
 
@@ -643,6 +662,10 @@ code: pronto.#App & {
 					{ordinal: 7, name: "offer", type: "string", required: false, cel: "this.size() <= 36"},
 					{ordinal: 8, name: "stage", type: "string", cel: "this.size() <= 16"},
 					{ordinal: 9, name: "name", type: "string", cel: "this.size() <= 16"},
+					// The challenge link you last opened or joined, until the cluster answers it.
+					{ordinal: 10, name: "link", type: "string", required: false, cel: "this.size() <= 64"},
+					// A challenge link pasted into the lobby's form, until the fold joins it.
+					{ordinal: 11, name: "join", type: "string", required: false, cel: "this.size() <= 128"},
 				]
 			}
 			// The auth plane's person: every player is one, a guest the auth
@@ -829,7 +852,7 @@ code: pronto.#App & {
 	meta: {
 		name: "apexrun"
 		description: "Apex Run kinetic arcade racing in Pronto"
-		ir: {sha256: "304246d00ac094ec31baa817b556b52f102c2d8ff87c2ed1656aedf6c62c8fd8"}
+		ir: {sha256: "7edf07b6d664e7934e2ae3182a830dfb164c1a41728b40cd5f70f6c98e8b039b"}
 		targets: ["cloudflare"]
 		domain: "apexrun.bonisoft3.com"
 		decisions: {

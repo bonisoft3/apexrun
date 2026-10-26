@@ -1293,6 +1293,24 @@
           "pk": false,
           "required": true,
           "cel": "this.size() <= 16"
+        },
+        {
+          "name": "link",
+          "ordinal": 10,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 64"
+        },
+        {
+          "name": "join",
+          "ordinal": 11,
+          "retired": false,
+          "type": "string",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 128"
         }
       ],
       "seed": [],
@@ -1304,7 +1322,8 @@
           "by": "arena",
           "kind": "screen",
           "ops": [
-            "reduce"
+            "reduce",
+            "update"
           ]
         }
       ],
@@ -1342,6 +1361,12 @@
           },
           "name": {
             "sizeMax": 16
+          },
+          "link": {
+            "sizeMax": 64
+          },
+          "join": {
+            "sizeMax": 128
           }
         }
       },
@@ -2503,7 +2528,7 @@
           "type": "json",
           "pk": false,
           "required": true,
-          "cel": "type(this) == map && size(this) == 12 && has(this.deadline) && this.deadline == int(this.deadline) && this.deadline >= 0 && this.deadline <= 9007199254740991 && has(this.described) && type(this.described) == bool && has(this.dispute) && type(this.dispute) == string && this.dispute.size() <= 24 && has(this.goal_a) && this.goal_a == int(this.goal_a) && this.goal_a >= -1 && this.goal_a <= 1000000 && has(this.goal_b) && this.goal_b == int(this.goal_b) && this.goal_b >= -1 && this.goal_b <= 1000000 && has(this.lifted) && type(this.lifted) == list && size(this.lifted) <= 8 && this.lifted.all(e1, type(e1) == map && size(e1) == 3 && has(e1.by) && type(e1.by) == list && size(e1.by) <= 2 && e1.by.all(e2, type(e2) == string && e2 in [\"a\", \"b\"]) && has(e1.frame) && e1.frame == int(e1.frame) && e1.frame >= 0 && e1.frame <= 1000000 && has(e1.kind) && type(e1.kind) == string && e1.kind in [\"grid\", \"start\", \"checkpoint\", \"time-over\", \"duel-finish\"]) && has(this.peer) && type(this.peer) == string && this.peer.size() <= 8192 && has(this.phase) && type(this.phase) == string && this.phase in [\"signalling\", \"racing\", \"finished\", \"disputed\", \"abandoned\"] && has(this.seed) && this.seed == int(this.seed) && this.seed >= 0 && this.seed <= 2147483647 && has(this.silent) && type(this.silent) == list && size(this.silent) <= 2 && this.silent.all(e1, type(e1) == string && e1 in [\"a\", \"b\"]) && has(this.stage) && type(this.stage) == string && this.stage in [\"coconut-beach\", \"desert-canyons\", \"gateway-pass\", \"alpine-peaks\", \"wilderness-run\", \"tulip-gardens\", \"sunset-highway\", \"ancient-ruins\", \"metropolis-night\", \"coastal-cliffs\"] && has(this.winner) && type(this.winner) == string && this.winner in [\"\", \"a\", \"b\", \"draw\"]"
+          "cel": "type(this) == map && size(this) == 12 && has(this.deadline) && this.deadline == int(this.deadline) && this.deadline >= 0 && this.deadline <= 9007199254740991 && has(this.described) && type(this.described) == bool && has(this.dispute) && type(this.dispute) == string && this.dispute.size() <= 24 && has(this.goal_a) && this.goal_a == int(this.goal_a) && this.goal_a >= -1 && this.goal_a <= 1000000 && has(this.goal_b) && this.goal_b == int(this.goal_b) && this.goal_b >= -1 && this.goal_b <= 1000000 && has(this.lifted) && type(this.lifted) == list && size(this.lifted) <= 8 && this.lifted.all(e1, type(e1) == map && size(e1) == 3 && has(e1.by) && type(e1.by) == list && size(e1.by) <= 2 && e1.by.all(e2, type(e2) == string && e2 in [\"a\", \"b\"]) && has(e1.frame) && e1.frame == int(e1.frame) && e1.frame >= 0 && e1.frame <= 1000000 && has(e1.kind) && type(e1.kind) == string && e1.kind in [\"grid\", \"start\", \"checkpoint\", \"time-over\", \"duel-finish\"]) && has(this.peer) && type(this.peer) == string && this.peer.size() <= 8192 && has(this.phase) && type(this.phase) == string && this.phase in [\"waiting\", \"signalling\", \"racing\", \"finished\", \"disputed\", \"abandoned\"] && has(this.seed) && this.seed == int(this.seed) && this.seed >= 0 && this.seed <= 2147483647 && has(this.silent) && type(this.silent) == list && size(this.silent) <= 2 && this.silent.all(e1, type(e1) == string && e1 in [\"a\", \"b\"]) && has(this.stage) && type(this.stage) == string && this.stage in [\"coconut-beach\", \"desert-canyons\", \"gateway-pass\", \"alpine-peaks\", \"wilderness-run\", \"tulip-gardens\", \"sunset-highway\", \"ancient-ruins\", \"metropolis-night\", \"coastal-cliffs\"] && has(this.winner) && type(this.winner) == string && this.winner in [\"\", \"a\", \"b\", \"draw\"]"
         },
         {
           "name": "stage",
@@ -2544,7 +2569,7 @@
           "id": "char_length(id) <= 64",
           "seat": "char_length(seat) <= 16",
           "phase": "char_length(phase) <= 16",
-          "view": "public.portable_shape_valid(view, '{\"kind\":\"object\",\"fields\":{\"deadline\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":9007199254740991},\"described\":{\"kind\":\"boolean\"},\"dispute\":{\"kind\":\"string\",\"sizeMax\":24},\"goal_a\":{\"kind\":\"integer\",\"intMin\":-1,\"intMax\":1000000},\"goal_b\":{\"kind\":\"integer\",\"intMin\":-1,\"intMax\":1000000},\"lifted\":{\"kind\":\"array\",\"maxItems\":8,\"items\":{\"kind\":\"object\",\"fields\":{\"by\":{\"kind\":\"array\",\"maxItems\":2,\"items\":{\"kind\":\"string\",\"enumValues\":[\"a\",\"b\"]}},\"frame\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":1000000},\"kind\":{\"kind\":\"string\",\"enumValues\":[\"grid\",\"start\",\"checkpoint\",\"time-over\",\"duel-finish\"]}}}},\"peer\":{\"kind\":\"string\",\"sizeMax\":8192},\"phase\":{\"kind\":\"string\",\"enumValues\":[\"signalling\",\"racing\",\"finished\",\"disputed\",\"abandoned\"]},\"seed\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":2147483647},\"silent\":{\"kind\":\"array\",\"maxItems\":2,\"items\":{\"kind\":\"string\",\"enumValues\":[\"a\",\"b\"]}},\"stage\":{\"kind\":\"string\",\"enumValues\":[\"coconut-beach\",\"desert-canyons\",\"gateway-pass\",\"alpine-peaks\",\"wilderness-run\",\"tulip-gardens\",\"sunset-highway\",\"ancient-ruins\",\"metropolis-night\",\"coastal-cliffs\"]},\"winner\":{\"kind\":\"string\",\"enumValues\":[\"\",\"a\",\"b\",\"draw\"]}}}'::jsonb)",
+          "view": "public.portable_shape_valid(view, '{\"kind\":\"object\",\"fields\":{\"deadline\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":9007199254740991},\"described\":{\"kind\":\"boolean\"},\"dispute\":{\"kind\":\"string\",\"sizeMax\":24},\"goal_a\":{\"kind\":\"integer\",\"intMin\":-1,\"intMax\":1000000},\"goal_b\":{\"kind\":\"integer\",\"intMin\":-1,\"intMax\":1000000},\"lifted\":{\"kind\":\"array\",\"maxItems\":8,\"items\":{\"kind\":\"object\",\"fields\":{\"by\":{\"kind\":\"array\",\"maxItems\":2,\"items\":{\"kind\":\"string\",\"enumValues\":[\"a\",\"b\"]}},\"frame\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":1000000},\"kind\":{\"kind\":\"string\",\"enumValues\":[\"grid\",\"start\",\"checkpoint\",\"time-over\",\"duel-finish\"]}}}},\"peer\":{\"kind\":\"string\",\"sizeMax\":8192},\"phase\":{\"kind\":\"string\",\"enumValues\":[\"waiting\",\"signalling\",\"racing\",\"finished\",\"disputed\",\"abandoned\"]},\"seed\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":2147483647},\"silent\":{\"kind\":\"array\",\"maxItems\":2,\"items\":{\"kind\":\"string\",\"enumValues\":[\"a\",\"b\"]}},\"stage\":{\"kind\":\"string\",\"enumValues\":[\"coconut-beach\",\"desert-canyons\",\"gateway-pass\",\"alpine-peaks\",\"wilderness-run\",\"tulip-gardens\",\"sunset-highway\",\"ancient-ruins\",\"metropolis-night\",\"coastal-cliffs\"]},\"winner\":{\"kind\":\"string\",\"enumValues\":[\"\",\"a\",\"b\",\"draw\"]}}}'::jsonb)",
           "stage": "char_length(stage) <= 16",
           "winner": "char_length(winner) <= 4"
         },
@@ -2626,6 +2651,7 @@
               "phase": {
                 "kind": "string",
                 "enumValues": [
+                  "waiting",
                   "signalling",
                   "racing",
                   "finished",
@@ -2728,7 +2754,7 @@
           "type": "json",
           "pk": false,
           "required": true,
-          "cel": "type(this) == map && size(this) == 3 && has(this.event) && type(this.event) == map && size(this.event) == 2 && has(this.event.kind) && type(this.event.kind) == string && this.event.kind in [\"describe\", \"lift\"] && has(this.event.payload) && type(this.event.payload) == map && has(this.expected_revision) && type(this.expected_revision) == string && this.expected_revision.size() <= 20 && has(this.version) && this.version == int(this.version) && this.version >= 1 && this.version <= 9007199254740991"
+          "cel": "type(this) == map && size(this) == 3 && has(this.event) && type(this.event) == map && size(this.event) == 2 && has(this.event.kind) && type(this.event.kind) == string && this.event.kind in [\"cancel\", \"describe\", \"lift\"] && has(this.event.payload) && type(this.event.payload) == map && has(this.expected_revision) && type(this.expected_revision) == string && this.expected_revision.size() <= 20 && has(this.version) && this.version == int(this.version) && this.version >= 1 && this.version <= 9007199254740991"
         },
         {
           "name": "revision",
@@ -2775,7 +2801,7 @@
       "cel": {
         "checks": {
           "id": "char_length(id) <= 128",
-          "request": "public.portable_shape_valid(request, '{\"kind\":\"object\",\"fields\":{\"event\":{\"kind\":\"object\",\"fields\":{\"kind\":{\"kind\":\"string\",\"enumValues\":[\"describe\",\"lift\"]},\"payload\":{\"kind\":\"object\"}}},\"expected_revision\":{\"kind\":\"string\",\"sizeMax\":20},\"version\":{\"kind\":\"integer\",\"intMin\":1,\"intMax\":9007199254740991}}}'::jsonb)",
+          "request": "public.portable_shape_valid(request, '{\"kind\":\"object\",\"fields\":{\"event\":{\"kind\":\"object\",\"fields\":{\"kind\":{\"kind\":\"string\",\"enumValues\":[\"cancel\",\"describe\",\"lift\"]},\"payload\":{\"kind\":\"object\"}}},\"expected_revision\":{\"kind\":\"string\",\"sizeMax\":20},\"version\":{\"kind\":\"integer\",\"intMin\":1,\"intMax\":9007199254740991}}}'::jsonb)",
           "outcome": "outcome IN ('', 'accepted', 'rejected')",
           "reason": "char_length(reason) <= 64"
         },
@@ -2799,6 +2825,7 @@
                   "kind": {
                     "kind": "string",
                     "enumValues": [
+                      "cancel",
                       "describe",
                       "lift"
                     ]
@@ -2818,6 +2845,122 @@
                 "intMax": 9007199254740991
               }
             }
+          },
+          "reason": {
+            "sizeMax": 64
+          }
+        }
+      },
+      "uniques": [],
+      "validations": {}
+    },
+    "ApexrunDuelOpen": {
+      "name": "ApexrunDuelOpen",
+      "ir": "ApexrunDuelOpen",
+      "access": {
+        "scope": "private",
+        "owner": "actor"
+      },
+      "durability": "live",
+      "fields": [
+        {
+          "name": "id",
+          "ordinal": 1,
+          "retired": false,
+          "type": "text",
+          "pk": true,
+          "required": true,
+          "cel": "this.size() <= 128"
+        },
+        {
+          "name": "instance_id",
+          "ordinal": 2,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "actor",
+          "ordinal": 3,
+          "retired": false,
+          "type": "uuid",
+          "pk": false,
+          "required": true,
+          "default": "auth_uid()"
+        },
+        {
+          "name": "kind",
+          "ordinal": 4,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": true,
+          "cel": "this in ['create', 'join']"
+        },
+        {
+          "name": "input",
+          "ordinal": 5,
+          "retired": false,
+          "type": "json",
+          "pk": false,
+          "required": true
+        },
+        {
+          "name": "outcome",
+          "ordinal": 6,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this in ['', 'accepted', 'rejected']"
+        },
+        {
+          "name": "reason",
+          "ordinal": 7,
+          "retired": false,
+          "type": "text",
+          "pk": false,
+          "required": false,
+          "cel": "this.size() <= 64"
+        }
+      ],
+      "id": "0xc2f63d8e4a1b9075",
+      "seed": [],
+      "table": "apexrun_duel_open",
+      "level": "compensable",
+      "read": "eager",
+      "server": true,
+      "writers": [
+        {
+          "by": "arena",
+          "kind": "screen",
+          "ops": [
+            "reduce"
+          ]
+        }
+      ],
+      "cel": {
+        "checks": {
+          "id": "char_length(id) <= 128",
+          "kind": "kind IN ('create', 'join')",
+          "outcome": "outcome IN ('', 'accepted', 'rejected')",
+          "reason": "char_length(reason) <= 64"
+        },
+        "enums": {
+          "kind": [
+            "create",
+            "join"
+          ],
+          "outcome": [
+            "",
+            "accepted",
+            "rejected"
+          ]
+        },
+        "bounds": {
+          "id": {
+            "sizeMax": 128
           },
           "reason": {
             "sizeMax": 64
@@ -2877,7 +3020,7 @@
               }
             ],
             "returns": "boolean",
-            "sql": "SELECT EXISTS (SELECT FROM hybrid_apexrun_presence.instance p\n  WHERE p.id = racer AND p.state->>'phase' = 'visible'\n  AND EXISTS (SELECT FROM jsonb_array_elements(p.state->'leases') l\n    WHERE (l->>'until')::bigint > hybrid_apexrun_presence.clock()))\n  AND NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.instance d ON d.id = m.instance_id\n    WHERE m.actor = racer AND d.state->>'phase' IN ('signalling', 'racing'));"
+            "sql": "SELECT EXISTS (SELECT FROM hybrid_apexrun_presence.instance p\n  WHERE p.id = racer AND p.state->>'phase' = 'visible'\n  AND EXISTS (SELECT FROM jsonb_array_elements(p.state->'leases') l\n    WHERE (l->>'until')::bigint > hybrid_apexrun_presence.clock()))\n  AND NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.instance d ON d.id = m.instance_id\n    WHERE m.actor = racer AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'));"
           }
         }
       },
@@ -3517,6 +3660,21 @@
                       }
                     }
                   }
+                },
+                {
+                  "send": {
+                    "machine": "apexrun_duel",
+                    "id": {
+                      "raw": "(game.state->>'duel')::uuid"
+                    },
+                    "event": "start",
+                    "payload": {
+                      "seats": [
+                        "a",
+                        "b"
+                      ]
+                    }
+                  }
                 }
               ]
             },
@@ -3569,7 +3727,7 @@
               "sql": "hybrid_apexrun_presence.available((game.state->>'inviter')::uuid) AND hybrid_apexrun_presence.available((game.state->>'target')::uuid)",
               "reason": "racer_unavailable"
             },
-            "sql": "PERFORM hybrid_apexrun_duel.spawn((game.state->>'duel')::uuid, jsonb_build_object('stage', game.state->>'stage', 'seed', (game.state->>'seed')::bigint), jsonb_build_object('a', game.state->>'inviter', 'b', game.state->>'target'), now_ms);"
+            "sql": "PERFORM hybrid_apexrun_duel.spawn((game.state->>'duel')::uuid, jsonb_build_object('stage', game.state->>'stage', 'seed', (game.state->>'seed')::bigint), jsonb_build_object('a', game.state->>'inviter', 'b', game.state->>'target'), now_ms);\nPERFORM hybrid_apexrun_duel.deliver((game.state->>'duel')::uuid, jsonb_build_object('kind', 'start', 'payload', jsonb_build_object('seats', '[\"a\",\"b\"]'::jsonb)), now_ms);"
           }
         ]
       }
@@ -3579,7 +3737,7 @@
       "version": 1,
       "fuel": 10000,
       "entropy": 0,
-      "initial": "signalling",
+      "initial": "waiting",
       "initialize": {
         "reduce": "initial",
         "input": {
@@ -3610,8 +3768,77 @@
         }
       },
       "ports": {
+        "admission": {
+          "name": "apexrun_duel_create",
+          "params": [
+            {
+              "name": "instance_id",
+              "type": "uuid"
+            },
+            {
+              "name": "stage",
+              "type": "text"
+            },
+            {
+              "name": "seed",
+              "type": "text"
+            }
+          ],
+          "id": "instance_id",
+          "checks": [
+            {
+              "sql": "seed ~ '^[0-9]{1,10}$' AND seed::bigint <= 2147483647",
+              "reason": "invalid duel seed",
+              "mode": "error"
+            },
+            {
+              "sql": "stage IN ('coconut-beach', 'desert-canyons', 'gateway-pass', 'alpine-peaks', 'wilderness-run', 'tulip-gardens', 'sunset-highway', 'ancient-ruins', 'metropolis-night', 'coastal-cliffs')",
+              "reason": "unknown duel stage",
+              "mode": "error"
+            },
+            {
+              "sql": "NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.instance d ON d.id = m.instance_id WHERE m.actor = current_actor AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'))",
+              "reason": "racer_unavailable",
+              "mode": "reject"
+            }
+          ],
+          "input": {
+            "stage": {
+              "raw": "stage"
+            },
+            "seed": {
+              "raw": "seed::bigint"
+            }
+          },
+          "locks": [
+            {
+              "schema": "hybrid_apexrun_presence",
+              "table": "instance",
+              "key": "id",
+              "values": [
+                {
+                  "raw": "current_actor"
+                }
+              ]
+            }
+          ],
+          "members": {
+            "a": {
+              "raw": "current_actor"
+            }
+          }
+        },
+        "join": {
+          "seats": "seats",
+          "membersPayload": "seats",
+          "phases": [
+            "waiting"
+          ],
+          "event": "start"
+        },
         "wake": {
           "phases": [
+            "waiting",
             "signalling",
             "racing"
           ],
@@ -3626,6 +3853,7 @@
             "type": "string",
             "maxLength": 10,
             "values": [
+              "waiting",
               "signalling",
               "racing",
               "finished",
@@ -3653,6 +3881,18 @@
             "type": "integer",
             "min": 0,
             "max": 2147483647
+          },
+          "seats": {
+            "type": "array",
+            "maxItems": 2,
+            "items": {
+              "type": "string",
+              "maxLength": 1,
+              "values": [
+                "a",
+                "b"
+              ]
+            }
           },
           "offer": {
             "type": "string",
@@ -3883,6 +4123,7 @@
             "type": "string",
             "maxLength": 10,
             "values": [
+              "waiting",
               "signalling",
               "racing",
               "finished",
@@ -3893,6 +4134,20 @@
         }
       },
       "contracts": {
+        "start": {
+          "reads": [
+            "now"
+          ],
+          "writes": [
+            "deadline"
+          ]
+        },
+        "cancel": {
+          "reads": [],
+          "writes": [
+            "deadline"
+          ]
+        },
         "describe": {
           "reads": [
             "actor",
@@ -3945,6 +4200,16 @@
             "deadline"
           ]
         },
+        "ready": {
+          "reads": [
+            "payload.seats"
+          ]
+        },
+        "mayCancel": {
+          "reads": [
+            "actor"
+          ]
+        },
         "mayDescribe": {
           "reads": [
             "actor"
@@ -3973,6 +4238,33 @@
         }
       },
       "events": {
+        "start": {
+          "tier": "mecha",
+          "payload": {
+            "type": "object",
+            "fields": {
+              "seats": {
+                "type": "array",
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "maxLength": 1,
+                  "values": [
+                    "a",
+                    "b"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "cancel": {
+          "tier": "omnishell",
+          "payload": {
+            "type": "object",
+            "fields": {}
+          }
+        },
         "describe": {
           "tier": "omnishell",
           "payload": {
@@ -4046,6 +4338,26 @@
         }
       },
       "states": {
+        "waiting": {
+          "final": false,
+          "on": {
+            "start": {
+              "target": "signalling",
+              "guard": "ready",
+              "reduce": "start"
+            },
+            "cancel": {
+              "target": "abandoned",
+              "guard": "mayCancel",
+              "reduce": "cancel"
+            },
+            "timeout": {
+              "target": "abandoned",
+              "guard": "isDue",
+              "reduce": "timeout"
+            }
+          }
+        },
         "signalling": {
           "final": false,
           "always": [
@@ -4108,7 +4420,13 @@
       "hatches": [],
       "mecha": {
         "locks": "",
-        "ports": {},
+        "ports": {
+          "admission": {
+            "input": "jsonb_build_object('stage', stage, 'seed', seed::bigint)",
+            "members": "jsonb_build_object('a', current_actor)",
+            "locks": "PERFORM 1 FROM \"hybrid_apexrun_presence\".\"instance\" WHERE \"id\" IN (current_actor) ORDER BY \"id\" FOR UPDATE;"
+          }
+        },
         "transitions": []
       }
     }

@@ -124,4 +124,10 @@ code: state: entities: {
 		table: "apexrun_duel_command"
 		fields: (_command & {machine: online.duel}).fields
 	}
+	ApexrunDuelOpen: _private
+	ApexrunDuelOpen: {
+		id: "0xc2f63d8e4a1b9075"
+		table: "apexrun_duel_open"
+		fields: _open
+	}
 }

@@ -521,6 +521,16 @@
         "name": "name",
         "type": "string",
         "retired": false
+      },
+      "10": {
+        "name": "link",
+        "type": "string",
+        "retired": false
+      },
+      "11": {
+        "name": "join",
+        "type": "string",
+        "retired": false
       }
     }
   },
@@ -920,6 +930,46 @@
       "5": {
         "name": "revision",
         "type": "bigint",
+        "retired": false
+      },
+      "6": {
+        "name": "outcome",
+        "type": "text",
+        "retired": false
+      },
+      "7": {
+        "name": "reason",
+        "type": "text",
+        "retired": false
+      }
+    }
+  },
+  "0xc2f63d8e4a1b9075": {
+    "name": "apexrun_duel_open",
+    "fields": {
+      "1": {
+        "name": "id",
+        "type": "text",
+        "retired": false
+      },
+      "2": {
+        "name": "instance_id",
+        "type": "uuid",
+        "retired": false
+      },
+      "3": {
+        "name": "actor",
+        "type": "uuid",
+        "retired": false
+      },
+      "4": {
+        "name": "kind",
+        "type": "text",
+        "retired": false
+      },
+      "5": {
+        "name": "input",
+        "type": "json",
         "retired": false
       },
       "6": {

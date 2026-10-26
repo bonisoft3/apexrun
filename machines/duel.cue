@@ -21,6 +21,7 @@ import pronto "github.com/bonisoft3/pronto"
 #Duel: {
 	stage: #Stage
 	seed:  #Seed
+	seats: #Seats
 	// Each side's session description, sent once its ICE gathering completes:
 	// the challenger's offer and the target's answer.
 	offer: {type: "string", maxLength: 8192}
@@ -38,12 +39,18 @@ import pronto "github.com/bonisoft3/pronto"
 }
 // One duel: its two racers signal a data channel through it, race over the
 // channel, and lift the race's milestones into it, which it joins and holds
-// to each other; the finish both lifted alike is the result.
+// to each other; the finish both lifted alike is the result. A challenge link
+// opens it in `waiting` with seat a taken until seat b joins.
 duel: pronto.#Machine & {
 	config: {
 		id:      "apexrun_duel"
-		initial: "signalling"
+		initial: "waiting"
 		states: {
+			waiting: on: {
+				start: {guard: "ready", target: "signalling", actions: "start"}
+				cancel: {guard: "mayCancel", target: "abandoned", actions: "cancel"}
+				timeout: {guard: "isDue", target: "abandoned", actions: "timeout"}
+			}
 			signalling: {
 				on: {
 					describe: {guard: "mayDescribe", actions: "describe"}
@@ -66,12 +73,16 @@ duel: pronto.#Machine & {
 	setup: {
 		version: 1
 		guards: {
+			ready: reads: ["payload.seats"]
+			mayCancel: reads: ["actor"]
 			mayDescribe: reads: ["actor"]
 			mayLift: reads: ["actor", "payload.frame", "payload.kind"]
 			isDue: reads: ["now"]
 			for g in ["connected", "desynced", "settled"] {(g): reads: []}
 		}
 		actions: {
+			start: {reads: ["now"], writes: ["deadline"]}
+			cancel: {reads: [], writes: ["deadline"]}
 			describe: {reads: ["actor", "payload.description"], writes: ["offer", "answer"]}
 			race: {reads: ["now"], writes: ["deadline"]}
 			lift: {reads: ["actor", "now", "payload.frame", "payload.kind", "payload.checksum", "payload.inputs", "payload.winner", "payload.goal_a", "payload.goal_b"], writes: ["lifts", "dispute", "deadline"]}
@@ -88,9 +99,11 @@ duel: pronto.#Machine & {
 				described: {type: "boolean"}
 				lifted: {type: "array", maxItems: 8, items: {type: "object", fields: {frame: #Lifted.frame, kind: #Lifted.kind, by: #Seats}}}
 				winner: #Winner, goal_a: #Goal, goal_b: #Goal, dispute: {type: "string", maxLength: 24}, silent: #Seats
-				phase: {type: "string", maxLength: 10, values: ["signalling", "racing", "finished", "disputed", "abandoned"]}
+				phase: {type: "string", maxLength: 10, values: ["waiting", "signalling", "racing", "finished", "disputed", "abandoned"]}
 			}}
 			events: {
+				start: {tier: "mecha", payload: {type: "object", fields: seats: #Seats}}
+				cancel: {tier: "omnishell", payload: {type: "object", fields: {}}}
 				describe: {tier: "omnishell", payload: {type: "object", fields: description: {type: "string", maxLength: 8192}}}
 				lift: {tier: "omnishell", payload: {type: "object", fields: #Lifted}}
 				timeout: {tier: "mecha", payload: {type: "object", fields: {}}}

@@ -43,5 +43,8 @@ CREATE TRIGGER restamp_txid BEFORE UPDATE ON apexrun_duel_seat
 DROP TRIGGER IF EXISTS restamp_txid ON apexrun_duel_command;
 CREATE TRIGGER restamp_txid BEFORE UPDATE ON apexrun_duel_command
   FOR EACH ROW EXECUTE FUNCTION restamp_txid();
+DROP TRIGGER IF EXISTS restamp_txid ON apexrun_duel_open;
+CREATE TRIGGER restamp_txid BEFORE UPDATE ON apexrun_duel_open
+  FOR EACH ROW EXECUTE FUNCTION restamp_txid();
 
 COMMIT;

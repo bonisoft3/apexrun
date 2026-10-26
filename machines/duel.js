@@ -11,7 +11,7 @@ const finish = state => state.lifts.find(lift => lift.kind === "duel-finish" && 
 const AGREED = ["checksum", "inputs", "winner", "goal_a", "goal_b"];
 return {
   initial: (input, context) => ({
-    ...input, phase: "signalling", offer: "", answer: "", deadline: context.now + SIGNAL_MS,
+    ...input, phase: "waiting", seats: SEATS, offer: "", answer: "", deadline: context.now + SIGNAL_MS,
     lifts: [], winner: "", goal_a: -1, goal_b: -1, dispute: "", silent: [],
   }),
   invariant: state => state.lifts.every((lift, i) => state.lifts.findIndex(other => key(other) === key(lift)) === i && lift.by.length > 0)
@@ -24,6 +24,10 @@ return {
     lifted: state.lifts.map(({frame, kind, by}) => ({frame, kind, by})),
     winner: state.winner, goal_a: state.goal_a, goal_b: state.goal_b, dispute: state.dispute, silent: state.silent, phase: state.phase,
   }),
+  ready: (_state, event) => SEATS.every(seat => event.payload.seats.includes(seat)) ? true : "waiting_for_players",
+  start: (state, _event, context) => ({...state, deadline: context.now + SIGNAL_MS}),
+  mayCancel: (_state, _event, context) => context.actor === "a" ? true : "not_inviter",
+  cancel: state => ({...state, deadline: 0}),
   // The challenger offers first; the target answers the offer.
   mayDescribe: (state, _event, context) => (context.actor === "a" ? state.offer : state.answer) !== "" ? "described"
     : context.actor === "b" && state.offer === "" ? "no_offer" : true,
@@ -51,7 +55,7 @@ return {
   },
   isDue: (state, _event, context) => context.now >= state.deadline ? true : "not_due",
   // Who had not answered when the clock ran out: a description, or the finish.
-  timeout: state => ({...state, deadline: 0, silent: SEATS.filter(seat => state.phase === "signalling"
+  timeout: state => ({...state, deadline: 0, silent: state.phase === "waiting" ? [] : SEATS.filter(seat => state.phase === "signalling"
     ? (seat === "a" ? state.offer : state.answer) === ""
     : !state.lifts.some(lift => lift.kind === "duel-finish" && lift.by.includes(seat)))}),
 };

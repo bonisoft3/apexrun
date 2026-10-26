@@ -102,6 +102,8 @@ code: state: entities: {
 			offer?: strings.MaxRunes(36)
 			stage?: strings.MaxRunes(16)
 			name?: strings.MaxRunes(16)
+			link?: strings.MaxRunes(64)
+			join?: strings.MaxRunes(128)
 		}]
 		cel: {
 			enums: {
@@ -116,6 +118,8 @@ code: state: entities: {
 				offer: {sizeMax: 36}
 				stage: {sizeMax: 16}
 				name: {sizeMax: 16}
+				link: {sizeMax: 64}
+				join: {sizeMax: 128}
 			}
 		}
 	}
@@ -328,7 +332,7 @@ code: state: entities: {
 			id?: strings.MaxRunes(64)
 			seat?: strings.MaxRunes(16)
 			phase?: strings.MaxRunes(16)
-			view?: close({deadline: int & >=0 & <=9007199254740991, described: bool, dispute: strings.MaxRunes(24), goal_a: int & >=-1 & <=1000000, goal_b: int & >=-1 & <=1000000, lifted: [...close({by: [...("a" | "b")] & list.MaxItems(2), frame: int & >=0 & <=1000000, kind: ("grid" | "start" | "checkpoint" | "time-over" | "duel-finish")})] & list.MaxItems(8), peer: strings.MaxRunes(8192), phase: ("signalling" | "racing" | "finished" | "disputed" | "abandoned"), seed: int & >=0 & <=2147483647, silent: [...("a" | "b")] & list.MaxItems(2), stage: ("coconut-beach" | "desert-canyons" | "gateway-pass" | "alpine-peaks" | "wilderness-run" | "tulip-gardens" | "sunset-highway" | "ancient-ruins" | "metropolis-night" | "coastal-cliffs"), winner: ("" | "a" | "b" | "draw")})
+			view?: close({deadline: int & >=0 & <=9007199254740991, described: bool, dispute: strings.MaxRunes(24), goal_a: int & >=-1 & <=1000000, goal_b: int & >=-1 & <=1000000, lifted: [...close({by: [...("a" | "b")] & list.MaxItems(2), frame: int & >=0 & <=1000000, kind: ("grid" | "start" | "checkpoint" | "time-over" | "duel-finish")})] & list.MaxItems(8), peer: strings.MaxRunes(8192), phase: ("waiting" | "signalling" | "racing" | "finished" | "disputed" | "abandoned"), seed: int & >=0 & <=2147483647, silent: [...("a" | "b")] & list.MaxItems(2), stage: ("coconut-beach" | "desert-canyons" | "gateway-pass" | "alpine-peaks" | "wilderness-run" | "tulip-gardens" | "sunset-highway" | "ancient-ruins" | "metropolis-night" | "coastal-cliffs"), winner: ("" | "a" | "b" | "draw")})
 			stage?: strings.MaxRunes(16)
 			winner?: strings.MaxRunes(4)
 		}]
@@ -337,7 +341,7 @@ code: state: entities: {
 				id: "char_length(id) <= 64"
 				seat: "char_length(seat) <= 16"
 				phase: "char_length(phase) <= 16"
-				view: "public.portable_shape_valid(view, '{\"kind\":\"object\",\"fields\":{\"deadline\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":9007199254740991},\"described\":{\"kind\":\"boolean\"},\"dispute\":{\"kind\":\"string\",\"sizeMax\":24},\"goal_a\":{\"kind\":\"integer\",\"intMin\":-1,\"intMax\":1000000},\"goal_b\":{\"kind\":\"integer\",\"intMin\":-1,\"intMax\":1000000},\"lifted\":{\"kind\":\"array\",\"maxItems\":8,\"items\":{\"kind\":\"object\",\"fields\":{\"by\":{\"kind\":\"array\",\"maxItems\":2,\"items\":{\"kind\":\"string\",\"enumValues\":[\"a\",\"b\"]}},\"frame\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":1000000},\"kind\":{\"kind\":\"string\",\"enumValues\":[\"grid\",\"start\",\"checkpoint\",\"time-over\",\"duel-finish\"]}}}},\"peer\":{\"kind\":\"string\",\"sizeMax\":8192},\"phase\":{\"kind\":\"string\",\"enumValues\":[\"signalling\",\"racing\",\"finished\",\"disputed\",\"abandoned\"]},\"seed\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":2147483647},\"silent\":{\"kind\":\"array\",\"maxItems\":2,\"items\":{\"kind\":\"string\",\"enumValues\":[\"a\",\"b\"]}},\"stage\":{\"kind\":\"string\",\"enumValues\":[\"coconut-beach\",\"desert-canyons\",\"gateway-pass\",\"alpine-peaks\",\"wilderness-run\",\"tulip-gardens\",\"sunset-highway\",\"ancient-ruins\",\"metropolis-night\",\"coastal-cliffs\"]},\"winner\":{\"kind\":\"string\",\"enumValues\":[\"\",\"a\",\"b\",\"draw\"]}}}'::jsonb)"
+				view: "public.portable_shape_valid(view, '{\"kind\":\"object\",\"fields\":{\"deadline\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":9007199254740991},\"described\":{\"kind\":\"boolean\"},\"dispute\":{\"kind\":\"string\",\"sizeMax\":24},\"goal_a\":{\"kind\":\"integer\",\"intMin\":-1,\"intMax\":1000000},\"goal_b\":{\"kind\":\"integer\",\"intMin\":-1,\"intMax\":1000000},\"lifted\":{\"kind\":\"array\",\"maxItems\":8,\"items\":{\"kind\":\"object\",\"fields\":{\"by\":{\"kind\":\"array\",\"maxItems\":2,\"items\":{\"kind\":\"string\",\"enumValues\":[\"a\",\"b\"]}},\"frame\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":1000000},\"kind\":{\"kind\":\"string\",\"enumValues\":[\"grid\",\"start\",\"checkpoint\",\"time-over\",\"duel-finish\"]}}}},\"peer\":{\"kind\":\"string\",\"sizeMax\":8192},\"phase\":{\"kind\":\"string\",\"enumValues\":[\"waiting\",\"signalling\",\"racing\",\"finished\",\"disputed\",\"abandoned\"]},\"seed\":{\"kind\":\"integer\",\"intMin\":0,\"intMax\":2147483647},\"silent\":{\"kind\":\"array\",\"maxItems\":2,\"items\":{\"kind\":\"string\",\"enumValues\":[\"a\",\"b\"]}},\"stage\":{\"kind\":\"string\",\"enumValues\":[\"coconut-beach\",\"desert-canyons\",\"gateway-pass\",\"alpine-peaks\",\"wilderness-run\",\"tulip-gardens\",\"sunset-highway\",\"ancient-ruins\",\"metropolis-night\",\"coastal-cliffs\"]},\"winner\":{\"kind\":\"string\",\"enumValues\":[\"\",\"a\",\"b\",\"draw\"]}}}'::jsonb)"
 				stage: "char_length(stage) <= 16"
 				winner: "char_length(winner) <= 4"
 			}
@@ -345,7 +349,7 @@ code: state: entities: {
 				id: {sizeMax: 64}
 				seat: {sizeMax: 16}
 				phase: {sizeMax: 16}
-				view: {kind: "object", fields: {"deadline":{"kind":"integer","intMin":0,"intMax":9007199254740991},"described":{"kind":"boolean"},"dispute":{"kind":"string","sizeMax":24},"goal_a":{"kind":"integer","intMin":-1,"intMax":1000000},"goal_b":{"kind":"integer","intMin":-1,"intMax":1000000},"lifted":{"kind":"array","maxItems":8,"items":{"kind":"object","fields":{"by":{"kind":"array","maxItems":2,"items":{"kind":"string","enumValues":["a","b"]}},"frame":{"kind":"integer","intMin":0,"intMax":1000000},"kind":{"kind":"string","enumValues":["grid","start","checkpoint","time-over","duel-finish"]}}}},"peer":{"kind":"string","sizeMax":8192},"phase":{"kind":"string","enumValues":["signalling","racing","finished","disputed","abandoned"]},"seed":{"kind":"integer","intMin":0,"intMax":2147483647},"silent":{"kind":"array","maxItems":2,"items":{"kind":"string","enumValues":["a","b"]}},"stage":{"kind":"string","enumValues":["coconut-beach","desert-canyons","gateway-pass","alpine-peaks","wilderness-run","tulip-gardens","sunset-highway","ancient-ruins","metropolis-night","coastal-cliffs"]},"winner":{"kind":"string","enumValues":["","a","b","draw"]}}}
+				view: {kind: "object", fields: {"deadline":{"kind":"integer","intMin":0,"intMax":9007199254740991},"described":{"kind":"boolean"},"dispute":{"kind":"string","sizeMax":24},"goal_a":{"kind":"integer","intMin":-1,"intMax":1000000},"goal_b":{"kind":"integer","intMin":-1,"intMax":1000000},"lifted":{"kind":"array","maxItems":8,"items":{"kind":"object","fields":{"by":{"kind":"array","maxItems":2,"items":{"kind":"string","enumValues":["a","b"]}},"frame":{"kind":"integer","intMin":0,"intMax":1000000},"kind":{"kind":"string","enumValues":["grid","start","checkpoint","time-over","duel-finish"]}}}},"peer":{"kind":"string","sizeMax":8192},"phase":{"kind":"string","enumValues":["waiting","signalling","racing","finished","disputed","abandoned"]},"seed":{"kind":"integer","intMin":0,"intMax":2147483647},"silent":{"kind":"array","maxItems":2,"items":{"kind":"string","enumValues":["a","b"]}},"stage":{"kind":"string","enumValues":["coconut-beach","desert-canyons","gateway-pass","alpine-peaks","wilderness-run","tulip-gardens","sunset-highway","ancient-ruins","metropolis-night","coastal-cliffs"]},"winner":{"kind":"string","enumValues":["","a","b","draw"]}}}
 				stage: {sizeMax: 16}
 				winner: {sizeMax: 4}
 			}
@@ -354,14 +358,14 @@ code: state: entities: {
 	ApexrunDuelCommand: {
 		seed: [...{
 			id?: strings.MaxRunes(128)
-			request?: close({event: close({kind: ("describe" | "lift"), payload: {...}}), expected_revision: strings.MaxRunes(20), version: int & >=1 & <=9007199254740991})
+			request?: close({event: close({kind: ("cancel" | "describe" | "lift"), payload: {...}}), expected_revision: strings.MaxRunes(20), version: int & >=1 & <=9007199254740991})
 			outcome?: ("" | "accepted" | "rejected")
 			reason?: strings.MaxRunes(64)
 		}]
 		cel: {
 			checks: {
 				id: "char_length(id) <= 128"
-				request: "public.portable_shape_valid(request, '{\"kind\":\"object\",\"fields\":{\"event\":{\"kind\":\"object\",\"fields\":{\"kind\":{\"kind\":\"string\",\"enumValues\":[\"describe\",\"lift\"]},\"payload\":{\"kind\":\"object\"}}},\"expected_revision\":{\"kind\":\"string\",\"sizeMax\":20},\"version\":{\"kind\":\"integer\",\"intMin\":1,\"intMax\":9007199254740991}}}'::jsonb)"
+				request: "public.portable_shape_valid(request, '{\"kind\":\"object\",\"fields\":{\"event\":{\"kind\":\"object\",\"fields\":{\"kind\":{\"kind\":\"string\",\"enumValues\":[\"cancel\",\"describe\",\"lift\"]},\"payload\":{\"kind\":\"object\"}}},\"expected_revision\":{\"kind\":\"string\",\"sizeMax\":20},\"version\":{\"kind\":\"integer\",\"intMin\":1,\"intMax\":9007199254740991}}}'::jsonb)"
 				outcome: "outcome IN ('', 'accepted', 'rejected')"
 				reason: "char_length(reason) <= 64"
 			}
@@ -370,7 +374,31 @@ code: state: entities: {
 			}
 			bounds: {
 				id: {sizeMax: 128}
-				request: {kind: "object", fields: {"event":{"kind":"object","fields":{"kind":{"kind":"string","enumValues":["describe","lift"]},"payload":{"kind":"object"}}},"expected_revision":{"kind":"string","sizeMax":20},"version":{"kind":"integer","intMin":1,"intMax":9007199254740991}}}
+				request: {kind: "object", fields: {"event":{"kind":"object","fields":{"kind":{"kind":"string","enumValues":["cancel","describe","lift"]},"payload":{"kind":"object"}}},"expected_revision":{"kind":"string","sizeMax":20},"version":{"kind":"integer","intMin":1,"intMax":9007199254740991}}}
+				reason: {sizeMax: 64}
+			}
+		}
+	}
+	ApexrunDuelOpen: {
+		seed: [...{
+			id?: strings.MaxRunes(128)
+			kind?: ("create" | "join")
+			outcome?: ("" | "accepted" | "rejected")
+			reason?: strings.MaxRunes(64)
+		}]
+		cel: {
+			checks: {
+				id: "char_length(id) <= 128"
+				kind: "kind IN ('create', 'join')"
+				outcome: "outcome IN ('', 'accepted', 'rejected')"
+				reason: "char_length(reason) <= 64"
+			}
+			enums: {
+				kind: ["create","join"]
+				outcome: ["","accepted","rejected"]
+			}
+			bounds: {
+				id: {sizeMax: 128}
 				reason: {sizeMax: 64}
 			}
 		}

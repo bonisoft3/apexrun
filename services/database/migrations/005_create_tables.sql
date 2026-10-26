@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS apexrun_duel_seat (
   "seat" TEXT NOT NULL CHECK (char_length(seat) <= 16),
   "revision" BIGINT NOT NULL,
   "phase" TEXT NOT NULL CHECK (char_length(phase) <= 16),
-  "view" json NOT NULL CONSTRAINT "apexrun_duel_seat_view_type" CHECK ("view" IS NULL OR public.portable_json_valid("view") IS TRUE) CHECK (public.portable_shape_valid(view, '{"kind":"object","fields":{"deadline":{"kind":"integer","intMin":0,"intMax":9007199254740991},"described":{"kind":"boolean"},"dispute":{"kind":"string","sizeMax":24},"goal_a":{"kind":"integer","intMin":-1,"intMax":1000000},"goal_b":{"kind":"integer","intMin":-1,"intMax":1000000},"lifted":{"kind":"array","maxItems":8,"items":{"kind":"object","fields":{"by":{"kind":"array","maxItems":2,"items":{"kind":"string","enumValues":["a","b"]}},"frame":{"kind":"integer","intMin":0,"intMax":1000000},"kind":{"kind":"string","enumValues":["grid","start","checkpoint","time-over","duel-finish"]}}}},"peer":{"kind":"string","sizeMax":8192},"phase":{"kind":"string","enumValues":["signalling","racing","finished","disputed","abandoned"]},"seed":{"kind":"integer","intMin":0,"intMax":2147483647},"silent":{"kind":"array","maxItems":2,"items":{"kind":"string","enumValues":["a","b"]}},"stage":{"kind":"string","enumValues":["coconut-beach","desert-canyons","gateway-pass","alpine-peaks","wilderness-run","tulip-gardens","sunset-highway","ancient-ruins","metropolis-night","coastal-cliffs"]},"winner":{"kind":"string","enumValues":["","a","b","draw"]}}}'::jsonb)),
+  "view" json NOT NULL CONSTRAINT "apexrun_duel_seat_view_type" CHECK ("view" IS NULL OR public.portable_json_valid("view") IS TRUE) CHECK (public.portable_shape_valid(view, '{"kind":"object","fields":{"deadline":{"kind":"integer","intMin":0,"intMax":9007199254740991},"described":{"kind":"boolean"},"dispute":{"kind":"string","sizeMax":24},"goal_a":{"kind":"integer","intMin":-1,"intMax":1000000},"goal_b":{"kind":"integer","intMin":-1,"intMax":1000000},"lifted":{"kind":"array","maxItems":8,"items":{"kind":"object","fields":{"by":{"kind":"array","maxItems":2,"items":{"kind":"string","enumValues":["a","b"]}},"frame":{"kind":"integer","intMin":0,"intMax":1000000},"kind":{"kind":"string","enumValues":["grid","start","checkpoint","time-over","duel-finish"]}}}},"peer":{"kind":"string","sizeMax":8192},"phase":{"kind":"string","enumValues":["waiting","signalling","racing","finished","disputed","abandoned"]},"seed":{"kind":"integer","intMin":0,"intMax":2147483647},"silent":{"kind":"array","maxItems":2,"items":{"kind":"string","enumValues":["a","b"]}},"stage":{"kind":"string","enumValues":["coconut-beach","desert-canyons","gateway-pass","alpine-peaks","wilderness-run","tulip-gardens","sunset-highway","ancient-ruins","metropolis-night","coastal-cliffs"]},"winner":{"kind":"string","enumValues":["","a","b","draw"]}}}'::jsonb)),
   "stage" TEXT CHECK (char_length(stage) <= 16),
   "winner" TEXT CHECK (char_length(winner) <= 4),
   "txid" BIGINT DEFAULT pg_current_xact_id()::text::bigint,
@@ -123,8 +123,20 @@ CREATE TABLE IF NOT EXISTS apexrun_duel_command (
   "id" TEXT PRIMARY KEY CHECK (char_length(id) <= 128),
   "instance_id" uuid NOT NULL,
   "actor" uuid DEFAULT auth_uid() NOT NULL,
-  "request" json NOT NULL CONSTRAINT "apexrun_duel_command_request_type" CHECK ("request" IS NULL OR public.portable_json_valid("request") IS TRUE) CHECK (public.portable_shape_valid(request, '{"kind":"object","fields":{"event":{"kind":"object","fields":{"kind":{"kind":"string","enumValues":["describe","lift"]},"payload":{"kind":"object"}}},"expected_revision":{"kind":"string","sizeMax":20},"version":{"kind":"integer","intMin":1,"intMax":9007199254740991}}}'::jsonb)),
+  "request" json NOT NULL CONSTRAINT "apexrun_duel_command_request_type" CHECK ("request" IS NULL OR public.portable_json_valid("request") IS TRUE) CHECK (public.portable_shape_valid(request, '{"kind":"object","fields":{"event":{"kind":"object","fields":{"kind":{"kind":"string","enumValues":["cancel","describe","lift"]},"payload":{"kind":"object"}}},"expected_revision":{"kind":"string","sizeMax":20},"version":{"kind":"integer","intMin":1,"intMax":9007199254740991}}}'::jsonb)),
   "revision" BIGINT,
+  "outcome" TEXT CHECK (outcome IN ('', 'accepted', 'rejected')),
+  "reason" TEXT CHECK (char_length(reason) <= 64),
+  "txid" BIGINT DEFAULT pg_current_xact_id()::text::bigint,
+  "scope_id" TEXT GENERATED ALWAYS AS ('user:' || "actor") STORED NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS apexrun_duel_open (
+  "id" TEXT PRIMARY KEY CHECK (char_length(id) <= 128),
+  "instance_id" uuid NOT NULL,
+  "actor" uuid DEFAULT auth_uid() NOT NULL,
+  "kind" TEXT NOT NULL CHECK (kind IN ('create', 'join')),
+  "input" json NOT NULL CONSTRAINT "apexrun_duel_open_input_type" CHECK ("input" IS NULL OR public.portable_json_valid("input") IS TRUE),
   "outcome" TEXT CHECK (outcome IN ('', 'accepted', 'rejected')),
   "reason" TEXT CHECK (char_length(reason) <= 64),
   "txid" BIGINT DEFAULT pg_current_xact_id()::text::bigint,

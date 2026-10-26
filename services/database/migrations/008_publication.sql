@@ -7,9 +7,9 @@ BEGIN;
 -- tier: container
 DO $$ DECLARE t text; BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'apexrun_cdc') THEN
-    CREATE PUBLICATION apexrun_cdc FOR TABLE app_user,high_score,apexrun_presence_seat,apexrun_presence_command,apexrun_presence_public,apexrun_presence_lease,apexrun_challenge_seat,apexrun_challenge_command,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command;
+    CREATE PUBLICATION apexrun_cdc FOR TABLE app_user,high_score,apexrun_presence_seat,apexrun_presence_command,apexrun_presence_public,apexrun_presence_lease,apexrun_challenge_seat,apexrun_challenge_command,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,apexrun_duel_open;
   END IF;
-  FOREACH t IN ARRAY ARRAY['app_user','high_score','apexrun_presence_seat','apexrun_presence_command','apexrun_presence_public','apexrun_presence_lease','apexrun_challenge_seat','apexrun_challenge_command','apexrun_challenge_open','apexrun_duel_seat','apexrun_duel_command'] LOOP
+  FOREACH t IN ARRAY ARRAY['app_user','high_score','apexrun_presence_seat','apexrun_presence_command','apexrun_presence_public','apexrun_presence_lease','apexrun_challenge_seat','apexrun_challenge_command','apexrun_challenge_open','apexrun_duel_seat','apexrun_duel_command','apexrun_duel_open'] LOOP
     IF NOT EXISTS (SELECT 1 FROM pg_publication_tables
                    WHERE pubname = 'apexrun_cdc' AND schemaname = 'public' AND tablename = t) THEN
       EXECUTE format('ALTER PUBLICATION apexrun_cdc ADD TABLE %I', t);
@@ -28,9 +28,9 @@ ALTER PUBLICATION apexrun_cdc SET (publish_generated_columns = stored);
 -- tier: container
 DO $$ DECLARE t text; BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'electric_publication_default') THEN
-    CREATE PUBLICATION electric_publication_default FOR TABLE app_user,high_score,apexrun_presence_seat,apexrun_presence_command,apexrun_presence_public,apexrun_presence_lease,apexrun_challenge_seat,apexrun_challenge_command,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command;
+    CREATE PUBLICATION electric_publication_default FOR TABLE app_user,high_score,apexrun_presence_seat,apexrun_presence_command,apexrun_presence_public,apexrun_presence_lease,apexrun_challenge_seat,apexrun_challenge_command,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,apexrun_duel_open;
   END IF;
-  FOREACH t IN ARRAY ARRAY['app_user','high_score','apexrun_presence_seat','apexrun_presence_command','apexrun_presence_public','apexrun_presence_lease','apexrun_challenge_seat','apexrun_challenge_command','apexrun_challenge_open','apexrun_duel_seat','apexrun_duel_command'] LOOP
+  FOREACH t IN ARRAY ARRAY['app_user','high_score','apexrun_presence_seat','apexrun_presence_command','apexrun_presence_public','apexrun_presence_lease','apexrun_challenge_seat','apexrun_challenge_command','apexrun_challenge_open','apexrun_duel_seat','apexrun_duel_command','apexrun_duel_open'] LOOP
     IF NOT EXISTS (SELECT 1 FROM pg_publication_tables
                    WHERE pubname = 'electric_publication_default' AND schemaname = 'public' AND tablename = t) THEN
       EXECUTE format('ALTER PUBLICATION electric_publication_default ADD TABLE %I', t);
@@ -50,6 +50,7 @@ ALTER TABLE apexrun_challenge_command REPLICA IDENTITY FULL;
 ALTER TABLE apexrun_challenge_open REPLICA IDENTITY FULL;
 ALTER TABLE apexrun_duel_seat REPLICA IDENTITY FULL;
 ALTER TABLE apexrun_duel_command REPLICA IDENTITY FULL;
+ALTER TABLE apexrun_duel_open REPLICA IDENTITY FULL;
 -- tier: any
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO anon;
 

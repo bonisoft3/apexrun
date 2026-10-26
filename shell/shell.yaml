@@ -28,6 +28,9 @@ access:
   apexrun_duel_command:
     owner: actor
     scope: private
+  apexrun_duel_open:
+    owner: actor
+    scope: private
 app: apexrun
 auth:
   required: false
@@ -222,6 +225,10 @@ optional:
       type: string
     - name: offer
       type: string
+    - name: link
+      type: string
+    - name: join
+      type: string
 presenter:
   policy: 'default-src ''none''; script-src ''self'' ''unsafe-eval''; connect-src blob:; worker-src ''self'''
   scripted:
@@ -266,6 +273,7 @@ tables:
   - apexrun_challenge_open
   - apexrun_challenge_seat
   - apexrun_duel_command
+  - apexrun_duel_open
   - apexrun_duel_seat
   - apexrun_presence_command
   - apexrun_presence_lease
@@ -593,6 +601,16 @@ schema:
         name: name
         type: string
         required: true
+      - bounds:
+          sizeMax: 64
+        name: link
+        type: string
+        required: false
+      - bounds:
+          sizeMax: 128
+        name: join
+        type: string
+        required: false
   high_score:
     durability: live
     fields:
@@ -1064,6 +1082,7 @@ schema:
             phase:
               kind: string
               enumValues:
+                - waiting
                 - signalling
                 - racing
                 - finished
@@ -1139,6 +1158,7 @@ schema:
                 kind:
                   kind: string
                   enumValues:
+                    - cancel
                     - describe
                     - lift
                 payload:
@@ -1156,6 +1176,43 @@ schema:
       - name: revision
         type: bigint
         required: false
+      - enum:
+          - ''
+          - accepted
+          - rejected
+        name: outcome
+        type: text
+        required: false
+      - bounds:
+          sizeMax: 64
+        name: reason
+        type: text
+        required: false
+  apexrun_duel_open:
+    durability: live
+    fields:
+      - bounds:
+          sizeMax: 128
+        name: id
+        pk: true
+        type: text
+        required: true
+      - name: instance_id
+        type: uuid
+        required: true
+      - defaulted: true
+        name: actor
+        type: uuid
+        required: true
+      - enum:
+          - create
+          - join
+        name: kind
+        type: text
+        required: true
+      - name: input
+        type: json
+        required: true
       - enum:
           - ''
           - accepted

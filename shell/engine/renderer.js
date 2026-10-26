@@ -46,6 +46,26 @@ export const MATERIAL_TINTS = { cactus: '#6E8350', cactus_tip: '#9AA66E' };
 // against them, the cypress and broadleaf stages' land sat at luminance
 // 0.11-0.16 against 0.27.
 export const MATERIAL_LIFT = { 'cypress/foliage': 1.5, 'tree-broadleaf-a/foliage': 1.3, 'tree-broadleaf-b/foliage': 1.3 };
+// Surface overlays (recessed windows, arrow slits, doors, iron straps and
+// blinds) sit 1-2 cm proud of a tower's or hangar's wall; at 60-400 m a 16- or
+// 24-bit depth buffer cannot resolve 1 cm, so their vertices are pushed
+// outward along their surface normals (metres in model space) and backed by
+// polygon offset.
+export const SURFACE_OVERLAYS = {
+  'castle-tower/dark': 0.08,
+  'castle-tower/wood': 0.08,
+  'castle-tower/iron': 0.14,
+  'windmill/door': 0.08,
+  'windmill/dark': 0.08,
+  'lighthouse/door': 0.08,
+  'lighthouse/trim': 0.08,
+  'hangar/glass': 0.08,
+  'colosseum/shade': 0.08,
+  'colosseum/shade_deep': 0.08,
+  'tower-a/window': 0.06,
+  'tower-b/window': 0.06,
+  'tower-c/window': 0.06,
+};
 /**
  * Where a verge item on the promenade grows: bushes and flowers in a bed
  * along the sea wall's road face, as the concept's greenery and flowers
@@ -718,6 +738,10 @@ uniform vec2 sunPos;
 uniform float intensity;
 void main(void) {
   vec4 base = texture2D(textureSampler, vUV);
+  if (intensity <= 0.001) {
+    gl_FragColor = base;
+    return;
+  }
   vec2 step = (vUV - sunPos) / 48.0;
   vec2 uv = vUV;
   float decay = 1.0;
@@ -746,6 +770,10 @@ uniform intensity: f32;
 @fragment
 fn main(input: FragmentInputs) -> FragmentOutputs {
   let base = textureSample(textureSampler, textureSamplerSampler, input.vUV);
+  if (uniforms.intensity <= 0.001) {
+    fragmentOutputs.color = base;
+    return fragmentOutputs;
+  }
   let st = (input.vUV - uniforms.sunPos) / 48.0;
   var uv = input.vUV;
   var decay = 1.0;
@@ -816,11 +844,16 @@ varying vec2 vUV;
 uniform sampler2D textureSampler;
 uniform float strength;
 void main(void) {
+  vec4 base = texture2D(textureSampler, vUV);
   vec2 dir = vUV - vec2(0.5, 0.55);
   float edge = smoothstep(0.18, 0.62, length(dir));
-  vec3 acc = vec3(0.0);
-  for (int k = 0; k < 8; k++) acc += texture2D(textureSampler, vUV - dir * strength * edge * float(k) / 8.0).rgb;
-  gl_FragColor = vec4(acc / 8.0, texture2D(textureSampler, vUV).a);
+  if (strength * edge <= 0.0005) {
+    gl_FragColor = base;
+    return;
+  }
+  vec3 acc = base.rgb;
+  for (int k = 1; k < 8; k++) acc += texture2D(textureSampler, vUV - dir * strength * edge * float(k) / 8.0).rgb;
+  gl_FragColor = vec4(acc / 8.0, base.a);
 }`;
 
 const SPEED_BLUR_WGSL = `
@@ -830,13 +863,18 @@ var textureSampler: texture_2d<f32>;
 uniform strength: f32;
 @fragment
 fn main(input: FragmentInputs) -> FragmentOutputs {
+  let base = textureSample(textureSampler, textureSamplerSampler, input.vUV);
   let dir = input.vUV - vec2f(0.5, 0.55);
   let edge = smoothstep(0.18, 0.62, length(dir));
-  var acc = vec3f(0.0);
-  for (var k = 0; k < 8; k++) {
+  if (uniforms.strength * edge <= 0.0005) {
+    fragmentOutputs.color = base;
+    return fragmentOutputs;
+  }
+  var acc = base.rgb;
+  for (var k = 1; k < 8; k++) {
     acc += textureSampleLevel(textureSampler, textureSamplerSampler, input.vUV - dir * uniforms.strength * edge * f32(k) / 8.0, 0.0).rgb;
   }
-  fragmentOutputs.color = vec4f(acc / 8.0, textureSample(textureSampler, textureSamplerSampler, input.vUV).a);
+  fragmentOutputs.color = vec4f(acc / 8.0, base.a);
 }`;
 
 // The pipeline's tone curve (Narkowicz's fit of ACES) and its inverse: the
@@ -1155,7 +1193,7 @@ export class ApexrunRenderer {
     this.cssHeight = (canvas?.height ?? 0) / place.dpr;
     this._fit();
     this.engine.setHardwareScalingLevel?.(1 / this.pixelRatio);
-    this.minResolutionScale = 0.5;
+    this.minResolutionScale = 0.5 / this.pixelRatio;
     this.maxResolutionScale = 1.0;
     this.adaptiveResolution = true;
     this.targetFrameTimeMs = 16.67;
@@ -1182,6 +1220,9 @@ export class ApexrunRenderer {
     this.trafficLooks = {};
     this._initHeadlightPool(B);
     this._limitGlow();
+    if (this.cssWidth > 0 && Math.min(this.cssWidth, this.cssHeight) < 500 && Math.max(this.cssWidth, this.cssHeight) >= 500) {
+      this.setResolutionScale(0.6);
+    }
   }
 
   /**
@@ -1235,9 +1276,49 @@ export class ApexrunRenderer {
     }
   }
 
+  _setPostProcess(post, key, enabled) {
+    if (!post || !this.bCamera || this[key] === enabled) return;
+    if (enabled) this.bCamera.attachPostProcess?.(post);
+    else this.bCamera.detachPostProcess?.(post);
+    this[key] = enabled;
+  }
+
   setResolutionScale(scale) {
     const clamped = Math.max(this.minResolutionScale, Math.min(this.maxResolutionScale, scale));
     this.resolutionScale = clamped;
+    // Passes that cost whole geometry draws or multi-sample targets step down
+    // with the scale: sub-sampling the canvas while keeping 4x MSAA, a 6-face
+    // car probe every third frame, SSAO's geometry buffer, linear depth for
+    // the ink pass, full-screen radial blurs and cascaded shadow maps leaves a
+    // tile GPU bound on the extra passes.
+    if (this.pipeline && this.plan) {
+      this.pipeline.samples = clamped < 1.0 ? 1 : this.plan.msaa;
+      this.pipeline.bloomEnabled = clamped > 0.6;
+    }
+    if (this.carProbe) this.carProbe.refreshRate = clamped < 1.0 ? 0 : 3;
+    if (this.ssao && this.bCamera) {
+      const wantSsao = clamped > 0.8;
+      if (wantSsao !== this._ssaoAttached) {
+        const mgr = this.scene?.postProcessRenderPipelineManager;
+        if (wantSsao) mgr?.attachCamerasToRenderPipeline?.('bSsao', this.bCamera);
+        else mgr?.detachCamerasFromRenderPipeline?.('bSsao', this.bCamera);
+        this._ssaoAttached = wantSsao;
+      }
+    }
+    this._setPostProcess(this.godRays, '_godRaysAttached', clamped > 0.8);
+    if (this.depthRenderer) this.depthRenderer.enabled = clamped > 0.7;
+    this._setPostProcess(this.stylePass, '_styleAttached', clamped > 0.7);
+    this._setPostProcess(this.inkAA, '_inkAAAttached', clamped > 0.7);
+    this._setPostProcess(this.speedBlur, '_speedBlurAttached', clamped > 0.7);
+    if (this.shadows) {
+      const pcf = clamped > 0.8;
+      const cascades = clamped > 0.7 ? 3 : 2;
+      if (this.shadows.usePercentageCloserFiltering !== pcf) this.shadows.usePercentageCloserFiltering = pcf;
+      if (this.shadows.numCascades !== cascades) this.shadows.numCascades = cascades;
+    }
+    if (this.bSun) this.bSun.shadowEnabled = (this.hasSun ?? true) && clamped > 0.6;
+    if (this.glow) this.glow.isEnabled = clamped > 0.7;
+    if (this.bCamera && this.bScatter?.length) this._showScatter(this.bCamera.position);
     if (this.engine?.setHardwareScalingLevel) {
       this._fit();
       this.engine.setHardwareScalingLevel(1.0 / (clamped * this.pixelRatio));
@@ -1310,14 +1391,17 @@ export class ApexrunRenderer {
    * @param {{index: number, count: number, from: number, frames: number} | null} [cut=null] a replay's window
    */
   render(state, isHistorical = false, prevState = null, alpha = 1, cut = null) {
-    this._renderBabylon(state, isHistorical, prevState, alpha, cut);
+    // Recorded before the scene draws: stepping the resolution resets the
+    // OffscreenCanvas's width and height, which wipes a frame already drawn to
+    // transparent black.
     if (isHistorical || !this.isGPU) {
       this._lastFrameAt = null;
-      return;
+    } else {
+      const now = this.now();
+      if (this._lastFrameAt !== null) this.recordFrameTime(now - this._lastFrameAt);
+      this._lastFrameAt = now;
     }
-    const now = this.now();
-    if (this._lastFrameAt !== null) this.recordFrameTime(now - this._lastFrameAt);
-    this._lastFrameAt = now;
+    this._renderBabylon(state, isHistorical, prevState, alpha, cut);
   }
 
   _registerShaders(B) {
@@ -1347,7 +1431,8 @@ export class ApexrunRenderer {
     this.bCamera = new B.TargetCamera('bKartCam', new B.Vector3(0, 4, -10), scene);
     this.lens = speedFov(0, 0);
     this.bCamera.fov = this.lens;
-    this.bCamera.minZ = 0.1;
+    this.bCamera.minZ = 0.5;
+    this.bCamera.maxZ = 4000;
 
     const hemi = new B.HemisphericLight('bHemi', new B.Vector3(0, 1, 0), scene);
     hemi.excludeWithLayerMask = SKY_LIT;
@@ -2328,6 +2413,7 @@ export class ApexrunRenderer {
   // image-based light from the stage's own sky, cascaded sun shadows, and the
   // screen-space passes the quality plan allows.
   _initLighting(B, plan) {
+    this.plan = plan;
     const scene = this.scene;
     const cam = this.bCamera;
 
@@ -2339,6 +2425,8 @@ export class ApexrunRenderer {
       ssao.totalStrength = 0.9;
       ssao.samples = 12;
       ssao.maxZ = 180;
+      this.ssao = ssao;
+      this._ssaoAttached = true;
     }
     if (plan.carProbe) {
       const car = new B.ReflectionProbe('bCarProbe', 128, scene);
@@ -2383,6 +2471,7 @@ export class ApexrunRenderer {
         effect.setFloat('intensity', this.sunScreen.intensity);
       };
       this.godRays = rays;
+      this._godRaysAttached = true;
       this.sunScreen = { x: 0.5, y: 0.5, intensity: 0 };
     }
     if (plan.style) {
@@ -2390,7 +2479,8 @@ export class ApexrunRenderer {
       // pass, so it costs the scene target no colour attachment. The ink fades
       // out like exp2 fog by INK_METRES, sooner in thicker fog: inked, the
       // painted horizon ridges read as paper cut-outs.
-      const depth = scene.enableDepthRenderer(cam, false, false).getDepthMap();
+      this.depthRenderer = scene.enableDepthRenderer(cam, false, false);
+      const depth = this.depthRenderer.getDepthMap();
       const style = new B.PostProcess('bStyle', 'stkStyle', {
         uniforms: ['texel', 'outline', 'saturation', 'inkFar'], samplers: ['depthSampler'], size: 1.0, camera: cam, engine: this.engine,
         shaderLanguage: this.isWebGPU ? B.ShaderLanguage.WGSL : B.ShaderLanguage.GLSL,
@@ -2404,6 +2494,8 @@ export class ApexrunRenderer {
       };
       this.stylePass = style;
       this.inkAA = new B.FxaaPostProcess('bInkAA', 1.0, cam);
+      this._styleAttached = true;
+      this._inkAAAttached = true;
     }
     if (plan.speedBlur) {
       const blur = new B.PostProcess('bSpeedBlur', 'stkSpeedBlur', {
@@ -2413,6 +2505,7 @@ export class ApexrunRenderer {
       blur.onApply = (effect) => effect.setFloat('strength', this.speedBlurStrength);
       this.speedBlurStrength = 0;
       this.speedBlur = blur;
+      this._speedBlurAttached = true;
     }
   }
 
@@ -2436,6 +2529,7 @@ export class ApexrunRenderer {
       list.length = 0;
       list.push(this.bSky, this.bRoad, ...this.bTerrain, ...this.bHorizon);
       this.carProbeStale = true;
+      this.carProbe.refreshRate = this.resolutionScale < 1.0 ? 0 : 3;
       // Until the cube's own is read back, the paint's diffuse light is the
       // stage sky's: a probe without one is read back on its first draw, and
       // the paint drawn before that lands is black.
@@ -2600,8 +2694,9 @@ export class ApexrunRenderer {
     const pool = this.bHeadlightPool;
     if (pool) {
       this._setNodeEnabled(pool, this.isNight && !!player);
-      const ahead = this._roadAt(z + 14, lx);
-      pool.position.set(ahead.x, ahead.y + 0.06, z + 14);
+      const ahead = this._poseOnRoad(z + 14, lx, 11, 11);
+      pool.position.set(ahead.x, ahead.y + 0.08, z + 14);
+      pool.rotation.x = Math.PI / 2 - ahead.pitch;
       pool.rotation.y = ahead.yaw;
     }
   }
@@ -2626,6 +2721,9 @@ export class ApexrunRenderer {
     mat.useAlphaFromDiffuseTexture = true;
     mat.disableLighting = true;
     mat.transparencyMode = B.Material.MATERIAL_ALPHABLEND;
+    mat.disableDepthWrite = true;
+    mat.zOffset = -4;
+    mat.zOffsetUnits = -8;
     pool.material = mat;
     this._setNodeEnabled(pool, false);
     this.bHeadlightPool = pool;
@@ -2720,7 +2818,7 @@ export class ApexrunRenderer {
     this.bSun.direction = new B.Vector3(-sunDir.x, -Math.max(sunDir.y, 0.25), -sunDir.z);
     if (this.hasSun) this.bSun.diffuse = new B.Color3(...sky.sun_light_rgb.map((c) => c / sunPeak));
     this.bSun.intensity = sunPeak;
-    this.bSun.shadowEnabled = this.hasSun;
+    this.bSun.shadowEnabled = this.hasSun && this.resolutionScale > 0.6;
     // Hemispheric light carries the sky's own irradiance to the materials
     // that do not read the environment.
     const skyPeak = Math.max(...sky.irradiance_up);
@@ -3218,7 +3316,8 @@ export class ApexrunRenderer {
 
   /** Only the scatter chunks near the camera draw. */
   _showScatter(eye) {
-    for (const { mesh, z0, z1 } of this.bScatter) mesh.setEnabled(z1 > eye.z - SCATTER_BEHIND && z0 < eye.z + SCATTER_AHEAD);
+    const ahead = SCATTER_AHEAD * Math.min(1, this.resolutionScale);
+    for (const { mesh, z0, z1 } of this.bScatter) mesh.setEnabled(z1 > eye.z - SCATTER_BEHIND && z0 < eye.z + ahead);
   }
 
   /**
@@ -3252,6 +3351,19 @@ export class ApexrunRenderer {
         if (lift && !mat.__lifted) {
           mat.albedoColor = mat.albedoColor.scale(lift);
           mat.__lifted = true;
+        }
+        const zOff = mat && SURFACE_OVERLAYS[`${id}/${part}`];
+        if (zOff) {
+          mat.zOffset = -4;
+          mat.zOffsetUnits = -8;
+          const pos = mesh.getVerticesData?.(B.VertexBuffer.PositionKind);
+          const nrm = mesh.getVerticesData?.(B.VertexBuffer.NormalKind);
+          if (pos && nrm) {
+            mesh.makeGeometryUnique();
+            const shifted = new Float32Array(pos.length);
+            for (let i = 0; i < pos.length; i++) shifted[i] = pos[i] + nrm[i] * zOff;
+            mesh.setVerticesData(B.VertexBuffer.PositionKind, shifted);
+          }
         }
         if (mat && SWAYING.has(mat.name) && !this.swaying.has(mat)) {
           this.swaying.add(mat);

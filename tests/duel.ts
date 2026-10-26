@@ -68,14 +68,29 @@ async function main(): Promise<number> {
     const callsign = (page: Page) => page.locator(".stk-lobby-you b").innerText();
     const biaName = await callsign(bia);
     await ana.click("#stage-alpine-peaks");
+    // A challenge link can be opened and cancelled before challenging from the list.
+    await ana.click("#btn-challenge-link");
+    const linkCode = ana.locator(".stk-lobby-code");
+    await linkCode.waitFor({ timeout: 30_000 });
+    const linkText = await linkCode.innerText();
+    assert(/^\?challenge=[0-9a-f-]{36}$/i.test(linkText), `expected ?challenge=<uuid>, got ${linkText}`);
+    await ana.locator('[id^="cancel-duel-"]').click();
+    await linkCode.waitFor({ state: "hidden", timeout: 30_000 });
+    console.log("PASS  duel: a racer opens and cancels a challenge link in the lobby");
+
     const listed = ana.locator(".stk-lobby-racer", { hasText: biaName });
     await listed.waitFor({ timeout: 30_000 });
     await shot(ana, "1-lobby");
     await listed.locator("button").click();
-    await bia.locator('[id^="accept-"]').waitFor({ timeout: 30_000 });
+    await bia.locator('[id^="decline-"]').waitFor({ timeout: 30_000 });
     await shot(bia, "2-challenged");
-    await bia.locator('[id^="accept-"]').click();
-    console.log("PASS  duel: a racer in the lobby challenges another on a stage, who accepts");
+    await bia.locator('[id^="decline-"]').click();
+    await ana.click("#btn-challenge-link");
+    await linkCode.waitFor({ timeout: 30_000 });
+    const sharedLink = await linkCode.innerText();
+    await bia.fill("#input-challenge-link", sharedLink);
+    await bia.click("#btn-join-link");
+    console.log("PASS  duel: a racer in the lobby opens a challenge link on a stage, which the other joins");
 
     // The duel's rows carry both descriptions; the start lifts once GGRS has
     // both racers' inputs for its frame.

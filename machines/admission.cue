@@ -52,7 +52,7 @@ presence: setup: {
 				  AND EXISTS (SELECT FROM jsonb_array_elements(p.state->'leases') l
 				    WHERE (l->>'until')::bigint > hybrid_apexrun_presence.clock()))
 				  AND NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.instance d ON d.id = m.instance_id
-				    WHERE m.actor = racer AND d.state->>'phase' IN ('signalling', 'racing'));
+				    WHERE m.actor = racer AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'));
 				"""
 		}
 	}
@@ -61,6 +61,24 @@ presence: setup: {
 duel: setup: {
 	initialize: "initial"
 	types: input: {type: "object", fields: {stage: #Stage, seed: #Seed}}
-	// A racer silent past the phase's deadline is the ticker's to time out.
-	ports: wake: {phases: ["signalling", "racing"], deadline: "deadline", event: "timeout"}
+	ports: {
+		// A challenge link opens a duel in `waiting` with the opener in seat a;
+		// the second racer joins seat b, which delivers `start`.
+		admission: {
+			name: "apexrun_duel_create"
+			params: [{name: "instance_id", type: "uuid"}, {name: "stage", type: "text"}, {name: "seed", type: "text"}]
+			id: "instance_id"
+			locks: [{schema: "hybrid_apexrun_presence", table: "instance", key: "id", values: [{raw: "current_actor"}]}]
+			checks: [
+				{sql: "seed ~ '^[0-9]{1,10}$' AND seed::bigint <= 2147483647", reason: "invalid duel seed", mode: "error"},
+				{sql: "stage IN (\(_stages))", reason: "unknown duel stage", mode: "error"},
+				{sql: "NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.instance d ON d.id = m.instance_id WHERE m.actor = current_actor AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'))", reason: "racer_unavailable"},
+			]
+			input: {stage: {raw: "stage"}, seed: {raw: "seed::bigint"}}
+			members: a: {raw: "current_actor"}
+		}
+		join: {seats: "seats", membersPayload: "seats", phases: ["waiting"], event: "start"}
+		// A racer silent past the phase's deadline is the ticker's to time out.
+		wake: {phases: ["waiting", "signalling", "racing"], deadline: "deadline", event: "timeout"}
+	}
 }

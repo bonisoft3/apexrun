@@ -49,6 +49,16 @@ message ApexrunDuelCommand {
   optional string reason = 7 [json_name = "reason"];
 }
 
+message ApexrunDuelOpen {
+  optional string id = 1 [json_name = "id"];
+  optional string instance_id = 2 [json_name = "instance_id"];
+  optional string actor = 3 [json_name = "actor"];
+  optional string kind = 4 [json_name = "kind"];
+  google.protobuf.Value input = 5 [json_name = "input"];
+  optional string outcome = 6 [json_name = "outcome"];
+  optional string reason = 7 [json_name = "reason"];
+}
+
 message ApexrunDuelSeat {
   optional string id = 1 [json_name = "id"];
   optional string instance_id = 2 [json_name = "instance_id"];
@@ -149,6 +159,8 @@ message LobbyTab {
   optional string offer = 7 [json_name = "offer"];
   optional string stage = 8 [json_name = "stage"];
   optional string name = 9 [json_name = "name"];
+  optional string link = 10 [json_name = "link"];
+  optional string join = 11 [json_name = "join"];
 }
 
 message Match {

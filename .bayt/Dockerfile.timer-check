@@ -24,7 +24,7 @@ DO $$ BEGIN
 END $$;
 DO $$ BEGIN
   IF EXISTS (SELECT FROM hybrid_apexrun_duel.instance i
-    WHERE i.state->>'phase' IN ('signalling', 'racing') AND (i.state->>'deadline')::bigint > 0
+    WHERE i.state->>'phase' IN ('waiting', 'signalling', 'racing') AND (i.state->>'deadline')::bigint > 0
       AND NOT EXISTS (SELECT FROM public.schedule s WHERE s.emits_entity = 'machine_timer_tick'
         AND s.emits_values @> jsonb_build_object('machine', 'apexrun_duel', 'row', jsonb_build_object('id', i.id::text)))) THEN
     RAISE EXCEPTION 'machine apexrun_duel has instances waiting on a deadline the ticker was never given';

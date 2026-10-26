@@ -175,3 +175,22 @@ Deno.test("the ticker abandons a duel whose racer fell silent", async () => {
   const seat = (await seatOf(bia, "apexrun_duel", duel))!;
   assertEquals([seat.phase, seat.view.silent, seat.view.winner], ["abandoned", ["b"], ""]);
 });
+
+Deno.test("a challenge link opens a waiting duel without listing in the lobby, and a second guest joining it starts signalling", async () => {
+  const [ana, bia, cau] = [await guest(), await guest(), await guest()];
+  const duel = crypto.randomUUID();
+  assertEquals((await insert(ana, "apexrun_duel_open", { id: duel, instance_id: duel, kind: "create", input: { stage: "sunset-highway", seed: "777777" } })).kind, "accepted");
+  const waiting = (await seatOf(ana, "apexrun_duel", duel))!;
+  assertEquals([waiting.seat, waiting.phase, waiting.view.stage, waiting.view.seed], ["a", "waiting", "sunset-highway", 777777]);
+  assertEquals((await insert(ana, "apexrun_duel_open", { id: crypto.randomUUID(), instance_id: crypto.randomUUID(), kind: "create", input: { stage: "sunset-highway", seed: "1" } })).reason, "racer_unavailable");
+  assertEquals((await insert(bia, "apexrun_duel_open", { id: `join/${duel}/1`, instance_id: duel, kind: "join", input: {} })).kind, "accepted");
+  const [a, b] = [(await seatOf(ana, "apexrun_duel", duel))!, (await seatOf(bia, "apexrun_duel", duel))!];
+  assertEquals([a.seat, a.phase, b.seat, b.phase], ["a", "signalling", "b", "signalling"]);
+  assertEquals((await insert(cau, "apexrun_duel_open", { id: `join/${duel}/2`, instance_id: duel, kind: "join", input: {} })).reason, "room_unavailable");
+  // A waiting link its opener cancels or the ticker times out is no longer open to join.
+  const cancelled = crypto.randomUUID();
+  assertEquals((await insert(cau, "apexrun_duel_open", { id: cancelled, instance_id: cancelled, kind: "create", input: { stage: "alpine-peaks", seed: "123" } })).kind, "accepted");
+  assertEquals((await command(cau, "apexrun_duel", cancelled, "cancel")).kind, "accepted");
+  assertEquals((await seatOf(cau, "apexrun_duel", cancelled))!.phase, "abandoned");
+  assertEquals((await insert(ana, "apexrun_duel_open", { id: `join/${cancelled}/1`, instance_id: cancelled, kind: "join", input: {} })).reason, "room_unavailable");
+});

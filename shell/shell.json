@@ -37,6 +37,10 @@
     "apexrun_duel_command": {
       "owner": "actor",
       "scope": "private"
+    },
+    "apexrun_duel_open": {
+      "owner": "actor",
+      "scope": "private"
     }
   },
   "app": "apexrun",
@@ -306,6 +310,14 @@
       {
         "name": "offer",
         "type": "string"
+      },
+      {
+        "name": "link",
+        "type": "string"
+      },
+      {
+        "name": "join",
+        "type": "string"
       }
     ]
   },
@@ -364,6 +376,7 @@
     "apexrun_challenge_open",
     "apexrun_challenge_seat",
     "apexrun_duel_command",
+    "apexrun_duel_open",
     "apexrun_duel_seat",
     "apexrun_presence_command",
     "apexrun_presence_lease",
@@ -874,6 +887,22 @@
           "name": "name",
           "type": "string",
           "required": true
+        },
+        {
+          "bounds": {
+            "sizeMax": 64
+          },
+          "name": "link",
+          "type": "string",
+          "required": false
+        },
+        {
+          "bounds": {
+            "sizeMax": 128
+          },
+          "name": "join",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1573,6 +1602,7 @@
               "phase": {
                 "kind": "string",
                 "enumValues": [
+                  "waiting",
                   "signalling",
                   "racing",
                   "finished",
@@ -1677,6 +1707,7 @@
                   "kind": {
                     "kind": "string",
                     "enumValues": [
+                      "cancel",
                       "describe",
                       "lift"
                     ]
@@ -1705,6 +1736,63 @@
           "name": "revision",
           "type": "bigint",
           "required": false
+        },
+        {
+          "enum": [
+            "",
+            "accepted",
+            "rejected"
+          ],
+          "name": "outcome",
+          "type": "text",
+          "required": false
+        },
+        {
+          "bounds": {
+            "sizeMax": 64
+          },
+          "name": "reason",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    "apexrun_duel_open": {
+      "durability": "live",
+      "fields": [
+        {
+          "bounds": {
+            "sizeMax": 128
+          },
+          "name": "id",
+          "pk": true,
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "instance_id",
+          "type": "uuid",
+          "required": true
+        },
+        {
+          "defaulted": true,
+          "name": "actor",
+          "type": "uuid",
+          "required": true
+        },
+        {
+          "enum": [
+            "create",
+            "join"
+          ],
+          "name": "kind",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "input",
+          "type": "json",
+          "required": true
         },
         {
           "enum": [

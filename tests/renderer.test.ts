@@ -65,7 +65,7 @@ class MockMatrix {
   copyToArray(a: Float32Array, o: number) { a.set(this.m, o); }
 }
 
-const PACK_MATERIALS = ["paint", "glass", "trim", "headlight", "taillight", "rubber", "rim", "chrome"];
+const PACK_MATERIALS = ["paint", "glass", "trim", "headlight", "taillight", "rubber", "rim", "chrome", "stone", "dark", "wood", "iron", "door", "window", "shade", "shade_deep"];
 
 class MockMesh {
   position = new MockVector3();
@@ -91,6 +91,12 @@ class MockMesh {
   getDescendants(): MockMesh[] { return this.children.flatMap((c) => [c, ...c.getDescendants()]); }
   getChildren() { return this.children; }
   rotationQuaternion: any = null;
+  vertices: Record<string, Float32Array> = {
+    position: new Float32Array([0, 0, 5.26, 0, 1, 5.26, 1, 0, 5.26]),
+    normal: new Float32Array([0, 0, 1, 0, 0, 1, 0, 0, 1]),
+  };
+  getVerticesData(kind: string) { return this.vertices[kind] ?? null; }
+  setVerticesData(kind: string, data: Float32Array) { this.vertices[kind] = data; }
   getTotalVertices() { return 3; }
   computeWorldMatrix() { return MockMatrix.Identity(); }
   clone(_name?: string) {
@@ -564,6 +570,162 @@ Deno.test("renderer: adaptive resolution does not step down for a single hitch",
   renderer.recordFrameTime(60);
   for (let i = 0; i < 40; i++) renderer.recordFrameTime(16.7);
   assertEquals(renderer.getResolutionScale(), 1.0);
+});
+
+Deno.test("renderer: adaptive resolution sheds and restores multi-pass effects as scale steps down and up", async () => {
+  setupMockBabylon();
+  const renderer = (await makeRenderer({ width: 960, height: 540 } as any)) as any;
+  const events: string[] = [];
+  renderer.plan = { msaa: 4 };
+  renderer.pipeline = { samples: 4, bloomEnabled: true };
+  renderer.carProbe = { refreshRate: 3 };
+  renderer.ssao = {};
+  renderer._ssaoAttached = true;
+  renderer.scene.postProcessRenderPipelineManager = {
+    attachCamerasToRenderPipeline: (name: string) => events.push(`attach:${name}`),
+    detachCamerasFromRenderPipeline: (name: string) => events.push(`detach:${name}`),
+  };
+  renderer.bCamera.attachPostProcess = (p: any) => events.push(`attach:${p.name}`);
+  renderer.bCamera.detachPostProcess = (p: any) => events.push(`detach:${p.name}`);
+  renderer.godRays = { name: "bGodRays" };
+  renderer._godRaysAttached = true;
+  renderer.depthRenderer = { enabled: true };
+  renderer.stylePass = { name: "bStyle" };
+  renderer._styleAttached = true;
+  renderer.inkAA = { name: "bInkAA" };
+  renderer._inkAAAttached = true;
+  renderer.speedBlur = { name: "bSpeedBlur" };
+  renderer._speedBlurAttached = true;
+  renderer.shadows = { usePercentageCloserFiltering: true, numCascades: 3 };
+  renderer.glow = { isEnabled: true };
+
+  renderer.setResolutionScale(0.9);
+  assertEquals(renderer.pipeline.samples, 1);
+  assertEquals(renderer.pipeline.bloomEnabled, true);
+  assertEquals(renderer.carProbe.refreshRate, 0);
+  assertEquals(renderer._ssaoAttached, true);
+  assertEquals(renderer._godRaysAttached, true);
+  assertEquals(renderer.depthRenderer.enabled, true);
+  assertEquals(renderer._styleAttached, true);
+  assertEquals(renderer._inkAAAttached, true);
+  assertEquals(renderer._speedBlurAttached, true);
+  assertEquals(renderer.shadows.usePercentageCloserFiltering, true);
+  assertEquals(renderer.shadows.numCascades, 3);
+  assertEquals(renderer.bSun.shadowEnabled, true);
+  assertEquals(renderer.glow.isEnabled, true);
+
+  renderer.setResolutionScale(0.8);
+  assertEquals(renderer._ssaoAttached, false);
+  assertEquals(renderer._godRaysAttached, false);
+  assertEquals(renderer.depthRenderer.enabled, true);
+  assertEquals(renderer.shadows.usePercentageCloserFiltering, false);
+  assertEquals(renderer.shadows.numCascades, 3);
+  assertEquals(renderer.bSun.shadowEnabled, true);
+  assertEquals(renderer.glow.isEnabled, true);
+  assertEquals(events, ["detach:bSsao", "detach:bGodRays"]);
+
+  renderer.setResolutionScale(0.7);
+  assertEquals(renderer.depthRenderer.enabled, false);
+  assertEquals(renderer._styleAttached, false);
+  assertEquals(renderer._inkAAAttached, false);
+  assertEquals(renderer._speedBlurAttached, false);
+  assertEquals(renderer.shadows.numCascades, 2);
+  assertEquals(renderer.bSun.shadowEnabled, true);
+  assertEquals(renderer.glow.isEnabled, false);
+  assertEquals(renderer.pipeline.bloomEnabled, true);
+  assertEquals(events, ["detach:bSsao", "detach:bGodRays", "detach:bStyle", "detach:bInkAA", "detach:bSpeedBlur"]);
+
+  renderer.setResolutionScale(0.6);
+  assertEquals(renderer.pipeline.bloomEnabled, false);
+  assertEquals(renderer.bSun.shadowEnabled, false);
+
+  renderer.setResolutionScale(1.0);
+  assertEquals(renderer.pipeline.samples, 4);
+  assertEquals(renderer.pipeline.bloomEnabled, true);
+  assertEquals(renderer.carProbe.refreshRate, 3);
+  assertEquals(renderer._ssaoAttached, true);
+  assertEquals(renderer._godRaysAttached, true);
+  assertEquals(renderer.depthRenderer.enabled, true);
+  assertEquals(renderer._styleAttached, true);
+  assertEquals(renderer._inkAAAttached, true);
+  assertEquals(renderer._speedBlurAttached, true);
+  assertEquals(renderer.shadows.usePercentageCloserFiltering, true);
+  assertEquals(renderer.shadows.numCascades, 3);
+  assertEquals(renderer.bSun.shadowEnabled, true);
+  assertEquals(renderer.glow.isEnabled, true);
+  assertEquals(events, [
+    "detach:bSsao", "detach:bGodRays", "detach:bStyle", "detach:bInkAA", "detach:bSpeedBlur",
+    "attach:bSsao", "attach:bGodRays", "attach:bStyle", "attach:bInkAA", "attach:bSpeedBlur",
+  ]);
+});
+
+Deno.test("renderer: phone viewports start at 0.6 scale and high-DPI screens can step down to half CSS resolution", async () => {
+  setupMockBabylon();
+  // Phone held in landscape: 844x390 CSS pixels at dpr 3 (2532x1170 device pixels).
+  const phone = await makeRenderer({ width: 2532, height: 1170 } as any, 3);
+  assertEquals(phone.getResolutionScale(), 0.6, "phone starts at 0.6 instead of 1.0");
+  assertEquals(phone.minResolutionScale, 0.25, "pixelRatio=2 allows stepping down to 0.5 CSS pixels");
+  assertEquals(phone.bSun.shadowEnabled, false, "cascaded shadows shed at 0.6 startup scale");
+  buildStage(phone, "desert-canyons");
+  assertEquals(phone.bSun.shadowEnabled, false, "stage swap keeps shadows shed at <= 0.6");
+  phone.setResolutionScale(0.1);
+  assertEquals(phone.getResolutionScale(), 0.25);
+  assertEquals(phone.engine.getHardwareScalingLevel(), 2.0, "floor is half CSS resolution");
+});
+
+// Recorded after _renderBabylon, a slow frame that stepped the resolution
+// down reset canvas.width and canvas.height after scene.render(), wiping the
+// OffscreenCanvas to transparent black for that presented frame.
+Deno.test("renderer: adaptive resolution steps resize the canvas before scene.render(), never wiping the drawn frame", async () => {
+  setupMockBabylon();
+  const canvas = { width: 960, height: 540 };
+  const renderer = (await makeRenderer(canvas as any)) as any;
+  const state = apexrunEngine.initState(0xABCD, { stageState: "racing" });
+  state.countdown = 0;
+  renderer.isGPU = true;
+  let clock = 0;
+  renderer.now = () => clock;
+  const order: string[] = [];
+  const origSet = renderer.setResolutionScale.bind(renderer);
+  renderer.setResolutionScale = (s: number) => {
+    order.push("resize");
+    origSet(s);
+  };
+  renderer.scene.render = () => order.push("render");
+
+  renderer.render(state);
+  for (let i = 0; i < 30; i++) {
+    order.length = 0;
+    clock += 25;
+    renderer.render(state);
+    if (order.includes("resize")) {
+      assertEquals(order, ["resize", "render"], "canvas resize happens before scene.render()");
+    }
+  }
+  assert(renderer.getResolutionScale() < 1.0, "stepped down during the slow run");
+});
+
+Deno.test("renderer: castle-tower and building surface overlays push vertices along normals and carry polygon zOffset", async () => {
+  setupMockBabylon();
+  const renderer = (await makeRenderer({ width: 960, height: 540 } as any)) as any;
+  buildStage(renderer, "destination-castle");
+  const tower = renderer.bModelSets.find((m: any) => m.id === "castle-tower");
+  assert(tower, "destination-castle places castle-tower");
+  for (const { parts } of tower.lods) {
+    const partOf = (name: string) => parts.find((p: any) => p.mesh.material?.name.endsWith(`#${name}`))?.mesh;
+    const stone = partOf("stone");
+    const dark = partOf("dark");
+    const wood = partOf("wood");
+    const iron = partOf("iron");
+    assertEquals(stone?.material?.zOffset ?? 0, 0, "stone wall stays at 0");
+    assertAlmostEquals(stone?.getVerticesData("position")[2], 5.26, 1e-5, "stone vertices stay in place");
+    assert((dark?.material?.zOffset ?? 0) < 0, "arrow slits and arched windows carry polygon zOffset");
+    assert(dark?.getVerticesData("position")[2] > 5.32, "dark vertices push outward along their normal");
+    assert((wood?.material?.zOffset ?? 0) < 0, "portal oak door carries polygon zOffset");
+    assert(wood?.getVerticesData("position")[2] > 5.32, "wood door vertices push outward clear of the stone surround");
+    assert(iron?.getVerticesData("position")[2] > wood?.getVerticesData("position")[2] + 0.04, "iron straps sit in front of the oak door");
+  }
+  assert(renderer.bCamera.minZ >= 0.5 && renderer.bCamera.maxZ <= 4000, "tight near/far planes preserve depth precision at distance");
 });
 
 // Scrubbed history once fed the live timer, so the first live frame after a
@@ -2563,17 +2725,26 @@ Deno.test("renderer: the flare and the speed blur ship in GLSL and WGSL", async 
   }
 });
 
-Deno.test("renderer: night stages light a headlight pool on the road", async () => {
+Deno.test("renderer: night stages light a headlight pool pitched with the road grade so hills do not slice it", async () => {
   setupMockBabylon();
   const { ApexrunRenderer } = await import("../shell/engine/renderer.js");
   const renderer = (await makeRenderer({ width: 960, height: 540 } as any));
   buildStage(renderer, "metropolis-night");
-  const night = apexrunEngine.initState(0x1337, { stageState: "racing", stageId: "metropolis-night" });
+  const night = apexrunEngine.initState(0x1337, { stageState: "racing", stageId: "metropolis-night", playerZ: 60 * 200 }) as any;
   renderer.render(night);
-  assertEquals(renderer.bHeadlightPool.isVisible, true, "lit at night");
+  const pool = renderer.bHeadlightPool;
+  assertEquals(pool.isVisible, true, "lit at night");
+  assertEquals(pool.material.disableDepthWrite, true, "alpha pool does not write depth");
+  assert(pool.material.zOffset < 0, "polygon offset keeps the pool above the road ribbon");
+  // At segment 60 metropolis-night climbs at pitch 18: the pool tilts with the
+  // road across its 22 m span rather than lying horizontal and slicing into the hill.
+  const z = night.karts.find((k: any) => k.isPlayer).z * renderer.trackScale;
+  const pose = renderer._poseOnRoad(z + 14, 0, 11, 11);
+  assert(pose.pitch > 0.01, `metropolis-night climbs at segment 60 (${pose.pitch})`);
+  assertAlmostEquals(pool.rotation.x, Math.PI / 2 - pose.pitch, 1e-6, "pool pitches with the road");
   buildStage(renderer, "coconut-beach");
   renderer.render(apexrunEngine.initState(0x1337, { stageState: "racing" }));
-  assertEquals(renderer.bHeadlightPool.isVisible, false, "dark by day");
+  assertEquals(pool.isVisible, false, "dark by day");
 });
 
 Deno.test("renderer: wind sways fronds and grass in both shader languages", async () => {
