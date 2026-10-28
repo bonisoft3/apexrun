@@ -4,8 +4,7 @@
 // ticker is played by inserting the tick it would.
 
 import { assert, assertEquals } from "jsr:@std/assert@1.0.19";
-import postgres from "npm:postgres@3.4.9";
-import { query as once, refusal } from "./db.ts";
+import { query, refusal } from "./db.ts";
 
 const INSUFFICIENT_PRIVILEGE = "42501";
 
@@ -16,23 +15,10 @@ async function guest(): Promise<string> {
   return id;
 }
 
-// A machine's step runs serializable, as the gateway and the ticker run it,
-// and like their writers this one runs again a transaction a conflict aborted,
-// so racing callers see some serial order of their steps.
-async function query(script: string): Promise<string> {
-  for (let attempt = 0; ; attempt++) {
-    try {
-      return await once(script);
-    } catch (e) {
-      if (!(e instanceof postgres.PostgresError) || e.code !== "40001" || attempt >= 20) throw e;
-    }
-  }
-}
-
 const lit = (value: unknown) => `'${(typeof value === "string" ? value : JSON.stringify(value)).replaceAll("'", "''")}'`;
 /** `script` in the session PostgREST builds from a guest's token. */
 const as = (id: string, script: string) =>
-  `BEGIN ISOLATION LEVEL SERIALIZABLE; SET LOCAL app.scopes='public:,user:${id}'; SET LOCAL request.jwt.claims='{"sub":"${id}","role":"app_user","guest":true}'; SET LOCAL ROLE app_user; ${script}; COMMIT;`;
+  `BEGIN ISOLATION LEVEL READ COMMITTED; SET LOCAL app.scopes='public:,user:${id}'; SET LOCAL request.jwt.claims='{"sub":"${id}","role":"app_user","guest":true}'; SET LOCAL ROLE app_user; ${script}; COMMIT;`;
 type Receipt = { kind: string; reason: string };
 /** A row of the surface, absorbed if it is already there, then its stamp. */
 async function insert(actor: string, table: string, row: Record<string, unknown>): Promise<Receipt> {
@@ -62,7 +48,7 @@ const challenge = (inviter: string, target: string, id = crypto.randomUUID(), st
   insert(inviter, "apexrun_challenge_open", { id, instance_id: id, kind: "create", input: { target, stage, seed: "424242" } }).then((r) => ({ id, ...r }));
 /** What the ticker does when an instance's schedule falls due, with its deadline already past. */
 async function lapse(schema: string, instance: string, field: string, machine: string, state = `jsonb_set(state, '{${field}}', '1')`) {
-  await query(`BEGIN ISOLATION LEVEL SERIALIZABLE;
+  await query(`BEGIN ISOLATION LEVEL READ COMMITTED;
     UPDATE ${schema}.instance SET state = ${state} WHERE id = '${instance}';
     SELECT ${schema}.arm(i) FROM ${schema}.instance i WHERE i.id = '${instance}';
     COMMIT`);
@@ -70,7 +56,7 @@ async function lapse(schema: string, instance: string, field: string, machine: s
 }
 /** The tick the ticker inserts when `instance`'s schedule falls due. */
 const tick = (machine: string, instance: string) =>
-  query(`BEGIN ISOLATION LEVEL SERIALIZABLE; INSERT INTO machine_timer_tick (id, schedule, tick_at, late, machine, "row", state, delay)
+  query(`BEGIN ISOLATION LEVEL READ COMMITTED; INSERT INTO machine_timer_tick (id, schedule, tick_at, late, machine, "row", state, delay)
     SELECT gen_random_uuid(), s.name, s.due_at, false, s.emits_values->>'machine', s.emits_values->'row', s.emits_values->>'state', s.emits_values->>'delay'
     FROM schedule s WHERE s.emits_values @> jsonb_build_object('machine', '${machine}', 'row', jsonb_build_object('id', '${instance}')); COMMIT`);
 

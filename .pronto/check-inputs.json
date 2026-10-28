@@ -1958,11 +1958,16 @@
         }
       ],
       "id": "0xc4d6d832835cfe26",
-      "seed": [],
-      "table": "apexrun_presence_lease",
+      "indexes": [
+        {
+          "on": "actor",
+          "using": "btree"
+        }
+      ],
       "level": "compensable",
-      "read": "eager",
+      "seed": [],
       "server": true,
+      "table": "apexrun_presence_lease",
       "writers": [
         {
           "by": "arena",
@@ -1988,6 +1993,7 @@
           }
         }
       },
+      "read": "eager",
       "uniques": [],
       "validations": {}
     },
@@ -3632,10 +3638,12 @@
             "accept": {
               "target": "accepted",
               "guard": "mayAnswer",
-              "requires": {
-                "sql": "hybrid_apexrun_presence.available((game.state->>'inviter')::uuid) AND hybrid_apexrun_presence.available((game.state->>'target')::uuid)",
-                "reason": "racer_unavailable"
-              },
+              "requires": [
+                {
+                  "sql": "hybrid_apexrun_presence.available((game.state->>'inviter')::uuid) AND hybrid_apexrun_presence.available((game.state->>'target')::uuid)",
+                  "reason": "racer_unavailable"
+                }
+              ],
               "actions": [
                 {
                   "spawn": {
@@ -3723,10 +3731,12 @@
           {
             "phase": "offered",
             "event": "accept",
-            "requires": {
-              "sql": "hybrid_apexrun_presence.available((game.state->>'inviter')::uuid) AND hybrid_apexrun_presence.available((game.state->>'target')::uuid)",
-              "reason": "racer_unavailable"
-            },
+            "requires": [
+              {
+                "sql": "hybrid_apexrun_presence.available((game.state->>'inviter')::uuid) AND hybrid_apexrun_presence.available((game.state->>'target')::uuid)",
+                "reason": "racer_unavailable"
+              }
+            ],
             "sql": "PERFORM hybrid_apexrun_duel.spawn((game.state->>'duel')::uuid, jsonb_build_object('stage', game.state->>'stage', 'seed', (game.state->>'seed')::bigint), jsonb_build_object('a', game.state->>'inviter', 'b', game.state->>'target'), now_ms);\nPERFORM hybrid_apexrun_duel.deliver((game.state->>'duel')::uuid, jsonb_build_object('kind', 'start', 'payload', jsonb_build_object('seats', '[\"a\",\"b\"]'::jsonb)), now_ms);"
           }
         ]
@@ -4345,10 +4355,12 @@
               "target": "signalling",
               "guard": "ready",
               "reduce": "start",
-              "requires": {
-                "sql": "NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.member o ON o.actor = m.actor AND o.instance_id <> m.instance_id JOIN hybrid_apexrun_duel.instance d ON d.id = o.instance_id WHERE m.instance_id = game.id AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'))",
-                "reason": "racer_unavailable"
-              }
+              "requires": [
+                {
+                  "sql": "NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.member o ON o.actor = m.actor AND o.instance_id <> m.instance_id JOIN hybrid_apexrun_duel.instance d ON d.id = o.instance_id WHERE m.instance_id = game.id AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'))",
+                  "reason": "racer_unavailable"
+                }
+              ]
             },
             "cancel": {
               "target": "abandoned",
@@ -4445,10 +4457,12 @@
           {
             "phase": "waiting",
             "event": "start",
-            "requires": {
-              "sql": "NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.member o ON o.actor = m.actor AND o.instance_id <> m.instance_id JOIN hybrid_apexrun_duel.instance d ON d.id = o.instance_id WHERE m.instance_id = game.id AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'))",
-              "reason": "racer_unavailable"
-            },
+            "requires": [
+              {
+                "sql": "NOT EXISTS (SELECT FROM hybrid_apexrun_duel.member m JOIN hybrid_apexrun_duel.member o ON o.actor = m.actor AND o.instance_id <> m.instance_id JOIN hybrid_apexrun_duel.instance d ON d.id = o.instance_id WHERE m.instance_id = game.id AND d.state->>'phase' IN ('waiting', 'signalling', 'racing'))",
+                "reason": "racer_unavailable"
+              }
+            ],
             "sql": ""
           }
         ]

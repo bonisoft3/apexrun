@@ -78,6 +78,7 @@ code: state: entities: {
 	ApexrunPresenceLease: {
 		id: "0xc4d6d832835cfe26"
 		table: "apexrun_presence_lease"
+		indexes: [{on: "actor"}]
 		fields: [
 			// One per tab, from the terminal's draw.
 			{ordinal: 1, name: "id", type: "text", pk: true, cel: "this.size() == 36"},

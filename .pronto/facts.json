@@ -1001,7 +1001,7 @@
   "artifact": [
     {"path":"program.cue","sha256":"eefabb8e8b5d66b9dc7811981150264468668523a98e117f0f5edf557247fec9","derived":false},
     {"path":"DESIGN.md","sha256":"20313a8680b035a576c500f4b0fcb6b01dcbd5d71315f551bccb98f21d846051","derived":false},
-    {"path":"ir.html","sha256":"7edf07b6d664e7934e2ae3182a830dfb164c1a41728b40cd5f70f6c98e8b039b","derived":false},
+    {"path":"ir.html","sha256":"3ea5df7dd373f399cc65f53c412a43dff6208df35184a3ad6e071c8eb9a9a7cb","derived":false},
     {"path":"acceptance.md","sha256":"0e126bc9793c506f6696c23d2d12bd83d93994cf32e86776666d6a82c14dc35c","derived":false},
     {"path":".pronto/cel.json","sha256":"3715eb3a53445e785a6100bbf36dfb4f8ed8c66d9a7594127d7656e87a48dd66","derived":true},
     {"path":"program_cel.cue","sha256":"f03afcf4b7e9b5e3e9a689ed6350b190654b50a401598e6a1cb0ef3384434455","derived":true},
@@ -1241,6 +1241,7 @@
     {"name":"Date","reason":"handlers run in an SES compartment with no endowments","except_role":"adapter"},
     {"name":"Intl","reason":"only an adapter or a module granted Intl via manifest endowments is endowed with Intl","except_role":"adapter"},
     {"name":"Crypto","reason":"safe platform primitives require opt-in via manifest endowments","except_role":""},
+    {"name":"Cheerio","reason":"safe platform primitives require opt-in via manifest endowments","except_role":""},
     {"name":"TextEncoder","reason":"safe platform primitives require opt-in via manifest endowments","except_role":""},
     {"name":"TextDecoder","reason":"safe platform primitives require opt-in via manifest endowments","except_role":""},
     {"name":"URL","reason":"safe platform primitives require opt-in via manifest endowments","except_role":""},

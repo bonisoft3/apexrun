@@ -144,5 +144,6 @@ CREATE TABLE IF NOT EXISTS apexrun_duel_open (
 );
 
 CREATE INDEX IF NOT EXISTS idx_high_score_score ON high_score USING btree (score);
+CREATE INDEX IF NOT EXISTS idx_apexrun_presence_lease_actor ON apexrun_presence_lease USING btree (actor);
 
 COMMIT;
