@@ -53,6 +53,7 @@ duel: pronto.#Machine & {
 			}
 			signalling: {
 				on: {
+					cancel: {guard: "mayCancel", target: "abandoned", actions: "cancel"}
 					describe: {guard: "mayDescribe", actions: "describe"}
 					timeout: {guard: "isDue", target: "abandoned", actions: "timeout"}
 				}
@@ -60,6 +61,7 @@ duel: pronto.#Machine & {
 			}
 			racing: {
 				on: {
+					cancel: {guard: "mayCancel", target: "abandoned", actions: "cancel"}
 					lift: {guard: "mayLift", actions: "lift"}
 					timeout: {guard: "isDue", target: "abandoned", actions: "timeout"}
 				}

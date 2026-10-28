@@ -4372,6 +4372,11 @@
             }
           ],
           "on": {
+            "cancel": {
+              "target": "abandoned",
+              "guard": "mayCancel",
+              "reduce": "cancel"
+            },
             "describe": {
               "guard": "mayDescribe",
               "reduce": "describe"
@@ -4397,6 +4402,11 @@
             }
           ],
           "on": {
+            "cancel": {
+              "target": "abandoned",
+              "guard": "mayCancel",
+              "reduce": "cancel"
+            },
             "lift": {
               "guard": "mayLift",
               "reduce": "lift"

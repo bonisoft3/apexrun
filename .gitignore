@@ -5,3 +5,7 @@
 
 # Generated local preview proxy configuration.
 /.preview/
+
+# Release secrets
+.*-secret
+.*secret*

@@ -238,6 +238,7 @@
          (shell/engine/effects.js). -->
     <canvas data-layer="effects" class="stk-layer stk-layer-over" aria-hidden="true"></canvas>
     <p class="stk-prompt arena-art-loading" role="status">LOADING THE ROAD AHEAD</p>
+    <p class="stk-prompt arena-connecting" role="status">CONNECTING TO RACER…</p>
 
     <!-- Touch controls: DESIGN.md "Touch". -->
     <div class="touch-deck touch-only" aria-hidden="true">
@@ -309,14 +310,58 @@
       <div class="stk-modal-card stk-lobby-card" data-live="lobby_tab" data-filter="id=eq.the" data-empty-row='{"id":"the","lease":"","me":"","note":"","shown":"","open":"no","offer":"","link":"","join":"","stage":"coconut-beach","name":""}'
            data-on-mutation="lobby" data-reads="lobby_tab,apexrun_presence_lease,apexrun_presence_seat,apexrun_presence_command,apexrun_challenge_seat,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,apexrun_duel_open,run,run_signal,run_milestone" data-open="{open}" data-shown="{shown}" data-pick="{stage}">
         <span hidden data-live="apexrun_presence_lease" data-filter="id=eq.{lease}" data-on-mutation="lease" data-empty=""></span>
-        <h2 class="stk-modal-title">ONLINE DUEL</h2>
-        <p class="stk-lobby-you">YOU RACE AS <b data-text="{name}"></b></p>
-        <button type="button" class="stk-btn stk-lobby-toggle" id="btn-toggle-online" data-on-click="lobby">
-          <span class="stk-lobby-when-on">ONLINE · GO OFFLINE</span><span class="stk-lobby-when-off">GO ONLINE</span>
-        </button>
-        <div class="stk-title-pick">THE STAGE YOU CHALLENGE ON</div>
-        <div class="stk-lobby-stages" role="group" aria-label="Stage">
-          <button type="button" class="stk-lobby-stage" id="stage-coconut-beach" data-on-click="lobby">COCONUT BEACH</button>
+        <div class="stk-lobby-header">
+          <div class="stk-lobby-header-info">
+            <h2 class="stk-modal-title">ONLINE DUEL</h2>
+            <div class="stk-lobby-status-strip">
+              <span class="stk-lobby-you">YOU RACE AS <b data-text="{name}"></b></span>
+              <button type="button" class="stk-btn stk-lobby-toggle" id="btn-toggle-online" commandfor="lobby" command="toggle-online" data-on-click="lobby">
+                <span class="stk-lobby-when-on"><span class="stk-live-dot">●</span> ONLINE</span>
+                <span class="stk-lobby-when-off">GO ONLINE</span>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="stk-btn stk-lobby-close-x" id="btn-lobby-close-top" commandfor="lobby" command="close" data-on-click="lobby" title="Close lobby">✕</button>
+        </div>
+        <div class="stk-lobby-body">
+          <div class="stk-lobby-section stk-lobby-sec-link">
+            <div class="stk-lobby-sec-header">
+              <span class="stk-title-pick">DIRECT CHALLENGE LINK</span>
+              <span class="stk-lobby-sec-tag">PLAY WITH A FRIEND</span>
+            </div>
+            <div class="stk-lobby-link-bar">
+              <button type="button" class="stk-btn stk-btn-online stk-btn-create-link" id="btn-challenge-link" commandfor="lobby" command="challenge-link" data-on-click="lobby">CHALLENGE LINK</button>
+              <form class="stk-lobby-join" data-entity="lobby_tab" data-action="update">
+                <div class="stk-lobby-input-capsule">
+                  <input type="text" id="input-challenge-link" name="join" class="stk-lobby-join-input" data-value="{join}" placeholder="PASTE CHALLENGE LINK…" aria-label="Challenge link" required pattern=".*[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F].*" maxlength="128" aria-describedby="join-link-invalid">
+                  <button type="button" class="stk-btn stk-btn-paste" id="btn-paste-link" title="Paste challenge link from clipboard">PASTE</button>
+                </div>
+                <button type="submit" class="stk-btn stk-btn-go" id="btn-join-link">JOIN LINK</button>
+                <p class="invalid" id="join-link-invalid" hidden>Paste a challenge link.</p>
+              </form>
+            </div>
+            <div class="stk-lobby-links" data-live="apexrun_duel_seat" data-filter="phase=eq.waiting" data-order="id.asc" data-reads="lobby_tab,apexrun_presence_lease,apexrun_presence_seat,apexrun_presence_command,apexrun_challenge_seat,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,apexrun_duel_open,run,run_signal,run_milestone" data-empty="">
+              <template data-item>
+                <div class="stk-lobby-offer stk-lobby-link-row">
+                  <div class="stk-lobby-waiting-info">
+                    <span class="stk-live-dot stk-pulse">●</span>
+                    <span>WAITING ON <b data-text="{stage}" data-text-format="stage"></b></span>
+                  </div>
+                  <div class="stk-lobby-link-actions">
+                    <code class="stk-lobby-code" id="challenge-link-{id}" title="Click to copy link">?challenge=<span data-text="{instance_id}"></span></code>
+                    <button type="button" class="stk-btn stk-btn-copy" id="copy-duel-{id}" title="Copy challenge link to clipboard">COPY LINK</button>
+                    <button type="button" class="stk-btn stk-btn-cancel" id="cancel-duel-{id}" commandfor="lobby" command="cancel" data-on-click="lobby">CANCEL</button>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+          <div class="stk-lobby-section stk-lobby-sec-stage">
+            <div class="stk-lobby-sec-header">
+              <span class="stk-title-pick">THE STAGE YOU CHALLENGE ON</span>
+            </div>
+            <div class="stk-lobby-stages" role="group" aria-label="Stage">
+              <button type="button" class="stk-lobby-stage" id="stage-coconut-beach" data-on-click="lobby">COCONUT BEACH</button>
           <button type="button" class="stk-lobby-stage" id="stage-desert-canyons" data-on-click="lobby">DESERT CANYONS</button>
           <button type="button" class="stk-lobby-stage" id="stage-gateway-pass" data-on-click="lobby">GATEWAY PASS</button>
           <button type="button" class="stk-lobby-stage" id="stage-alpine-peaks" data-on-click="lobby">ALPINE PEAKS</button>
@@ -326,42 +371,51 @@
           <button type="button" class="stk-lobby-stage" id="stage-ancient-ruins" data-on-click="lobby">ANCIENT RUINS</button>
           <button type="button" class="stk-lobby-stage" id="stage-metropolis-night" data-on-click="lobby">METROPOLIS NIGHT</button>
           <button type="button" class="stk-lobby-stage" id="stage-coastal-cliffs" data-on-click="lobby">COASTAL CLIFFS</button>
-        </div>
-        <div class="stk-lobby-link-bar">
-          <button type="button" class="stk-btn stk-btn-online" id="btn-challenge-link" data-on-click="lobby">CHALLENGE LINK</button>
-          <form class="stk-lobby-join" data-entity="lobby_tab" data-action="update">
-            <input type="text" id="input-challenge-link" name="join" class="stk-lobby-join-input" data-value="{join}" placeholder="PASTE CHALLENGE LINK…" aria-label="Challenge link" required pattern=".*[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F].*" maxlength="128" aria-describedby="join-link-invalid">
-            <button type="submit" class="stk-btn stk-btn-go" id="btn-join-link">JOIN LINK</button>
-            <p class="invalid" id="join-link-invalid" hidden>Paste a challenge link.</p>
-          </form>
-        </div>
-        <div class="stk-lobby-links" data-live="apexrun_duel_seat" data-filter="phase=eq.waiting" data-order="id.asc" data-reads="lobby_tab,apexrun_presence_lease,apexrun_presence_seat,apexrun_presence_command,apexrun_challenge_seat,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,apexrun_duel_open,run,run_signal,run_milestone" data-empty="">
-          <template data-item>
-            <div class="stk-lobby-offer stk-lobby-link-row"><span>WAITING ON <b data-text="{stage}" data-text-format="stage"></b> · <code class="stk-lobby-code" id="challenge-link-{id}">?challenge=<span data-text="{instance_id}"></span></code></span>
-              <button type="button" class="stk-btn" id="cancel-duel-{id}" data-on-click="lobby">CANCEL</button></div>
-          </template>
-        </div>
-        <div class="stk-title-pick stk-lobby-racers-label">RACERS ONLINE</div>
-        <div class="stk-lobby-racers" data-live="apexrun_presence_public" data-order="name.asc" data-project='{"me":{"eq":["id","{me}"]}}'
-             data-reads="lobby_tab,apexrun_presence_lease,apexrun_presence_seat,apexrun_presence_command,apexrun_challenge_seat,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,apexrun_duel_open,run,run_signal,run_milestone" data-empty="No one else is online.">
-          <template data-item data-when="me=eq.false">
-            <div class="stk-lobby-racer"><b data-text="{name}"></b><button type="button" class="stk-btn" id="challenge-{id}" data-on-click="lobby">CHALLENGE</button></div>
-          </template>
-          <template data-item><i hidden></i></template>
-        </div>
-        <div class="stk-lobby-offers" data-live="apexrun_challenge_seat" data-filter="phase=eq.offered" data-order="id.asc" data-reads="lobby_tab,apexrun_presence_lease,apexrun_presence_seat,apexrun_presence_command,apexrun_challenge_seat,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,apexrun_duel_open,run,run_signal,run_milestone" data-empty="">
-          <template data-item data-when="seat=eq.target">
-            <div class="stk-lobby-offer"><span><b data-text="{inviter_name}"></b> CHALLENGES YOU ON <b data-text="{stage}" data-text-format="stage"></b></span>
-              <button type="button" class="stk-btn stk-btn-go" id="accept-{id}" data-on-click="lobby">ACCEPT</button>
-              <button type="button" class="stk-btn" id="decline-{id}" data-on-click="lobby">DECLINE</button></div>
-          </template>
-          <template data-item>
-            <div class="stk-lobby-offer"><span>WAITING FOR <b data-text="{target_name}"></b> ON <b data-text="{stage}" data-text-format="stage"></b></span>
-              <button type="button" class="stk-btn" id="cancel-{id}" data-on-click="lobby">CANCEL</button></div>
-          </template>
+            </div>
+          </div>
+          <div class="stk-lobby-section stk-lobby-sec-racers">
+            <div class="stk-lobby-sec-header">
+              <span class="stk-title-pick stk-lobby-racers-label">RACERS ONLINE</span>
+            </div>
+            <div class="stk-lobby-offers" data-live="apexrun_challenge_seat" data-filter="phase=eq.offered" data-order="id.asc" data-reads="lobby_tab,apexrun_presence_lease,apexrun_presence_seat,apexrun_presence_command,apexrun_challenge_seat,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,apexrun_duel_open,run,run_signal,run_milestone" data-empty="">
+              <template data-item data-when="seat=eq.target">
+                <div class="stk-lobby-offer stk-lobby-incoming-offer">
+                  <div class="stk-lobby-offer-msg">
+                    <span class="stk-lobby-offer-icon">⚡</span>
+                    <span><b data-text="{inviter_name}"></b> CHALLENGES YOU ON <b data-text="{stage}" data-text-format="stage"></b></span>
+                  </div>
+                  <div class="stk-lobby-offer-btns">
+                    <button type="button" class="stk-btn stk-btn-go" id="accept-{id}" commandfor="lobby" command="accept" data-on-click="lobby">ACCEPT</button>
+                    <button type="button" class="stk-btn" id="decline-{id}" commandfor="lobby" command="decline" data-on-click="lobby">DECLINE</button>
+                  </div>
+                </div>
+              </template>
+              <template data-item>
+                <div class="stk-lobby-offer stk-lobby-outgoing-offer">
+                  <span>WAITING FOR <b data-text="{target_name}"></b> ON <b data-text="{stage}" data-text-format="stage"></b></span>
+                  <button type="button" class="stk-btn" id="cancel-{id}" commandfor="lobby" command="cancel" data-on-click="lobby">CANCEL</button>
+                </div>
+              </template>
+            </div>
+            <div class="stk-lobby-racers" data-live="apexrun_presence_public" data-order="name.asc" data-project='{"me":{"eq":["id","{me}"]}}'
+                 data-reads="lobby_tab,apexrun_presence_lease,apexrun_presence_seat,apexrun_presence_command,apexrun_challenge_seat,apexrun_challenge_open,apexrun_duel_seat,apexrun_duel_command,apexrun_duel_open,run,run_signal,run_milestone" data-empty="No one else is online.">
+              <template data-item data-when="me=eq.false">
+                <div class="stk-lobby-racer">
+                  <span class="stk-racer-avatar">🏎️</span>
+                  <b data-text="{name}"></b>
+                  <span class="stk-racer-status">READY</span>
+                  <button type="button" class="stk-btn stk-btn-challenge" id="challenge-{id}" commandfor="lobby" command="challenge" data-on-click="lobby">CHALLENGE</button>
+                </div>
+              </template>
+              <template data-item><i hidden></i></template>
+            </div>
+          </div>
         </div>
         <p class="stk-lobby-note" role="status" data-text="{note}"></p>
-        <button type="button" class="stk-btn" id="btn-lobby-close" data-on-click="lobby">BACK</button>
+        <div class="stk-lobby-footer">
+          <button type="button" class="stk-btn stk-btn-back" id="btn-lobby-close" data-on-click="lobby">← BACK</button>
+          <span class="stk-lobby-esc-hint">PRESS <kbd>ESC</kbd> TO CLOSE</span>
+        </div>
       </div>
       <div class="stk-modal-card stk-pause-card">
         <h2 class="stk-modal-title">PAUSED</h2>

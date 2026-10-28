@@ -74,6 +74,29 @@ Deno.test("lobby: the switch shows the racer under its callsign, and a stale one
   assertEquals(l.store.apexrun_presence_command.map((c) => c.id), ["me-0000/3/owner/show", "me-0000/4/owner/show"]);
 });
 
+Deno.test("lobby: clicking online duel opens the lobby and goes online directly, with opt-out toggle", () => {
+  const l = lobbyOf({ apexrun_presence_seat: [seat("hidden", 3)] });
+  l.raise({ type: "mutation" });
+  assertEquals(l.tab.open, "no");
+  assertEquals(l.store.apexrun_presence_command.length, 0);
+
+  // Clicking ONLINE DUEL opens the lobby and immediately sends show
+  l.raise({ type: "click", from: "stk-btn-lobby" });
+  assertEquals(l.tab.open, "yes");
+  assertEquals(l.tab.shown, "show");
+  const [shown] = l.store.apexrun_presence_command;
+  assertEquals(shown.id, "me-0000/3/owner/show");
+  assertEquals(((shown.request as Row).event as Row).kind, "show");
+
+  // Opting out via the toggle switch sends hide
+  l.store.apexrun_presence_seat[0] = seat("visible", 4);
+  l.raise({ type: "click", from: "btn-toggle-online" });
+  assertEquals(l.tab.shown, "hide");
+  const [_, hidden] = l.store.apexrun_presence_command;
+  assertEquals(hidden.id, "me-0000/4/owner/hide");
+  assertEquals(((hidden.request as Row).event as Row).kind, "hide");
+});
+
 Deno.test("lobby: a challenge is opened on the picked stage under drawn keys, and its refusal is said", () => {
   const l = lobbyOf({ apexrun_presence_seat: [seat("visible")] });
   l.raise({ type: "mutation" });
@@ -91,6 +114,17 @@ Deno.test("lobby: a challenge is opened on the picked stage under drawn keys, an
   open.reason = "racer_unavailable";
   l.raise({ type: "mutation" });
   assertEquals([l.tab.offer, l.tab.note], ["", "racer_unavailable"]);
+});
+
+Deno.test("lobby: challenging while offline transitions the racer to online and opens the challenge", () => {
+  const l = lobbyOf({ apexrun_presence_seat: [seat("hidden")] });
+  l.raise({ type: "mutation" });
+  l.raise({ type: "click", from: "challenge-x", id: "target-0000" });
+  assertEquals(l.tab.shown, "show");
+  const [shown] = l.store.apexrun_presence_command;
+  assertEquals(((shown.request as Row).event as Row).kind, "show");
+  const [open] = l.store.apexrun_challenge_open;
+  assertEquals(open.kind, "create");
 });
 
 Deno.test("lobby: a challenge's answer is a command at the revision its seat holds", () => {
@@ -145,8 +179,9 @@ const milestone = (frame: number, kind: string, detail: Row = {}) =>
   ({ id: `4242:${frame}:${kind}`, race: 4242, frame, kind, checksum: `${frame}77`, from: 0, width: 2, inputs: "AAAA", detail: JSON.stringify(detail) });
 
 Deno.test("lobby: the race's description goes to its duel once, at the seat's revision", () => {
-  const l = lobbyOf({ apexrun_presence_seat: [seat("visible")], run: [{ id: "run", duel: "d1", race: 4242 }], apexrun_duel_seat: [duelling("signalling", 2)] });
+  const l = lobbyOf({ apexrun_presence_seat: [seat("visible")], run: [{ id: "run", duel: "d1", race: 4242, mode: "online" }], apexrun_duel_seat: [duelling("signalling", 2)] });
   l.raise({ type: "mutation" });
+  assertEquals(l.tab.open, "no", "entering signalling closes the lobby modal");
   assertEquals(l.store.apexrun_duel_command, [], "nothing to send before the race describes its side");
   l.store.run_signal = [{ id: "4242", description: '{"type":"answer"}' }];
   l.raise({ type: "mutation" });
@@ -154,9 +189,33 @@ Deno.test("lobby: the race's description goes to its duel once, at the seat's re
   assertEquals(l.store.apexrun_duel_command.map((c) => [c.id, (c.request as Row).event]), [["d1/2/b/describe", { kind: "describe", payload: { description: '{"type":"answer"}' } }]]);
 });
 
+Deno.test("lobby: returning to the title cancels the previous duel without lifting title milestones", () => {
+  const l = lobbyOf({
+    apexrun_presence_seat: [seat("visible")],
+    run: [{ id: "run", duel: "d1", race: 99, phase: "title" }],
+    apexrun_duel_seat: [duelling("racing", 5, { described: true })],
+    run_milestone: [{ ...milestone(1, "grid"), race: 99 }],
+  });
+  l.raise({ type: "mutation" });
+  l.raise({ type: "mutation" });
+  const commands = () => l.store.apexrun_duel_command.map((c) => [c.id, (c.request as Row).event]);
+  assertEquals(commands(), [["d1/5/b/cancel", { kind: "cancel", payload: {} }]]);
+  l.raise({ type: "mutation" });
+  assertEquals(commands().length, 1, "a pending cancel is not duplicated");
+  Object.assign(l.store.apexrun_duel_command[0], { outcome: "rejected", reason: "stale_revision" });
+  Object.assign(l.store.run[0], { phase: "race", mode: "", race: 100 });
+  l.store.apexrun_duel_seat[0] = duelling("racing", 6, { described: true });
+  l.raise({ type: "mutation" });
+  assertEquals(commands().at(-1), ["d1/6/b/cancel", { kind: "cancel", payload: {} }]);
+  l.store.apexrun_duel_seat[0] = duelling("abandoned", 7);
+  l.raise({ type: "click", from: "stk-btn-lobby" });
+  l.raise({ type: "mutation" });
+  assertEquals(l.tab.open, "yes", "the abandoned duel no longer closes the lobby");
+});
+
 Deno.test("lobby: the race's milestones go to its duel oldest first, one a revision, a stale one again at the next", () => {
   const l = lobbyOf({
-    apexrun_presence_seat: [seat("visible")], run: [{ id: "run", duel: "d1", race: 4242 }], apexrun_duel_seat: [duelling("racing", 5, { described: true })],
+    apexrun_presence_seat: [seat("visible")], run: [{ id: "run", duel: "d1", race: 4242, mode: "online" }], apexrun_duel_seat: [duelling("racing", 5, { described: true })],
     run_milestone: [milestone(4100, "duel-finish", { winner: 1, goal: [null, 3790] }), milestone(1, "grid"), { ...milestone(9, "start"), race: 99 }],
   });
   l.raise({ type: "mutation" });

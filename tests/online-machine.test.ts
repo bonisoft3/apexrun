@@ -59,7 +59,7 @@ const finish = (extra: Partial<Lift> = {}) => lift(4100, "duel-finish", { winner
 async function started() {
   const { step, init } = await machine<Duel>("duel", ["a", "b"]);
   const waiting = await init({ stage: "alpine-peaks", seed: 77 }, 900);
-  assertEquals([waiting.state.phase, waiting.state.seats, waiting.state.deadline], ["waiting", ["a", "b"], 30900]);
+  assertEquals([waiting.state.phase, waiting.state.seats, waiting.state.deadline], ["waiting", ["a", "b"], 600900]);
   const opened = await step(waiting.state, "start", { seats: ["a", "b"] }, 1000);
   assertEquals([opened.state.phase, opened.state.deadline], ["signalling", 31000]);
   return { step, waiting: waiting.state, opened };
@@ -79,7 +79,7 @@ Deno.test("a challenge link opens a duel in waiting until seat b joins, and only
   assertEquals((await step(waiting, "cancel", {}, 1000, "b")).reason, "not_inviter");
   const cancelled = await step(waiting, "cancel", {}, 1000, "a");
   assertEquals([cancelled.state.phase, cancelled.state.deadline], ["abandoned", 0]);
-  const timedOut = await step(waiting, "timeout", {}, 30900);
+  const timedOut = await step(waiting, "timeout", {}, 600900);
   assertEquals([timedOut.state.phase, timedOut.state.silent, timedOut.state.deadline], ["abandoned", [], 0]);
 });
 
@@ -128,4 +128,16 @@ Deno.test("the ticker times out a duel whose racer fell silent, naming them", as
   const half = (await step(answered.state, "lift", finish(), 60000, "a")).state;
   const left = await step(half, "timeout", {}, 75000);
   assertEquals([left.state.phase, left.state.silent, left.state.winner], ["abandoned", ["b"], ""], "one racer's finish is no result");
+});
+
+Deno.test("either racer can release a duel after connection failure, before its deadline", async () => {
+  const { step, opened } = await started();
+  const { answered } = await racing();
+  for (const state of [opened.state, answered.state]) {
+    for (const actor of ["a", "b"]) {
+      const cancelled = await step(state, "cancel", {}, 1300, actor);
+      assertEquals([cancelled.state.phase, cancelled.state.deadline], ["abandoned", 0]);
+      assertEquals((await step(cancelled.state, "describe", { description: "late" }, 1400, actor)).reason, "illegal_event");
+    }
+  }
 });

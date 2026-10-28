@@ -49,7 +49,7 @@
   if (event.type === "lease") {
     const id = uuidOf(draws);
     return {updates: [
-      {op: "put", entity: "lobby_tab", id: "the", row: {id: "the", lease: id, me: "", note: "", shown: "", open: "no", offer: "", link: "", join: "", stage: "coconut-beach", name: `RACER ${id.slice(0, 4).toUpperCase()}`}},
+      {op: "put", entity: "lobby_tab", id: "the", row: {id: "the", lease: id, me: "", note: "", shown: tab?.shown ?? "", open: tab?.open ?? "no", offer: "", link: "", join: tab?.join ?? "", stage: tab?.stage ?? "coconut-beach", name: `RACER ${id.slice(0, 4).toUpperCase()}`}},
       {op: "put", entity: "apexrun_presence_lease", id, row: {id, beat: 0}},
     ]};
   }
@@ -75,11 +75,29 @@
     ]};
   }
 
-  if (event.type === "click") {
+  if (event.type === "click" || event.command !== undefined) {
     const from = event.from ?? "";
-    if (from === "stk-btn-lobby" || from === "btn-lobby-close") return {updates: [{op: "patch", entity: "lobby_tab", id: "the", row: {open: from === "stk-btn-lobby" ? "yes" : "no"}}]};
+    const cmd = event.command;
+    if (from === "stk-btn-lobby") {
+      const goOnline = presence !== undefined && presence.phase !== "visible" ? [
+        command("apexrun_presence", presence.instance_id, presence.revision, presence.seat, "show", {name: tab?.name ?? ""}),
+      ] : [];
+      const hasTab = (rows.lobby_tab ?? []).some(r => r.id === "the");
+      const tabUpdate = hasTab
+        ? {op: "patch", entity: "lobby_tab", id: "the", row: {open: "yes", shown: "show"}}
+        : {op: "put", entity: "lobby_tab", id: "the", row: {id: "the", lease: "", me: "", note: "", shown: "show", open: "yes", offer: "", link: "", join: "", stage: "coconut-beach", name: ""}};
+      return {updates: [
+        ...note(""),
+        tabUpdate,
+        ...goOnline,
+      ]};
+    }
+    if (from === "btn-lobby-close" || from === "btn-lobby-close-top" || cmd === "close") {
+      const hasTab = (rows.lobby_tab ?? []).some(r => r.id === "the");
+      return {updates: hasTab ? [{op: "patch", entity: "lobby_tab", id: "the", row: {open: "no"}}] : []};
+    }
     if (from.startsWith("stage-")) return {updates: [{op: "patch", entity: "lobby_tab", id: "the", row: {stage: from.slice("stage-".length)}}]};
-    if (from === "btn-toggle-online") {
+    if (cmd === "toggle-online" || from === "btn-toggle-online") {
       if (presence === undefined) return {updates: []};
       // The switch answers what it shows, which may be ahead of the seat.
       const visible = (tab?.shown || (presence.phase === "visible" ? "show" : "hide")) === "show";
@@ -89,14 +107,23 @@
         command("apexrun_presence", presence.instance_id, presence.revision, presence.seat, visible ? "hide" : "show", visible ? {} : {name: tab.name}),
       ]};
     }
-    if (from === "btn-challenge-link") return {updates: note(""), then: {type: "duel", seed: true}};
-    if (from.startsWith("cancel-duel-")) {
+    if (cmd === "challenge-link" || from === "btn-challenge-link") return {updates: note(""), then: {type: "duel", seed: true}};
+    if ((cmd === "cancel" && from.startsWith("cancel-duel-")) || from.startsWith("cancel-duel-")) {
       const waitingDuel = (rows.apexrun_duel_seat ?? []).find(d => d.id === event.id && d.phase === "waiting");
       return {updates: waitingDuel ? [command("apexrun_duel", waitingDuel.instance_id, waitingDuel.revision, waitingDuel.seat, "cancel", {})] : []};
     }
-    if (from.startsWith("challenge-")) return {updates: note(""), then: {type: "offer", seed: true, with: {target: event.id}}};
-    const answer = ["accept", "decline", "cancel"].find(kind => from.startsWith(`${kind}-`));
-    const offer = (rows.apexrun_challenge_seat ?? []).find(c => c.id === event.id);
+    if (cmd === "challenge" || from.startsWith("challenge-")) {
+      const visible = (tab?.shown || (presence?.phase === "visible" ? "show" : "hide")) === "show";
+      const goOnline = !visible && presence !== undefined ? [
+        {op: "patch", entity: "lobby_tab", id: "the", row: {shown: "show"}},
+        command("apexrun_presence", presence.instance_id, presence.revision, presence.seat, "show", {name: tab.name}),
+      ] : [];
+      const target = event.id ?? (from.startsWith("challenge-") ? from.slice("challenge-".length) : undefined);
+      return {updates: [...note(""), ...goOnline], then: {type: "offer", seed: true, with: {target}}};
+    }
+    const answer = ["accept", "decline", "cancel"].find(kind => cmd === kind || from.startsWith(`${kind}-`));
+    const offerId = event.id ?? (answer && from.startsWith(`${answer}-`) ? from.slice(`${answer}-`.length) : undefined);
+    const offer = (rows.apexrun_challenge_seat ?? []).find(c => c.id === offerId || c.instance_id === offerId);
     if (answer && offer) return {updates: [command("apexrun_challenge", offer.instance_id, offer.revision, offer.seat, answer, {})]};
     return {updates: []};
   }
@@ -132,8 +159,9 @@
   // Shown is what you asked for while a switch of yours is in flight, and
   // what the seat holds once none is: a refused switch shows the seat again.
   const inFlight = presence !== undefined && ((rows.apexrun_presence_command ?? []).some(c => c.instance_id === presence.instance_id && !c.outcome) || disconnected);
+  const needsShow = presence !== undefined && tab?.shown === "show" && presence.phase !== "visible" && !inFlight;
   const held = presence === undefined ? "" : presence.phase === "visible" ? "show" : "hide";
-  const shown = inFlight ? txt(tab.shown ?? "") || held : held;
+  const shown = inFlight || needsShow ? txt(tab.shown ?? "") || held : held;
   // The duel the arena races (the run row's), while its machine signals or
   // races it: the race's description goes once, then each milestone it
   // lifted, oldest first. One command goes at the revision the seat holds; a
@@ -141,26 +169,33 @@
   // wake sends it again at the new one.
   const run = (rows.run ?? [])[0];
   const duel = (rows.apexrun_duel_seat ?? []).find(d => d.instance_id === run?.duel && ["signalling", "racing"].includes(d.phase));
+  const sameRace = duel !== undefined && txt(duel.view.seed) === txt(run.race);
+  const abandoned = duel !== undefined && run.mode !== "online";
   const waiting = duel === undefined || (rows.apexrun_duel_command ?? []).some(c => txt(c.id).startsWith(`${duel.instance_id}/${duel.revision}/`));
   const signal = duel === undefined ? undefined : (rows.run_signal ?? []).find(s => txt(s.id) === txt(run.race));
   const [owed] = duel === undefined ? [] : (rows.run_milestone ?? [])
     .filter(m => txt(m.race) === txt(run.race) && !duel.view.lifted.some(l => l.frame === Number(m.frame) && l.kind === m.kind && l.by.includes(duel.seat)))
     .sort((x, y) => Number(x.frame) - Number(y.frame));
   const toDuel = waiting ? []
+    : abandoned ? [command("apexrun_duel", duel.instance_id, duel.revision, duel.seat, "cancel", {})]
+    : !sameRace ? []
     : duel.phase === "signalling" && !duel.view.described && signal !== undefined ? [command("apexrun_duel", duel.instance_id, duel.revision, duel.seat, "describe", {description: signal.description})]
     : duel.phase === "racing" && owed !== undefined ? [command("apexrun_duel", duel.instance_id, duel.revision, duel.seat, "lift", lifted(owed))]
     : [];
   // The challenge or challenge link you last made or joined, once the cluster
   // answers it: a refusal says why.
+  const inDuel = (rows.apexrun_duel_seat ?? []).some(d => ["signalling", "racing"].includes(d.phase));
   const made = (rows.apexrun_challenge_open ?? []).find(o => o.id === txt(tab.offer ?? "") && o.outcome);
   const linked = (rows.apexrun_duel_open ?? []).find(o => o.id === txt(tab.link ?? "") && o.outcome);
   return {updates: [
     ...toDuel,
     ...relist,
+    ...(inDuel && tab?.open === "yes" ? [{op: "patch", entity: "lobby_tab", id: "the", row: {open: "no"}}] : []),
     ...(made === undefined ? [] : [{op: "patch", entity: "lobby_tab", id: "the", row: {offer: "", note: made.outcome === "rejected" ? made.reason : ""}}]),
     ...(linked === undefined ? [] : [{op: "patch", entity: "lobby_tab", id: "the", row: {link: "", note: linked.outcome === "rejected" ? linked.reason : ""}}]),
     ...(txt(tab.me ?? "") === me ? [] : [{op: "patch", entity: "lobby_tab", id: "the", row: {me}}]),
     ...(txt(tab.shown ?? "") === shown ? [] : [{op: "patch", entity: "lobby_tab", id: "the", row: {shown}}]),
-    ...(unmet ? [command("apexrun_presence", presence.instance_id, presence.revision, presence.seat, last.kind, last.kind === "show" ? {name: tab.name} : {})] : []),
+    ...(unmet ? [command("apexrun_presence", presence.instance_id, presence.revision, presence.seat, last.kind, last.kind === "show" ? {name: tab.name} : {})]
+      : needsShow ? [command("apexrun_presence", presence.instance_id, presence.revision, presence.seat, "show", {name: tab.name})] : []),
   ]};
 }

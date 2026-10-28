@@ -1,6 +1,7 @@
 // Long enough for both racers' stages to load and a duel's whole clock to
 // run, 80 s from the grid; once one racer has lifted the finish, the other
 // has this long to lift theirs.
+const WAITING_MS = 600000;
 const SIGNAL_MS = 30000;
 const RACE_MS = 150000;
 const FINISH_MS = 15000;
@@ -11,7 +12,7 @@ const finish = state => state.lifts.find(lift => lift.kind === "duel-finish" && 
 const AGREED = ["checksum", "inputs", "winner", "goal_a", "goal_b"];
 return {
   initial: (input, context) => ({
-    ...input, phase: "waiting", seats: SEATS, offer: "", answer: "", deadline: context.now + SIGNAL_MS,
+    ...input, phase: "waiting", seats: SEATS, offer: "", answer: "", deadline: context.now + WAITING_MS,
     lifts: [], winner: "", goal_a: -1, goal_b: -1, dispute: "", silent: [],
   }),
   invariant: state => state.lifts.every((lift, i) => state.lifts.findIndex(other => key(other) === key(lift)) === i && lift.by.length > 0)
@@ -26,7 +27,7 @@ return {
   }),
   ready: (_state, event) => SEATS.every(seat => event.payload.seats.includes(seat)) ? true : "waiting_for_players",
   start: (state, _event, context) => ({...state, deadline: context.now + SIGNAL_MS}),
-  mayCancel: (_state, _event, context) => context.actor === "a" ? true : "not_inviter",
+  mayCancel: (state, _event, context) => context.actor === "a" || (state.phase !== "waiting" && context.actor === "b") ? true : "not_inviter",
   cancel: state => ({...state, deadline: 0}),
   // The challenger offers first; the target answers the offer.
   mayDescribe: (state, _event, context) => (context.actor === "a" ? state.offer : state.answer) !== "" ? "described"

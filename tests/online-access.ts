@@ -200,3 +200,15 @@ Deno.test("a challenge link opens a waiting duel without listing in the lobby, a
   assertEquals((await seatOf(cau, "apexrun_duel", cancelled))!.phase, "abandoned");
   assertEquals((await insert(ana, "apexrun_duel_open", { id: `join/${cancelled}/1`, instance_id: cancelled, kind: "join", input: {} })).reason, "room_unavailable");
 });
+
+Deno.test("a failed connection releases both racers for another challenge immediately", async () => {
+  const { ana, bia, duel } = await raced();
+  assertEquals((await command(bia, "apexrun_duel", duel, "cancel")).kind, "accepted");
+  for (const racer of [ana, bia]) {
+    assertEquals((await seatOf(racer, "apexrun_duel", duel))!.phase, "abandoned");
+    const next = crypto.randomUUID();
+    assertEquals((await insert(racer, "apexrun_duel_open", {
+      id: next, instance_id: next, kind: "create", input: { stage: "alpine-peaks", seed: "42" },
+    })).kind, "accepted");
+  }
+});

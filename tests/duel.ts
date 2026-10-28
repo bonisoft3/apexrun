@@ -1,6 +1,6 @@
 // An online duel in the browser against the stack: two racers, each a guest
-// in a context of their own, meet in the lobby; one challenges on a stage and
-// the other accepts; the duel machine's rows carry their descriptions, and
+// in a browser of their own; a fresh guest follows the challenge URL.
+// The duel machine's rows carry their descriptions, and
 // the race runs over a real data channel to its end card, whose result is the
 // machine's. Both races lift the same milestones with the same checksums.
 //
@@ -33,21 +33,30 @@ async function main(): Promise<number> {
   const engine = ({ chromium: engines.chromium, firefox: engines.firefox })[name];
   if (!engine) throw new Error(`PW_BROWSER=${name}: not chromium, firefox or webkit`);
   const base = await baseUrl(APP);
+  const local = ["localhost", "127.0.0.1", "[::1]"].includes(new URL(base).hostname);
   const headed = Deno.env.get("PW_HEADED") === "1";
   // Both racers' tabs play: one in the background would get no animation
   // frames, and its peer would wait on it.
-  const browser = await engine.launch({
+  const launch = () => engine.launch({
     headless: !headed,
     ...(name === "chromium"
-      ? { args: ["--ignore-certificate-errors", "--disable-renderer-backgrounding", "--disable-backgrounding-occluded-windows", "--disable-background-timer-throttling", ...(Deno.env.get("PW_ARGS") ?? "").split(" ").filter(Boolean)] }
+      ? { args: ["--ignore-certificate-errors", "--disable-renderer-backgrounding", "--disable-backgrounding-occluded-windows", "--disable-background-timer-throttling",
+        // Isolated local browsers cannot rely on multicast name resolution.
+        ...(local ? ["--disable-features=WebRtcHideLocalIpsWithMdns"] : []),
+        ...(Deno.env.get("PW_ARGS") ?? "").split(" ").filter(Boolean)] }
       : {}),
   });
+  const browsers: Awaited<ReturnType<typeof launch>>[] = [];
   const errors: string[] = [];
+  const diagnostics: string[] = [];
+  const pages: Page[] = [];
   const shot = async (page: Page, label: string) => {
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${label}.png` });
   };
   try {
-    const racer = async () => {
+    browsers.push(await launch());
+    browsers.push(await launch());
+    const racer = async (browser: typeof browsers[number], challenge?: string) => {
       const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1280, height: 720 } });
       // The race's lifted milestones, as the mount raises them.
       await context.addInitScript(() => {
@@ -57,14 +66,25 @@ async function main(): Promise<number> {
         document.addEventListener("milestone", (e) => w.__lifted.push((e as CustomEvent).detail), true);
       });
       const page = await context.newPage();
+      pages.push(page);
       page.on("pageerror", (err: Error) => errors.push(err.message));
-      await openArena(page, base);
-      await page.click("#stk-btn-lobby");
-      await page.click("#btn-toggle-online");
-      await page.waitForSelector('.stk-lobby-card[data-shown="show"]');
+      page.on("console", (message: { type(): string; text(): string }) => {
+        if (message.type() === "error") diagnostics.push(message.text());
+      });
+      page.on("requestfailed", (request: { url(): string; failure(): { errorText: string } | null }) => {
+        diagnostics.push(`${request.url()}: ${request.failure()?.errorText}`);
+      });
+      if (challenge) {
+        await page.goto(new URL(challenge, `${base}/`).href, { waitUntil: "domcontentloaded" });
+      } else {
+        await openArena(page, base);
+        await page.click("#stk-btn-lobby");
+        await page.waitForSelector('.stk-lobby-card[data-shown="show"]');
+      }
       return page;
     };
-    const [ana, bia] = [await racer(), await racer()];
+    const ana = await racer(browsers[0]);
+    let bia = await racer(browsers[1]);
     const callsign = (page: Page) => page.locator(".stk-lobby-you b").innerText();
     const biaName = await callsign(bia);
     await ana.click("#stage-alpine-peaks");
@@ -88,15 +108,21 @@ async function main(): Promise<number> {
     await ana.click("#btn-challenge-link");
     await linkCode.waitFor({ timeout: 30_000 });
     const sharedLink = await linkCode.innerText();
-    await bia.fill("#input-challenge-link", sharedLink);
-    await bia.click("#btn-join-link");
-    console.log("PASS  duel: a racer in the lobby opens a challenge link on a stage, which the other joins");
+    await bia.context().close();
+    bia = await racer(browsers[1], sharedLink);
+    console.log("PASS  duel: a fresh guest opens the shared challenge URL");
 
     // The duel's rows carry both descriptions; the start lifts once GGRS has
     // both racers' inputs for its frame.
     for (const page of [ana, bia]) {
       await page.waitForFunction(() => document.querySelector(".arena-run")?.getAttribute("data-mode") === "online", null, { timeout: 30_000 });
-      await page.waitForFunction(() => document.querySelector(".arena-run")?.getAttribute("data-racing") === "yes", null, { timeout: 90_000 });
+      await page.waitForFunction(() => {
+        const run = document.querySelector(".arena-run");
+        const verdict = run?.getAttribute("data-verdict");
+        if (run?.getAttribute("data-mode") !== "online") throw new Error("duel returned to an offline screen before racing");
+        if (verdict === "disputed" || verdict === "abandoned") throw new Error(`duel ended before racing: ${verdict}`);
+        return run?.getAttribute("data-racing") === "yes";
+      }, null, { timeout: 90_000 });
     }
     assert(await attr(ana, "data-stage") === "alpine-peaks", "the duel races the challenger's stage");
     console.log("PASS  duel: both races start over the data channel the duel machine signalled");
@@ -131,9 +157,16 @@ async function main(): Promise<number> {
     return 0;
   } catch (err) {
     console.log(`FAIL  duel\n      ${err instanceof Error ? err.message : err}`);
+    for (const error of errors) console.log(`      page error: ${error}`);
+    for (const message of diagnostics) console.log(`      diagnostic: ${message}`);
+    const snapshots = await Promise.allSettled(pages.filter((page) => !page.isClosed()).map(async (page, i) => {
+      console.log(`      browser ${i}: ${await page.locator("body").innerText({ timeout: 5000 })}`);
+      await shot(page, `failure-${i}`);
+    }));
+    for (const result of snapshots) if (result.status === "rejected") console.log(`      diagnostics failed: ${result.reason}`);
     return 1;
   } finally {
-    await browser.close();
+    await Promise.all(browsers.map((browser) => browser.close()));
   }
 }
 

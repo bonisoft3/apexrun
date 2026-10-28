@@ -209,7 +209,7 @@
     if (run.phase === 'title' && (action === 'confirm' || action === 'stk-btn-start')) then = { type: 'race', seed: true };
     if (run.phase === 'title' && (action === 'duel' || action === 'stk-btn-duel')) then = { type: 'race', seed: true, with: 'hotseat' };
     if (action === 'stk-pause-restart' || action === 'stk-res-restart') then = { type: 'race', seed: true };
-    if (action === 'stk-res-lobby') then = { type: 'title', seed: true };
+    if (action === 'stk-res-lobby' || action === 'duel-abort') then = { type: 'title', seed: true };
     // An online race runs on both racers' clocks, which neither holds.
     if (run.phase === 'race' && run.mode !== 'online' && (action === 'pause' || action === 'stk-pause-btn')) return paused;
     if (run.phase === 'paused' && (action === 'pause' || action === 'stk-pause-resume')) return racing;

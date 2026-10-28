@@ -1,5 +1,6 @@
 {
   "written": [
+    ".github/workflows/cd.yml",
     ".goreleaser.yaml",
     ".pronto/check-inputs.json",
     ".pronto/cluster.json",
