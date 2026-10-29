@@ -44,6 +44,14 @@ includes:
     taskfile: ./Taskfile.ci.yaml
     dir: ../
     optional: true
+  launch-action:
+    taskfile: ./Taskfile.launch-action.yaml
+    dir: ../
+    optional: true
+  integrate-action:
+    taskfile: ./Taskfile.integrate-action.yaml
+    dir: ../
+    optional: true
   check-finish:
     taskfile: ./Taskfile.check-finish.yaml
     dir: ../
@@ -90,14 +98,6 @@ includes:
     optional: true
   ci-leaderboard-access:
     taskfile: ./Taskfile.ci-leaderboard-access.yaml
-    dir: ../
-    optional: true
-  launch-action:
-    taskfile: ./Taskfile.launch-action.yaml
-    dir: ../
-    optional: true
-  integrate-action:
-    taskfile: ./Taskfile.integrate-action.yaml
     dir: ../
     optional: true
 version: "3"

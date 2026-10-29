@@ -22,6 +22,20 @@ include:
   required: false
 - path: ./compose.ci.yaml
   required: false
+- path: ./compose.served.yaml
+  required: false
+- path: ./compose.render.yaml
+  required: false
+- path: ./compose.database.yaml
+  required: false
+- path: ./compose.auth.yaml
+  required: false
+- path: ./compose.ticker.yaml
+  required: false
+- path: ./compose.clock.yaml
+  required: false
+- path: ./compose.timer-check.yaml
+  required: false
 - path: ./compose.check-finish.yaml
   required: false
 - path: ./compose.ci-finish.yaml
@@ -45,20 +59,6 @@ include:
 - path: ./compose.check-leaderboard-access.yaml
   required: false
 - path: ./compose.ci-leaderboard-access.yaml
-  required: false
-- path: ./compose.served.yaml
-  required: false
-- path: ./compose.render.yaml
-  required: false
-- path: ./compose.database.yaml
-  required: false
-- path: ./compose.auth.yaml
-  required: false
-- path: ./compose.ticker.yaml
-  required: false
-- path: ./compose.clock.yaml
-  required: false
-- path: ./compose.timer-check.yaml
   required: false
 - path: ./compose.caddy.yaml
   required: false

@@ -3,3 +3,4 @@ services:
   apexrun-caddy:
     ports:
     - ${CADDY_TLS_HOST_PORT:-23221}:8443
+    - ${CADDY_TLS_HOST_PORT:-23221}:8443/udp

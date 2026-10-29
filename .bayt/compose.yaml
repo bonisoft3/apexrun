@@ -77,6 +77,55 @@ services:
     profiles:
     - ci
     scale: 1
+  served:
+    extends:
+      file: ./compose.served.yaml
+      service: apexrun-served
+    profiles:
+    - served
+    scale: 1
+  render:
+    extends:
+      file: ./compose.render.yaml
+      service: apexrun-render
+    profiles:
+    - render
+    scale: 1
+  database:
+    extends:
+      file: ./compose.database.yaml
+      service: apexrun-database
+    profiles:
+    - database
+    scale: 1
+  auth:
+    extends:
+      file: ./compose.auth.yaml
+      service: apexrun-auth
+    profiles:
+    - auth
+    scale: 1
+  ticker:
+    extends:
+      file: ./compose.ticker.yaml
+      service: apexrun-ticker
+    profiles:
+    - ticker
+    scale: 1
+  clock:
+    extends:
+      file: ./compose.clock.yaml
+      service: apexrun-clock
+    profiles:
+    - clock
+    scale: 1
+  timer-check:
+    extends:
+      file: ./compose.timer-check.yaml
+      service: apexrun-timer-check
+    profiles:
+    - timer-check
+    scale: 1
   check-finish:
     extends:
       file: ./compose.check-finish.yaml
@@ -160,55 +209,6 @@ services:
       service: apexrun-ci-leaderboard-access
     profiles:
     - ci-leaderboard-access
-    scale: 1
-  served:
-    extends:
-      file: ./compose.served.yaml
-      service: apexrun-served
-    profiles:
-    - served
-    scale: 1
-  render:
-    extends:
-      file: ./compose.render.yaml
-      service: apexrun-render
-    profiles:
-    - render
-    scale: 1
-  database:
-    extends:
-      file: ./compose.database.yaml
-      service: apexrun-database
-    profiles:
-    - database
-    scale: 1
-  auth:
-    extends:
-      file: ./compose.auth.yaml
-      service: apexrun-auth
-    profiles:
-    - auth
-    scale: 1
-  ticker:
-    extends:
-      file: ./compose.ticker.yaml
-      service: apexrun-ticker
-    profiles:
-    - ticker
-    scale: 1
-  clock:
-    extends:
-      file: ./compose.clock.yaml
-      service: apexrun-clock
-    profiles:
-    - clock
-    scale: 1
-  timer-check:
-    extends:
-      file: ./compose.timer-check.yaml
-      service: apexrun-timer-check
-    profiles:
-    - timer-check
     scale: 1
   caddy:
     extends:
