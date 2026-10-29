@@ -11,6 +11,6 @@ export { attachTouch, canonical, checksum, createKineticHost, createKineticInput
 export { loadMilestone, unpackInputs } from "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.20.3/interpreter/kinetic-milestones.js";
 export { kineticChild } from "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.20.3/interpreter/kinetic-mount.js";
 export { createRollbackHost } from "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.20.3/interpreter/kinetic-session.js";
-export { readCheckInputs } from "https://raw.githubusercontent.com/bonisoft3/pronto/v0.26.3/check-inputs.ts";
-export { compileHybrid, type HybridMachine } from "https://raw.githubusercontent.com/bonisoft3/pronto/v0.26.3/hybrid.ts";
-export { executeHybrid } from "https://raw.githubusercontent.com/bonisoft3/pronto/v0.26.3/hybrid-local.ts";
+export { readCheckInputs } from "https://raw.githubusercontent.com/bonisoft3/pronto/v0.26.5/check-inputs.ts";
+export { compileHybrid, type HybridMachine } from "https://raw.githubusercontent.com/bonisoft3/pronto/v0.26.5/hybrid.ts";
+export { executeHybrid } from "https://raw.githubusercontent.com/bonisoft3/pronto/v0.26.5/hybrid-local.ts";
