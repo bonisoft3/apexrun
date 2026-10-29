@@ -260,3 +260,5 @@ _irAccepts: {
 if !_deriving {
 	code: meta: tests: [Id=string]: accepts: _irAccepts[Id]
 }
+
+code: meta: ladder: ["journal/2026-10-16-stitch-hud-telemetry.png","journal/2026-10-16-stitch-outrun-vision.png","journal/2026-10-23-t40-challenged.jpg","journal/2026-10-23-t40-lobby.jpg","journal/2026-10-23-t40-racing-a.jpg","journal/2026-10-23-t40-racing-b.jpg","journal/2026-10-23-t40-result-a.jpg","journal/2026-10-23-t40-result-b.jpg","journal/2026-10-24-t41-aerodrome-arrival.jpg","journal/2026-10-24-t41-castle-arrival.jpg","journal/2026-10-24-t41-goal.jpg","journal/2026-10-24-t41-oasis-arrival.jpg","journal/2026-10-24-t41-trip-helicopter.jpg","journal/2026-10-24-t41-trip-pull.jpg","journal/2026-10-24-t41-trip-roadside.jpg","journal/2026-10-25-t42-phone-initials.jpg","journal/2026-10-25-t42-phone-race.jpg","journal/2026-10-25-t42-phone-title.jpg","journal/2026-10-25-t42-portrait-race.jpg","journal/2026-10-25-t42-tablet-duel.jpg","journal/2026-10-25-t42-tablet-paused.jpg","journal/2026-10-25-t42-tablet-race.jpg"]

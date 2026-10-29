@@ -4,8 +4,6 @@ package apexrun
 
 import (
 	"encoding/json"
-	"list"
-	"regexp"
 	"strings"
 
 	pronto "github.com/bonisoft3/pronto"
@@ -949,30 +947,9 @@ code: pronto.#App & {
 	}
 }
 
-// The journal's images ship with it: every one its pages reference, read from
-// the journal itself, so a new entry's shots cannot be left behind.
-_journal: _ @embed(file="journal.html", type=text)
-_journalAssets: {for m in regexp.FindAllSubmatch(#"src="(journal_assets/[^"]+)""#, _journal, -1) {(m[1]): true}}
-
-_extraApexrunStatics: [
-	for f in list.Concat([[
-		"journal.html",
-		"ir.html",
-		"ir/card.css",
-		"ir/neighbourhood-app.svg",
-		"ir/neighbourhood-arena.svg",
-		"brief.html",
-		"brief.md",
-	], [for f, _ in _journalAssets {f}]]) {
-		file:   f
-		target: "/srv/\(f)"
-		watch:  true
-	},
-]
-
 cluster: (pronto.#DefaultCluster & {
 	"code":  code
-	statics: list.Concat([terminal.surface.statics, _extraApexrunStatics])
+	statics: terminal.surface.statics
 }).out
 terminal: surface: renderers: ["shell/renderers/ending.js", "shell/renderers/run_time.js", "shell/renderers/stage.js"]
 

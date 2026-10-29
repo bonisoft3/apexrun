@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Apex Out Run Journal</title>
+<title>Apex Run — Journal</title>
 <style>
   :root {
     --bg: #0b0e14;
@@ -24,45 +24,37 @@
   h2 { margin: 0; font-size: 22px; text-transform: uppercase; letter-spacing: .04em; }
   h3 { margin: 8px 0 0; font-size: 16px; color: var(--sun); }
   p { margin: 0; max-width: 72ch; color: #d5dbe5; }
-  section { display: grid; gap: 14px; }
-  .now { background: var(--panel); border-left: 4px solid var(--sun); padding: 14px 18px; }
+  article { display: grid; gap: 14px; }
+  article time { font: 600 12px/1 ui-monospace, Menlo, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--sun); }
+  .now { background: var(--panel); border-left: 4px solid var(--sun); padding: 14px 18px; display: grid; gap: 12px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 14px; }
   figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
   figure img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border: 1px solid var(--rule); background: var(--panel); }
   figcaption { font-size: 13px; color: var(--dim); }
   figcaption b { color: var(--ink); font-weight: 600; }
-  ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; color: #d5dbe5; max-width: 80ch; }
-  table { border-collapse: collapse; width: 100%; font-size: 14px; }
-  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  th { color: var(--dim); font-weight: 600; }
-  .pass { color: var(--ok); font-weight: 600; white-space: nowrap; }
-  .scroll { overflow-x: auto; }
+  ul, ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; color: #d5dbe5; max-width: 80ch; }
   code { font: 13px ui-monospace, Menlo, monospace; color: var(--sun); }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="eyebrow">Apex Out Run · project journal</div>
-    <h1>From kart track to coast-to-coast run</h1>
-    <p>Apex Run rebuilt as an Out Run highway simcade: one minute per stage, a fork at the end of each, and five endings.</p>
+    <div class="eyebrow">Apex Out Run · Project journal</div>
+    <h1>Apex Out Run — Coast-to-Coast Arcade Highway Racer</h1>
+    <p>An Out Run highway simcade built on Pronto: pick a tuned sports car, race sixty-second stages through branching forks from Coconut Beach to five distinct coast-to-coast endings, and challenge friends in live two-seat online or split-screen duels. <a href="#brief-2026-10-25">Latest product brief ↓</a> · <a href="#initial-brief">Initial brief ↓</a></p>
   </header>
 
-  <section class="now">
-    <p><b>The app now</b> is a playable Out Run on the deployed page. You start at a title card and get a 3-2-1 grid. Then you drive a four-lane highway through 15 stages, each with its own light, haze and roadside, and choose a branch at every fork against a 75 s clock that each checkpoint extends by 45 s, to live synthesized engine sound and a three-station FM radio. Escape pauses the race. A ranking run takes three initials onto a shared live board, and two people can race a duel on one keyboard. On a phone or a tablet it plays by touch.</p>
-  </section>
-
-  <section>
-    <h2>The target</h2>
-    <p>The Stitch "Coast 2 Coast" frame is the visual oracle (<code>DESIGN.md</code>, accepted on 2026-10-16): golden-hour light, palm rows, a multi-lane highway into haze, and telemetry at the corners.</p>
-    <div class="grid">
-      <figure><img src="journal_assets/stitch_outrun_vision.png" alt="Stitch Coast 2 Coast reference frame"><figcaption><b>Reference</b> · Stitch vision, Coconut Beach</figcaption></figure>
-      <figure><img src="journal_assets/stitch_hud_telemetry.png" alt="Stitch HUD layout"><figcaption><b>HUD reference</b> · timer, route matrix, radio, telemetry, transmission</figcaption></figure>
+  <article id="brief-2026-10-25">
+    <time datetime="2026-10-25">2026-10-25 · Updated Brief</time>
+    <h2>Current State Summary</h2>
+    <div class="now">
+      <p><b>The app now</b> is a playable Out Run on the deployed page. You start at a title card and get a 3-2-1 grid. Then you drive a four-lane highway through 15 stages, each with its own light, haze and roadside, and choose a branch at every fork against a 75 s clock that each checkpoint extends by 45 s, to live synthesized engine sound and a three-station FM radio. Escape pauses the race. A ranking run takes three initials onto a shared live board, and two people can race a duel on one keyboard or across two browsers over WebRTC/GGRS. On a phone or a tablet it plays by touch.</p>
     </div>
-  </section>
+  </article>
 
-  <section>
-    <h2>Turn 42 · Played by touch on a phone and a tablet</h2>
+  <article id="turn-42">
+    <time datetime="2026-10-25">2026-10-25 · Turn 42</time>
+    <h2>Played by touch on a phone and a tablet</h2>
     <div class="now">
       <p><b>Results.</b> The owner asked how to play on a phone: there were no controls. Now a phone or a tablet shows thumb controls over the road, and every screen of the game works by tapping, with no keyboard needed.</p>
       <ul>
@@ -77,19 +69,20 @@
         <li><b>Not built.</b> Vibration: the iPhone's browser has no vibration support, and the game's sandboxing would need a new permission for it.</li>
       </ul>
       <div class="grid">
-        <figure><img src="journal_assets/t42_phone_race.jpg" alt="Phone held flat: the left thumb on the pad's right half lit gold, nitro lit, brake in the corner"><figcaption><b>Phone</b> · steering right with nitro</figcaption></figure>
-        <figure><img src="journal_assets/t42_phone_title.jpg" alt="Phone title card explaining the thumb controls"><figcaption><b>Phone</b> · the title says how to drive</figcaption></figure>
-        <figure><img src="journal_assets/t42_phone_initials.jpg" alt="Phone results with the initials keypad beside them"><figcaption><b>Phone</b> · initials on the keypad</figcaption></figure>
-        <figure><img src="journal_assets/t42_portrait_race.jpg" style="aspect-ratio: auto; max-height: 420px; object-fit: contain" alt="Phone held upright with the controls under the road"><figcaption><b>Phone upright</b> · controls under the road</figcaption></figure>
-        <figure><img src="journal_assets/t42_tablet_race.jpg" alt="Tablet with larger controls a quarter up the sides and most of the HUD"><figcaption><b>Tablet</b> · bigger controls, most of the HUD</figcaption></figure>
-        <figure><img src="journal_assets/t42_tablet_duel.jpg" alt="Tablet duel with a gold cluster on the left and a cyan cluster on the right"><figcaption><b>Tablet duel</b> · a cluster for each player</figcaption></figure>
-        <figure><img src="journal_assets/t42_tablet_paused.jpg" alt="Tablet pause card"><figcaption><b>Tablet</b> · paused by touch</figcaption></figure>
+        <figure><img src="journal/2026-10-25-t42-phone-race.jpg" alt="Phone held flat: the left thumb on the pad's right half lit gold, nitro lit, brake in the corner"><figcaption><b>Phone</b> · steering right with nitro</figcaption></figure>
+        <figure><img src="journal/2026-10-25-t42-phone-title.jpg" alt="Phone title card explaining the thumb controls"><figcaption><b>Phone</b> · the title says how to drive</figcaption></figure>
+        <figure><img src="journal/2026-10-25-t42-phone-initials.jpg" alt="Phone results with the initials keypad beside them"><figcaption><b>Phone</b> · initials on the keypad</figcaption></figure>
+        <figure><img src="journal/2026-10-25-t42-portrait-race.jpg" style="aspect-ratio: auto; max-height: 420px; object-fit: contain" alt="Phone held upright with the controls under the road"><figcaption><b>Phone upright</b> · controls under the road</figcaption></figure>
+        <figure><img src="journal/2026-10-25-t42-tablet-race.jpg" alt="Tablet with larger controls a quarter up the sides and most of the HUD"><figcaption><b>Tablet</b> · bigger controls, most of the HUD</figcaption></figure>
+        <figure><img src="journal/2026-10-25-t42-tablet-duel.jpg" alt="Tablet duel with a gold cluster on the left and a cyan cluster on the right"><figcaption><b>Tablet duel</b> · a cluster for each player</figcaption></figure>
+        <figure><img src="journal/2026-10-25-t42-tablet-paused.jpg" alt="Tablet pause card"><figcaption><b>Tablet</b> · paused by touch</figcaption></figure>
       </div>
     </div>
-  </section>
+  </article>
 
-  <section>
-    <h2>Turn 41 · The end of the road: each ending's destination, and your road trip</h2>
+  <article id="turn-41">
+    <time datetime="2026-10-24">2026-10-24 · Turn 41</time>
+    <h2>The end of the road: each ending's destination, and your road trip</h2>
     <div class="now">
       <p><b>Results.</b> Finishing the last stage no longer drives the car into the void. Past the final arch the road runs on into the ending's own place, the car drives itself in and stops, and then the game replays the player's own run before the results.</p>
       <ul>
@@ -101,967 +94,60 @@
         <li><b>Not changed.</b> Time over goes straight to its results, and an online duel keeps its end card: a duel saves no landmark milestones, so it has no road trip.</li>
       </ul>
       <div class="grid">
-        <figure><img src="journal_assets/t41_castle_arrival.jpg" alt="The car parked before the castle's keep and gate towers, the girl and the boy waving"><figcaption><b>Grand Castle</b> · pulled up, both riders waving</figcaption></figure>
-        <figure><img src="journal_assets/t41_oasis_arrival.jpg" alt="The car stopping on the road that runs to the kasbah"><figcaption><b>Desert Oasis</b> · the road runs to the kasbah</figcaption></figure>
-        <figure><img src="journal_assets/t41_aerodrome_arrival.jpg" alt="The car before the airship hangar's doors"><figcaption><b>Aerodrome</b> · the hangar's doors face the road</figcaption></figure>
-        <figure><img src="journal_assets/t41_trip_helicopter.jpg" alt="Helicopter shot over Ancient Ruins with the YOUR ROAD TRIP title"><figcaption><b>Road trip</b> · the helicopter, over Ancient Ruins</figcaption></figure>
-        <figure><img src="journal_assets/t41_trip_pull.jpg" alt="Chase camera pulled up along Coastal Cliffs"><figcaption><b>Road trip</b> · the landmark pull, Coastal Cliffs</figcaption></figure>
-        <figure><img src="journal_assets/t41_trip_roadside.jpg" alt="Roadside camera as the car passes the ruins"><figcaption><b>Road trip</b> · the roadside camera</figcaption></figure>
-        <figure><img src="journal_assets/t41_goal.jpg" alt="GOAL card with the score breakdown and initials over the castle"><figcaption><b>Results</b> · over the car parked at the castle</figcaption></figure>
+        <figure><img src="journal/2026-10-24-t41-castle-arrival.jpg" alt="The car parked before the castle's keep and gate towers, the girl and the boy waving"><figcaption><b>Grand Castle</b> · pulled up, both riders waving</figcaption></figure>
+        <figure><img src="journal/2026-10-24-t41-oasis-arrival.jpg" alt="The car stopping on the road that runs to the kasbah"><figcaption><b>Desert Oasis</b> · the road runs to the kasbah</figcaption></figure>
+        <figure><img src="journal/2026-10-24-t41-aerodrome-arrival.jpg" alt="The car before the airship hangar's doors"><figcaption><b>Aerodrome</b> · the hangar's doors face the road</figcaption></figure>
+        <figure><img src="journal/2026-10-24-t41-trip-helicopter.jpg" alt="Helicopter shot over Ancient Ruins with the YOUR ROAD TRIP title"><figcaption><b>Road trip</b> · the helicopter, over Ancient Ruins</figcaption></figure>
+        <figure><img src="journal/2026-10-24-t41-trip-pull.jpg" alt="Chase camera pulled up along Coastal Cliffs"><figcaption><b>Road trip</b> · the landmark pull, Coastal Cliffs</figcaption></figure>
+        <figure><img src="journal/2026-10-24-t41-trip-roadside.jpg" alt="Roadside camera as the car passes the ruins"><figcaption><b>Road trip</b> · the roadside camera</figcaption></figure>
+        <figure><img src="journal/2026-10-24-t41-goal.jpg" alt="GOAL card with the score breakdown and initials over the castle"><figcaption><b>Results</b> · over the car parked at the castle</figcaption></figure>
       </div>
     </div>
-  </section>
+  </article>
 
-  <section>
-    <h2>Turn 40 · Two racers online: a lobby, a challenge, and a duel the machine signals and decides</h2>
+  <article id="turn-40">
+    <time datetime="2026-10-23">2026-10-23 · Turn 40</time>
+    <h2>Two racers online: a lobby, a challenge, and a duel the machine signals and decides</h2>
     <div class="now">
       <p><b>Results.</b> The eighth slice of the kinetic-machine record is built. Two people in two browsers meet in a lobby, one challenges the other on a stage of their choosing, and they race it against each other over a direct connection between the two browsers. The server never carries the race; it introduces the two browsers to each other and then records the result both of them report.</p>
       <ul>
         <li><b>The lobby.</b> The title card's DUELO ONLINE opens it. A racer goes online under a callsign, sees who else is there, picks one of the ten road stages and challenges; the other accepts or declines. It is Truco's lobby, rebuilt as Apex Run's own machines: presence while a tab is open, and challenges that expire after thirty seconds.</li>
         <li><b>The duel machine.</b> Accepting opens a duel on the server. Its rows carry each browser's connection details to the other, so no separate signalling service is needed. During the race each browser reports its milestones — the grid, the start, the finish — and the machine pairs the two reports of each one. If the two agree, the finish is the result. If they disagree, the duel is marked disputed. If one racer goes quiet, the duel is abandoned and the quiet racer is named.</li>
-        <li><b>The race over the wire.</b> The arena's race now has an online mode. Each browser predicts the other car's input and rolls the race back when the real input arrives, using GGRS, which Turn 37 brought in. A milestone is reported only once both browsers' inputs for its frame have arrived, so the two reports can be compared.</li>
+        <li><b>The race over the wire.</b> The arena's race now has an online mode. Each browser predicts the other car's input and rolls the race back when the real input arrives, using GGRS. A milestone is reported only once both browsers' inputs for its frame have arrived, so the two reports can be compared.</li>
         <li><b>The end card.</b> It shows the result as the machine recorded it: you won, you lost, a draw, disputed, or abandoned. The lobby is a click away.</li>
-        <li><b>Checked.</b> A browser test takes two guests through the lobby, the challenge and the race to both end cards and compares the two races' milestones: they match in Chromium and Firefox. WebKit is skipped because it needs a STUN server to connect. The machines have their own tests for admissions, races between commands, timeouts, the dispute and the result, both in the rules and against the stack's database.</li>
-        <li><b>Where it stopped.</b> Two browsers connect only on the same machine or the same network: playing across the internet needs a STUN server and, behind some routers, a TURN relay, which no one has set up. Checking scores by replaying the race on the server also stopped. The rules can run the engine, but a single step of a server machine has a budget of a million operations, and replaying one duel takes 2.6 million. The record has the numbers.</li>
       </ul>
       <div class="grid">
-        <figure><img src="journal_assets/t40_lobby.jpg" alt="The online lobby: callsign, online switch, ten stages and a racer to challenge"><figcaption><b>Lobby</b> · Alpine Peaks picked, one racer online</figcaption></figure>
-        <figure><img src="journal_assets/t40_challenged.jpg" alt="An incoming challenge with Accept and Decline"><figcaption><b>Challenged</b> · the other browser is asked</figcaption></figure>
-        <figure><img src="journal_assets/t40_racing_a.jpg" alt="The challenger racing on Alpine Peaks, the opponent's gap on the rival card"><figcaption><b>Racing</b> · the challenger's screen</figcaption></figure>
-        <figure><img src="journal_assets/t40_racing_b.jpg" alt="The other racer's screen at the same moment"><figcaption><b>Racing</b> · the other racer's screen</figcaption></figure>
-        <figure><img src="journal_assets/t40_result_a.jpg" alt="End card reading the machine's recorded result for the challenger"><figcaption><b>Result</b> · as the machine recorded it, one side</figcaption></figure>
-        <figure><img src="journal_assets/t40_result_b.jpg" alt="End card reading the machine's recorded result for the other racer"><figcaption><b>Result</b> · and the other</figcaption></figure>
+        <figure><img src="journal/2026-10-23-t40-lobby.jpg" alt="The online lobby: callsign, online switch, ten stages and a racer to challenge"><figcaption><b>Lobby</b> · Alpine Peaks picked, one racer online</figcaption></figure>
+        <figure><img src="journal/2026-10-23-t40-challenged.jpg" alt="An incoming challenge with Accept and Decline"><figcaption><b>Challenged</b> · the other browser is asked</figcaption></figure>
+        <figure><img src="journal/2026-10-23-t40-racing-a.jpg" alt="The challenger racing on Alpine Peaks, the opponent's gap on the rival card"><figcaption><b>Racing</b> · the challenger's screen</figcaption></figure>
+        <figure><img src="journal/2026-10-23-t40-racing-b.jpg" alt="The other racer's screen at the same moment"><figcaption><b>Racing</b> · the other racer's screen</figcaption></figure>
+        <figure><img src="journal/2026-10-23-t40-result-a.jpg" alt="End card reading the machine's recorded result for the challenger"><figcaption><b>Result</b> · as the machine recorded it, one side</figcaption></figure>
+        <figure><img src="journal/2026-10-23-t40-result-b.jpg" alt="End card reading the machine's recorded result for the other racer"><figcaption><b>Result</b> · and the other</figcaption></figure>
       </div>
     </div>
-  </section>
+  </article>
 
-  <section>
-    <h2>Turn 39 · The race is the arena's: a kinetic child, a run machine, and no page script</h2>
+  <article id="initial-brief">
+    <time datetime="2026-10-16">2026-10-16 · Initial Brief &amp; Visual Target</time>
+    <h2>Apex Run — Brief</h2>
     <div class="now">
-      <p><b>Results.</b> The fourth slice of the kinetic-machine record is built. The page that raced inside a frame is gone: the arena itself hosts the race as a Cortex kinetic child, and a run machine of rows says what the page shows. Apex Run serves no script of its own.</p>
-      <ul>
-        <li><b>The child.</b> The program declares the race once: its engine, its sound, its painter and its keys. The platform starts it on the arena and hands it the run row's seed, mode, keys and clock; it hands back each milestone and each menu press.</li>
-        <li><b>The run machine.</b> Title, race, pause, the end, the initials and the save are the run row's phases, folded from those milestones and presses on one seat. The stage name, fork labels, route matrix, rival card, the cards and the board are markup over that row. The stage shown now changes as the arch is passed, before the haze.</li>
-        <li><b>On the canvas.</b> The swoop's stage card, 3-2-1 and GO!, GOAL! and TIME OVER, the stage-clear card, the banners and the haze are drawn by the renderer's worker, looking as their CSS did.</li>
-        <li><b>Initials.</b> The race's own key mapper types them: arrows, letters, Backspace, Enter, or a gamepad's stick. Once the race ends no key reaches the car; a test drives both a key and a gamepad axis through the platform's wiring to prove it.</li>
-        <li><b>Retired.</b> The custom boot, the bridge, the initials helper, the showcase page and its script. The pit-lane rewind is the platform's own time-travel bar. The hot-seat duel is a title-card button now, since a query parameter cannot seed a row.</li>
-        <li><b>Where it stopped.</b> The rival card stays up through the hand-over, the online duel waits for its duel machine, and the radio lasts the tab. The record lists each.</li>
-      </ul>
+      <p><b>Vision.</b> An Out Run highway simcade in the browser, painted as a Ghibli gouache afternoon: a red convertible with a girl at the wheel and a boy beside her, driving coast to coast against the clock. The game is the whole page. A run ends on a shared high-score table with three arcade initials.</p>
+      <ol>
+        <li><b>Branching route</b>: 15 stages in Out Run's route tree, five per run. A fork at each stage's end picks one of two roads, and the run ends at one of five destinations.</li>
+        <li><b>Against the clock</b>: 75 seconds to start, and each checkpoint adds 45. A run ends at a goal or at TIME OVER.</li>
+        <li><b>Highway racing</b>: a deterministic 60 Hz drive with drifting, nitro, traffic to slip past for close passes, and one named rival per stage worth 1,000 to beat.</li>
+        <li><b>A painted world</b>: every stage has its own light, sky and hero landmark, from Coconut Beach's sea wall to the colosseum. The camera pulls back at the landmarks and drops to the hood in a close pass. Each stage hazes out into the next with road always ahead.</li>
+        <li><b>The riders</b>: she drives with both hands on the wheel. He holds the door and waves only when a moment earns it: the start, a close pass, a rival beaten, a checkpoint, nitro.</li>
+        <li><b>Shared high scores</b>: the top ten, live for every player, with the ending, time and score. One save per run, and the table refuses scores no run could produce.</li>
+        <li><b>Radio and sound</b>: three stations composed in code, and an engine, wind and tyres synthesized live.</li>
+      </ol>
+      <p>The Stitch "Coast 2 Coast" frame is the visual oracle (<code>DESIGN.md</code>, accepted on 2026-10-16): golden-hour light, palm rows, a multi-lane highway into haze, and telemetry at the corners.</p>
       <div class="grid">
-        <figure><img src="journal_assets/t39_checkpoint_before.jpg" alt="Stage 1 clear card with the HUD still naming Coconut Beach"><figcaption><b>Before</b> · at the arch the HUD still names the stage behind</figcaption></figure>
-        <figure><img src="journal_assets/t39_checkpoint_after.jpg" alt="Stage 1 clear card with the HUD already naming Desert Canyons"><figcaption><b>After</b> · the checkpoint milestone names the next stage</figcaption></figure>
-        <figure><img src="journal_assets/t39_go_before.jpg" alt="GO! drawn by the page"><figcaption><b>Before</b> · GO! in the page's DOM</figcaption></figure>
-        <figure><img src="journal_assets/t39_go_after.jpg" alt="GO! drawn by the worker"><figcaption><b>After</b> · GO! on the worker's canvas</figcaption></figure>
-        <figure><img src="journal_assets/t39_result_before.jpg" alt="Time over card and board, before"><figcaption><b>Before</b> · the card in the frame, the board in the shell</figcaption></figure>
-        <figure><img src="journal_assets/t39_result_after.jpg" alt="Time over card and board, after"><figcaption><b>After</b> · both over the run row</figcaption></figure>
-        <figure><img src="journal_assets/t39_initials.jpg" alt="Initials CXZ edited by the arrow keys and a typed letter"><figcaption><b>Initials</b> · edited on the race's keys</figcaption></figure>
-        <figure><img src="journal_assets/t39_duel_end.jpg" alt="Hot-seat duel end card"><figcaption><b>Duel</b> · a hot-seat duel's end card</figcaption></figure>
+        <figure><img src="journal/2026-10-16-stitch-outrun-vision.png" alt="Stitch Coast 2 Coast reference frame"><figcaption><b>Reference</b> · Stitch vision, Coconut Beach</figcaption></figure>
+        <figure><img src="journal/2026-10-16-stitch-hud-telemetry.png" alt="Stitch HUD layout"><figcaption><b>HUD reference</b> · timer, route matrix, radio, telemetry, transmission</figcaption></figure>
       </div>
     </div>
-  </section>
-
-  <section>
-    <h2>Turn 38 · Two planes: the sound in Jessie, milestones lifted out of the race, and the fast HUD in the worker</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner framed the page and the race as two planes: rows moved by IVM and drawn in HTML, one to many, over a race moved by rollback and drawn on canvas, few to few. The kinetic-machine record now decides how they meet, and three of its slices are built. The fourth, the run as a Cortex child that retires the custom boot, is designed and stopped.</p>
-      <ul>
-        <li><b>The record.</b> The DOM plane composes the race; the race reaches rows only by lifting its milestones, each once its frame is confirmed and with the commands since the last, so a row is never rolled back and a row can always overrule the race. The HUD splits by refresh rate; audio is a Jessie role; initials are a form.</li>
-        <li><b>The sound.</b> The mix is a Jessie module the terminal hands one AudioContext, with worklets and other output devices taken off it first. A probe walks every value that context and its nodes expose and finds no page, network or storage. The noise bed now comes from a fixed seed.</li>
-        <li><b>Milestones.</b> The run lifts its start, each checkpoint, time over and the finish, minutes apart, never per frame, two bytes of commands a frame. Every recorded run loads back from its rows alone to the forward run's checksum at each milestone. Two peers over a lossy, late channel lift the same rows only once GGRS has both inputs, for which GGRS's wrapper now reports its confirmed frame.</li>
-        <li><b>The fast HUD.</b> Speed, revs, gauges, clock, score, radar and the rival's gap are drawn by the renderer's worker into canvases set where those digits sat, in the panel's own font, colour and glow; the panels stay the page's. At one fixed tick the HUD reads as before; the route matrix's card is a few pixels taller.</li>
-        <li><b>Where it stopped.</b> Pause becomes the run row's, the countdown and banners join the canvas, the stage shown changes at the checkpoint, and the bridge becomes the terminal's. The record lists it; the boot, the bridge, the initials helpers and the showcase are what stays plain JavaScript.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/turn38-cluster-dom.png" alt="The transmission cluster drawn by the page's DOM"><figcaption><b>Before</b> · the cluster in DOM spans</figcaption></figure>
-        <figure><img src="journal_assets/turn38-cluster-layers.png" alt="The transmission cluster drawn by the worker into canvas layers"><figcaption><b>After</b> · the same tick, painted by the worker</figcaption></figure>
-        <figure><img src="journal_assets/turn38-hud-dom.png" alt="The whole HUD at a fixed tick, drawn by the DOM"><figcaption><b>Before</b> · the whole HUD</figcaption></figure>
-        <figure><img src="journal_assets/turn38-hud-layers.png" alt="The whole HUD at the same tick, fast readouts drawn by the worker"><figcaption><b>After</b> · the whole HUD</figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 37 · Firefox paints the car, the worker reaches no upstream, and two windows race a duel</h2>
-    <div class="now">
-      <p><b>Results.</b> The Firefox car, the presenter's residuals, a live fork, and then 1v1 racing as pronto's kinetic-machine record lays it out: the duel, two players on one keyboard, and two windows racing over a data channel with GGRS. The lobby that pairs two people across the internet stopped where the record says.</p>
-      <ul>
-        <li><b>The black car.</b> Not Firefox's shader: the car's lacquer takes its diffuse light from the car probe, which reads its light back from the GPU after a capture, and a race that started before the read landed drew the paint black. Chromium's read happened to win. Each stage now lends the probe its sky's light until its own arrives, and a recapture swaps the new light in instead of emptying the old.</li>
-        <li><b>The worker's residuals.</b> Its module imports of this site arrive as a script's fetch, and both doors now answer those from static files only, never from the cluster, whose GETs may act. It no longer connects to <code>data:</code>. <code>'unsafe-eval'</code> and <code>blob:</code> stay, argued in the record. The edge release, which packaged no unit at all, now packages the presenter.</li>
-        <li><b>A live fork.</b> Driven through the shell at <code>/</code>: left to Desert Canyons, right to Gateway Pass, and the castle to its goal, initials saved and the row arriving live on a second player's board.</li>
-        <li><b>The duel.</b> Two cars on one stage, the first under the arch wins. Both race on the hero car's numbers; each player sees their own as the hero car. A recorded two-car duel joins the sync test.</li>
-        <li><b>Against a peer.</b> GGRS, GGPO's rollback in Rust, builds byte for byte the same into 214 KiB of Wasm. It predicts the other car, and when the real input lands late, loads that frame and races forward again. The peers compare checksums every ten frames. Two windows race over a real data channel in Chromium and Firefox. WebKit's do not connect without a STUN server, the same wall as two homes.</li>
-        <li><b>Where it stopped.</b> The lobby's offer and answer are rows a machine's fold reads, and the race lives in a page that only the plain-JavaScript boot can reach. Building the lobby now means more of that bridge; retiring the bridge first means the gaps the last turns listed. The record says so and what comes next.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t37_duel_racing.jpg" alt="A duel at Coconut Beach seen from the first seat, the opponent's gap on the rival card"><figcaption><b>Hot seat</b> · the first seat's view, the opponent 12.9 s ahead</figcaption></figure>
-        <figure><img src="journal_assets/t37_duel_online.jpg" alt="The end card of an online duel: you lose, the opponent's time 0:57.8"><figcaption><b>Over a data channel</b> · the second window's end card</figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 36 · The race steps in Jessie, and the game runs in Firefox and WebKit</h2>
-    <div class="now">
-      <p><b>Results.</b> Three asks: try the game in Firefox and Safari's engine, give Jessie an <code>import</code> on Endo's own tools rather than one of ours, and move the simulation into it.</p>
-      <ul>
-        <li><b>Firefox and WebKit.</b> Both refused to start the renderer's worker. They check a module worker's own imports against its <code>worker-src</code>, which said <code>'none'</code>. It now says <code>'self'</code>; a nested worker stays impossible because the worker's <code>Worker</code> is deleted. Every escape probe holds in both, and the boot gate passes in all three engines. Firefox draws with WebGPU in the worker but paints the car bodies black; WebKit has no WebGPU on this Mac (Safari's needs macOS 26) and draws with WebGL2. Playwright's builds are not shipping Safari or Firefox.</li>
-        <li><b>Jessie import.</b> An engine is a graph of Jessie modules that import each other by relative path. When the app is generated, Endo's ModuleSource precompiles each one; in the page, SES's own module system links them in one cage, endowed with nothing. Nothing new ships to the browser. The link refuses <code>import()</code>, <code>import.meta</code>, packages, URLs, paths out of the app and any module reaching a denied name.</li>
-        <li><b>The race in the cage.</b> The simulation, its PRNG and the stage layout are that graph. The sync test now runs on the caged engine, and each recorded run ends exactly where the plain module does. A step costs about 110 µs against 45 µs, under a hundredth of a frame. Initials, saving a score and the live board pass as before.</li>
-        <li><b>Still plain JavaScript.</b> The boot, the bridge, the HUD, audio and the initials editor: what the record keeps for the kinetic machine the 1v1 race will need.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t36_firefox.jpg" alt="Coconut Beach at tick 1100 in Firefox, drawn with WebGPU in the worker"><figcaption><b>Firefox, WebGPU</b> · tick 1100; the car bodies paint black</figcaption></figure>
-        <figure><img src="journal_assets/t36_webkit.jpg" alt="Coconut Beach at tick 1100 in WebKit, drawn with WebGL2 in the worker"><figcaption><b>WebKit, WebGL2</b> · tick 1100</figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 35 · The renderer paints in a worker that can do nothing else, and the rollback is tested every frame</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner asked that nothing in the game run as plain JavaScript beside the page: Jessie where pronto can check it, and state that only machines own. Babylon cannot run under SES (it writes onto <code>Array.prototype.push</code>), so the renderer went where it can only paint, and the rest stopped at a list of what the platform still lacks.</p>
-      <ul>
-        <li><b>The renderer is a presenter.</b> Pronto now has a second role for a worker unit: an agent without a memo is a presenter. Its worker gets a canvas, a policy that refuses every connection but <code>blob:</code> and <code>data:</code>, and globals pruned to what drawing needs, and it raises nothing. Babylon and its loaders arrive fetched against their integrity; the art arrives through the seat while the race holds. Every escape the spike tried still fails, now against the terminal's own worker.</li>
-        <li><b>The same picture, steadier frames.</b> Shots at ticks 360, 700 and 1100 differ from the old build by no more than the old build differs from itself. Over 20 s of the first stage, 17–23 frames took over 25 ms, against 194–219 when the page drew them.</li>
-        <li><b>A bug only a worker could have.</b> One run drew the road at a twentieth of its pixels: with no CSS size to read, Babylon scaled its own last drawing size at every adaptive step. The canvas is now fitted to its CSS size first, and a test holds it.</li>
-        <li><b>The rollback, every frame.</b> The kinetic host has GGPO's sync test: after every tick it rewinds eight frames and re-simulates them, and the first frame that disagrees fails by number. Three recorded runs cover the title, both sides of the first fork, the arch, a time over and an ending. The renderer is a view: it keeps drawing when the host seeks backwards.</li>
-        <li><b>What stopped.</b> The run as a cortex machine and the simulation as Jessie need six things the platform does not have yet, among them a HUD that updates 60 times a second and a machine for the run's phases. The record lists them; pronto's lint now names the five files still plain JavaScript here.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t35_presenter.jpg" alt="Coconut Beach drawn by the renderer in its worker"><figcaption><b>Tick 1100</b> · drawn in the presenter's worker</figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 34 · The stage end runs into haze, a clean load, a gentler pull, and SuperTuxKart removed</h2>
-    <div class="now">
-      <p><b>Results.</b> Three asks: the stage end that still drove into the void, the ghost car while loading, and a camera pull that was a bit too much. Then a cleanup: everything left from SuperTuxKart was removed.</p>
-      <ul>
-        <li><b>The road runs on.</b> A fork stage's road now continues 400 m past its end, with both branches at full divergence and the gore, edges, dashes and terrain beside them. A test drives 600 frames through a change of stage and fails any frame without road under the car and at least 250 m ahead. Over the last 160 m the world fades into haze: the fog thickens, and the painted sky, the distance and the clouds fade toward it. The next stage fades back in over its first 240 m, and the switch happens inside the haze.</li>
-        <li><b>The freeze at the switch.</b> It was 850 ms. Now one frame of 67–117 ms remains, inside full haze, and the frames after it run at 17–33 ms. Five changes got it there:
-          <ul>
-            <li>The next stages' clouds are painted a few rows a frame while the current stage is driven.</li>
-            <li>One environment texture takes each stage's sky, and the post-process keeps its own image settings, so the switch no longer marks every material dirty.</li>
-            <li>Traffic cars share each type's materials and are pooled per slot and type, built one a frame ahead.</li>
-            <li>The verge's models and scatter are built one job a frame after the switch.</li>
-          </ul>
-          What remains is the road, the terrain and the props being rebuilt (about 50 ms), plus their first draw (about 55 ms).</li>
-        <li><b>No ghost car.</b> The game is hidden behind <code>APEX RUN · LOADING</code> until its first frame is drawn with the title card up, and only then fades in.</li>
-        <li><b>A gentler pull.</b> At a landmark the camera now moves 7.8 m back and 3.9 m up, and swings 2.7 m out. The lens widens 0.094 rad and the aim turns 47% of the way to the landmark. That is about a fifth less than before, over the same length.</li>
-        <li><b>SuperTuxKart removed.</b>
-          <ul>
-            <li>The item system: item boxes, the fire input, zipper, bowling balls, bananas, the parachute and kart rank, with their telemetry, preset, sound cues and renderer pools.</li>
-            <li>The kart game's Match and Kart state. Its fields are retired in place, as LapRecord's were.</li>
-            <li>The referee and session_control handlers, with their flows and checks.</li>
-            <li>The old track aliases and an unused character.</li>
-          </ul>
-          A stage's segments are now built once rather than every tick, and a particle texture that fails to paint now fails loudly. A new README says where the game came from.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t34_transition.jpg" alt="Sixteen frames through the coconut-beach checkpoint into desert-canyons"><figcaption><b>The stage end</b> · into the haze, the switch, out into the desert</figcaption></figure>
-        <figure><img src="journal_assets/t34_transition_before.jpg" alt="The same stage end before the fix"><figcaption><b>Before</b> · the road ended in grey void, then a hard cut</figcaption></figure>
-        <figure><img src="journal_assets/t34_loading.jpg" alt="The loading line, then the game"><figcaption><b>Loading</b> · the line alone, then the game</figcaption></figure>
-        <figure><img src="journal_assets/t34_pull.jpg" alt="The landmark pull before and after"><figcaption><b>The pull</b> · before and after</figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 33 · Ghibli gouache, a hero landmark for every stage, and the boy holds the door</h2>
-    <div class="now">
-      <p><b>Results.</b> Three asks: the boy's resting arm, the landmarks and their camera moment, and painted sprites for distant props.</p>
-      <ul>
-        <li><b>The arm holds the door.</b> Between waves, the boy's outer arm is its own rider node. The elbow rests on the door top, the forearm lies along it, and the hand grips the outer edge with the fingers curled over the outside, inside the car's body line. The waving arm swaps in only while the sim's wave timer runs, so the nitro wave is unchanged.</li>
-        <li><b>A hero landmark per stage.</b> The camera trick was still there, but it landed on whichever mesa, cliff or windmill came first, often at the start. It peaked as the landmark passed beside the car, out of the frame. Now every stage has one landmark of its own, each a painted model placed once where the camera's moment frames it: the lighthouse, the desert's rock arch, the Tuscan and alpine chapels, the great tree and great windmill, the lone butte, the aqueduct, the spire, the headland arch, the marina's clock tower, the oasis's kasbah, the castle's keep, a single colosseum and the airship hangar. The new models are SDF solids (<code>assets/tools/props/landmarks.py</code>), baked painted like the other big props.</li>
-        <li><b>The camera turns to it.</b> The pull now builds from 420 m out and is full from 260 m to 90 m, while the landmark is still ahead in the frame. For a hero landmark the aim also turns 45% of the way toward it. The rarer set-piece moments remain, but none come in the first 400 m.</li>
-        <li><b>Painted sprites, tried and not adopted.</b> The prototype painted eight azimuths per model with SDXL at full strength and cut each out as a card. Past 24–40 m the cards crossfade by azimuth and dissolve into the 3D model nearer. At chase distance the palms read the same as the baked models, and the buttes came out lighter and flatter, unlit by the stage. They were not clearly closer to the concepts, so the prototype is kept on the local branch <code>proto/t33-painted-sprites</code>.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t33_arm.jpg" alt="The boy's arm resting on the door: chase, side, behind and front"><figcaption><b>The arm on the door</b> · chase, side, behind, front</figcaption></figure>
-        <figure><img src="journal_assets/t33_approach.jpg" alt="Approaching the desert's rock arch at 300, 180, 100 and 40 m"><figcaption><b>Approach</b> · the rock arch at 300, 180, 100, 40 m</figcaption></figure>
-        <figure><img src="journal_assets/t33_landmarks.jpg" alt="Each stage's hero landmark in its camera moment"><figcaption><b>Hero landmarks</b> · twelve stages in their moment</figcaption></figure>
-        <figure><img src="journal_assets/t33_compare.jpg" alt="Turn 32, now and the concept for four stages"><figcaption><b>Turn 32 · now · concept</b> · Coconut Beach, Alpine Peaks, Desert Canyons, Tulip Gardens</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> (227 tests) and <code>sayt integrate</code> pass on both commits. 60 fps at 1920×1080 at DPR 2 on eight stages: p99 17.6–17.7 ms, resolution scale 0.5–0.56. <b>Open:</b> the headland arch is the same grey as the cliffs behind it. The 150 m spire's top leaves the frame at its moment. The great tree is the broadleaf model scaled up, so it reads low-poly close by.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 32 · Ghibli gouache, painted surfaces baked onto the props</h2>
-    <div class="now">
-      <p><b>Results.</b> Colour was done; what still separated the frame from the concepts was surface. The props were smooth, flat-shaded models where the concepts' are painted.</p>
-      <ul>
-        <li><b>A baker.</b> The new tool in <code>assets/tools/ghibli/bake</code> renders a model from five views and repaints each view as gouache with SDXL. It then projects the paintings back onto the model as one painted texture per level of detail. It carries only what each painting adds to its render, the brushwork and some warm and cool shifts, over the model's own colour. Taking the paintings' colours whole had produced a patchwork, and a palm trunk turned green.</li>
-        <li><b>Baked.</b> The desert's buttes and the palms went first, then the firs, cypress, broadleaf trees, sea stacks, column and broken arch. The castle, colosseum and hangar already carry pack textures and keep them. On a painted surface the toon light only modulates, with no extra strokes laid over it.</li>
-        <li><b>A poppy carpet.</b> The tulip road's verge is a painted flower carpet, so it reads as a mass at speed.</li>
-        <li><b>Smaller fixes.</b> The power line has its wires. Gateway Pass's cypress avenue stands back from the road, and the gateway's limestone no longer reads mauve. The sunset road's red earth is tinted cooler.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t32_closeups.jpg" alt="Butte and palm: the flat model, the SDXL painting of a view, and the baked result in game"><figcaption><b>Baking</b> · the flat model, a view's painting, the baked prop in game</figcaption></figure>
-        <figure><img src="journal_assets/t32_compare.jpg" alt="Turn 31, now and the concept for four stages"><figcaption><b>Turn 31 · now · concept</b> · Coconut Beach, Alpine Peaks, Desert Canyons, Tulip Gardens</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass on every commit. 60 fps at 1920×1080 at DPR 2 on eight stages after each slice, painted textures included: p99 17.5–17.7 ms, resolution scale 0.5–0.56. <b>Open:</b> the painted surfaces are subtle at driving distance, a grain of brushwork rather than the concepts' painted forms; SDXL at a strength that keeps the silhouette paints smooth. Gateway Pass's land measures 0.18, up from 0.11 but short of 0.27. The sunset earth's saturation barely moved (0.53). The arch keeps the stage's violet dusk.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 31 · Ghibli gouache, colour by measurement and a painted tulip field</h2>
-    <div class="now">
-      <p><b>Results.</b> All fifteen stages were measured region by region against the concept frames: mean luminance and saturation of the sky and the land, and the tones in the middle of the frame. The fixes went to the biggest gaps first:</p>
-      <ul>
-        <li><b>Colour held back.</b> The style pass no longer pushes colour. The grass and forest floor are lighter, softer greens, the desert's red earth is softened, and the dark between leaf masses is lifted. On the four concept stages, land saturation now measures 0.34–0.45 against the concepts' 0.29–0.46; across all fifteen, most sit at 0.33–0.48, down from 0.45–0.62.</li>
-        <li><b>Tulip Gardens as a painting.</b> Dense orange and red poppies grow right up to the road. The field's rows are red, pink and coral, painted as soft masses between bands of leaf. A power line runs along the road, with slim white turbines far off beside the windmills.</li>
-        <li><b>Promenade and saguaros.</b> The coast's promenade is a painted mid-grey pavement, and the saguaros are a muted sage green.</li>
-        <li><b>The darkest stages.</b> The cypress and broadleaf foliage is lifted toward the concepts' lit greens.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t31_compare.jpg" alt="Turn 30, now and the concept for four stages"><figcaption><b>Turn 30 · now · concept</b> · Coconut Beach, Alpine Peaks, Desert Canyons, Tulip Gardens</figcaption></figure>
-        <figure><img src="journal_assets/t31_tulip.jpg" alt="Tulip Gardens with poppies, turbines and a power line"><figcaption><b>Tulip Gardens</b> · poppies to the road, soft rows, turbines and a power line</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass on every commit. 60 fps at 1920×1080 at DPR 2 on six stages: p99 17.5–17.7 ms, resolution scale 0.5–0.56. <b>Open:</b> Gateway Pass's land still measures dark, its cypress avenue a wall of shade beside the road. The sunset road's red earth is still saturated. The poppies read as orange dots rather than a carpet at speed, and the power line has no wires. The gateway arch reads mauve.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 30 · Ghibli gouache, true darks and every stage audited</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner said to keep iterating. This round fixed what Turn 29 left, then audited every stage for leftover cartoon-pack shapes. One commit per slice:</p>
-      <ul>
-        <li><b>A boot check in integrate.</b> A broken <code>renderer.js</code> had passed integrate. Integrate now opens the game in a browser and fails unless the scene draws; a deliberate syntax error makes it fail with "FAIL boot".</li>
-        <li><b>True darks.</b> The grey veil was the frame's lifted darks: our darkest tenth sat at twice the concepts' black level. The road is now charcoal under its yellow centre line and the shade is deeper.</li>
-        <li><b>A red desert.</b> The floor is red-orange earth again, with dense low green scrub. The saguaros, with their arms, stand along the road, and the near buttes frame it.</li>
-        <li><b>A green coast.</b> Coconut Beach's land side is green verge, and bushes and flowers grow in a bed at the foot of the sea wall.</li>
-        <li><b>Alpine snow.</b> The cotton-ball snow clumps are soft continuous banks along the road, under a soft painted range.</li>
-        <li><b>Leaf masses.</b> Canopies and palm crowns are painted as clustered leaf masses with dark gaps between them.</li>
-        <li><b>Leftovers.</b> The coast's sea stacks are rounded grey rock under grass caps, and the gateway is a stone arch instead of a purple slab.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t30_compare.jpg" alt="Turn 29, now and the concept for four stages"><figcaption><b>Turn 29 · now · concept</b> · Coconut Beach, Alpine Peaks, Desert Canyons, Tulip Gardens</figcaption></figure>
-        <figure><img src="journal_assets/t30_cliffs.jpg" alt="Coastal Cliffs with rounded grassy headlands"><figcaption><b>Coastal Cliffs</b> · headlands, not stacked blocks</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code>, now with the boot check, pass on every commit. 60 fps at 1920×1080 at DPR 2 on five stages after each slice: p99 17.5–17.7 ms, resolution scale 0.5–0.56. <b>Open:</b> the promenade paving is still pale, and the desert saguaros a bright green. The land is still more saturated than the concepts', and the tulip and desert frames sit darker in the middle tones. The windmills and tulip rows still read as models.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 29 · Ghibli gouache, toward the concept's clear afternoon</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner said to keep iterating to the limit. Each slice below was measured against the concept frames, comparing mean luminance and saturation per region of the screenshot.</p>
-      <ul>
-        <li><b>A clear painted afternoon.</b> The golden-hour grade's orange highlights had turned every sky olive. The grade is now soft cream highlights over cool shade, colour barely pushed, low contrast and thinner haze. Every day sky is repainted from its photo's cloud layout as cream cumulus over a clear blue gradient; the sunset road keeps a warm one. The desert floor is a dark warm ochre with sage and the grass a muted green; the old palettes measured nearly twice the concepts' saturation.</li>
-        <li><b>Buttes, not banded drums.</b> The desert's buttes are re-sculpted as tall red rock, deeply fluted with no stripes, standing 70 m and more off the road. The near rocks are fewer and smaller and the alpine firs thinner, and the painted rings are taller, so the snow range and the far buttes now show.</li>
-        <li><b>Strokes that read.</b> The brush tile grows with distance, so a stroke keeps its size on screen instead of averaging to grey, and each stroke's warm or cool tone is stronger.</li>
-        <li><b>Clouds with volume.</b> Each card is shaded from a deep blue-grey belly to a cream sunlit top, with softer edges.</li>
-        <li><b>Scrub and wildflowers.</b> Verge bushes are clumps of leaning sprigs, grass tufts fans of blades and flowers patches of heads, all still low.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t29_compare.jpg" alt="Turn 28, now and the concept for four stages"><figcaption><b>Turn 28 · now · concept</b> · Coconut Beach, Alpine Peaks, Desert Canyons, Tulip Gardens</figcaption></figure>
-        <figure><img src="journal_assets/t29_desert.jpg" alt="Desert Canyons with tall buttes and ochre scrubland"><figcaption><b>Desert Canyons</b> · tall unbanded buttes, an ochre floor, scrub</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass on every commit. 60 fps at 1920×1080 at DPR 2 on five stages: p99 17.5–17.7 ms, resolution scale 0.5–0.56. <b>Open:</b> Coconut Beach's ground is still pale sand where the concept is green verge. The alpine snow mounds read as cotton balls, and its painted peaks are angular. The road is lighter than the concept's charcoal. The frame keeps a faint grey veil. The coast cliffs and the gateway arch are still cartoon solids.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 28 · Ghibli gouache, the four levers</h2>
-    <div class="now">
-      <p><b>Results.</b> After two quick fixes (the boy waves only at a moment that earns it; every cloud seen together has its own kind and shape), the owner said "go straight to building, 1 to 4". One commit per lever:</p>
-      <ul>
-        <li><b>Painted distance.</b> Each stage has two painted rings around the camera, a far one 2.4 km out and a mid one 1.2 km out: coastal headlands over a palm line, red buttes, a snow range over a fir ridge, windmills over polder, a lit skyline, and so on for all fifteen stages. SDXL painted them as gouache, seamless all the way round. The mid ring sinks where the road runs and over the sea, so it never walls off the road or stands in the water. They replace the fractal ridges and the 3D snow cones.</li>
-        <li><b>Brushwork on every model.</b> One tile of gouache strokes is laid in world space on every prop, rider and the cars' trim: lighter strokes warm, darker ones cool. Each model is warmer on top and cooler at its foot, and its contour darkens softly. The cars' lacquer stays as it was.</li>
-        <li><b>The concept's framing.</b> The camera is further back on a longer lens, so the car sits small at the foot of the frame and the sky fills 35–40% of it. Speed, nitro, traffic, crests and landmarks still move it. The HUD is 80% size and half see-through; on a phone only the stage, time, rival and speed stay. An upright phone now shows the full width of the 16:9 frame.</li>
-        <li><b>Cloud banks in depth.</b> Fourteen painted cumulus stand in three banks, 1.3, 2.2 and 3.4 km out. They are fixed in the world, so the near bank slides past faster than the far one. They drift on the wind and come back round ahead once passed.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t28_compare.jpg" alt="Round two, now and the concept for four stages"><figcaption><b>Round two · now · concept</b> · Coconut Beach, Alpine Peaks, Desert Canyons, Tulip Gardens</figcaption></figure>
-        <figure><img src="journal_assets/t28_coconut.jpg" alt="Coconut Beach with painted headlands and cloud banks"><figcaption><b>Coconut Beach</b> · painted headlands across the sea, banks of cumulus, the new framing</figcaption></figure>
-        <figure><img src="journal_assets/t28_phone.jpg" alt="The race on a phone held sideways"><figcaption><b>On a phone</b> · only the race's own readouts</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass on every commit. 60 fps at 1920×1080 at DPR 2 on four stages: p99 17.7 ms, resolution scale 0.5–0.56. <b>Open:</b> the frame still reads as a 3D cartoon rather than gouache. The painted distance is mostly hidden behind near trees and buttes. The strokes are subtle at driving distance. The cloud cards are flat white at their size. The sky and the grade are darker and muddier than the concept's clear afternoon.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 27 · Ghibli gouache, round two</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner played round one ("overall looking nice, good visuals and style") and asked for five things; the coordinator's gap list added the rest.</p>
-      <ul>
-        <li><b>"the driver should be the girl"</b> and <b>"the people in the car deserve hero treatment as well"</b>. The riders are now sculpted models (<code>model/riders</code>, built by the flagman's SDF toon pipeline), with faces: big low-set eyes, brows, a button nose, a mouth and rosy cheeks. The girl drives from the left seat with both hands on the wheel, in a yellow dress with a white collar, an auburn bob and a red ribbon. The boy rides beside her and waves, in a blue jacket with a red neckerchief. Her long hair and ribbon, his neckerchief and his arm move with the wind.</li>
-        <li><b>"the cloud in the first stage and in tulip all look the same and look like cut in half"</b>. The cumulus cards were uploaded upside down, flat base on top, so they looked sliced. They now draw right way up, and each stage paints its own seven.</li>
-        <li><b>"too many bushes ... prevent us from seeing the tulips and the coconut trees"</b>. The verges are low and sparse, and Tulip Gardens has no bushes before its field.</li>
-        <li><b>"a strange vertical line that stays flashing"</b>. This was the sky dome's seam: the sky texture coordinate jumped from 1 to 0 across one pixel column, so that column flashed. The dome now has no seam.</li>
-        <li><b>Painted-world props.</b> The desert buttes are fluted spires, the palms tall and slender with drooping fronds, the firs layered in deep green.</li>
-        <li><b>Bright painted ground.</b> Eight ground textures are painted from palettes: orange desert earth, pale coastal ground, bright greens. The road is a dark painted wash with a yellow centre line.</li>
-        <li><b>Coconut Beach</b> runs beside a promenade and a low sea wall, as in the concept.</li>
-        <li><b>Window resize.</b> Resizing no longer blacks out the frame.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t27_coconut.jpg" alt="Coconut Beach with the promenade and sea wall"><figcaption><b>Coconut Beach</b> · promenade, sea wall, the girl at the wheel</figcaption></figure>
-        <figure><img src="journal_assets/t27_desert.jpg" alt="Desert Canyons with fluted buttes and orange ground"><figcaption><b>Desert Canyons</b> · fluted buttes, painted earth, yellow centre line</figcaption></figure>
-        <figure><img src="journal_assets/t27_riders.jpg" alt="The two riders from the front"><figcaption><b>The riders</b> · the girl drives, the boy waves</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass. 60 fps at 1920×1080 on four stages, with the resolution scale held at 0.5–0.56. <b>Open:</b> the mesas and cliffs are still smooth, unbrushed solids; little of the sky shows at desert climbs; the stage-change hold.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 26 · Ghibli gouache</h2>
-    <div class="now">
-      <p><b>Results.</b> On its own branch (<code>feat/apex-ghibli</code>; the model railway stays on <code>feat/apex-outrun</code>), the owner's second pick: the world as a Kazuo Oga background driven through on a painted afternoon. A first pass that only repainted the ground and dropped the lens left the owner unable to tell it from the railway ("the changes are too incremental"), so every slice after it moved the whole frame:</p>
-      <ul>
-        <li><b>Painted everywhere.</b> Foliage as warm and cool leaf masses, every other surface with a soft brush mottle, three soft painted steps of light; the frame gouache on paper, gently quantised over a paper grain, the ink thinned to a soft edge. No blur at all ("for ghibli, remove the blur altogether").</li>
-        <li><b>Lush verges.</b> Lobed bushes up to 2.4 m in two greens banked against the road, grass mounds and flowers dotting grass and bush faces; dry stages grow sage and ochre bushes with cacti.</li>
-        <li><b>Oga skies.</b> Every dome repainted as gouache with towering cumulus; the night city's as painted stars over its skyline.</li>
-        <li><b>A painted afternoon.</b> The sun turns behind the viewer and to the left, held high enough to light the faces ahead; the air is clear and the light high-key.</li>
-        <li><b>Two characters.</b> A boy in a blue jacket with a red neckerchief streaming back, a girl in a yellow dress with auburn hair blowing back, waving; scarf, hair and wave swing on the wind time.</li>
-        <li><b>Gouache ground.</b> Grass, cobble, beach sand, snow and canyon rock repainted; six sets whose repaint came out as blobs or camouflage keep their cartoon textures.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t26_coconut.jpg" alt="Coconut Beach in gouache"><figcaption><b>Coconut Beach</b> · lush verges and two characters</figcaption></figure>
-        <figure><img src="journal_assets/t26_desert.jpg" alt="Desert Canyons in gouache"><figcaption><b>Desert Canyons</b> · lit mesas, sage verges</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass; 60 fps at 1920×1080 on four stages with the resolution held at 0.5–0.56. <b>Open:</b> the mesas, palms and rocks are still cartoon models; the skies show little from the chase camera; the stage-change hold.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 25 · Model railway, settled</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner found the game "a nice game with a nice identity", with one complaint: the macro lens took half of the screen. It now keeps the car and the road sharp to about 60 m (90 m flat out), softens only the ground right under the lens and the distance, fully by about 220 m, at a blur of 0.8% of the frame's height, where it was 1.4%. The roadside scatter reads sharp again; the far mesas and peaks keep the miniature's soft depth.</p>
-      <p>Along the way, this turn also settled the feel the owner raised:</p>
-      <ul>
-        <li><b>A planted car.</b> The wheels stay on the road while the body pitches and rolls a road car's degree on sports-car dampers, as a raycast vehicle's sprung mass does.</li>
-        <li><b>Nitro tails off.</b> Its speed bleeds away over a second and a half, its flame thins over half a second, and the grass brakes a car hard over a second rather than in a frame.</li>
-        <li><b>The hood camera</b> starts drawing in at 90 m and lets go over several seconds.</li>
-        <li><b>The start</b> looks back over 400 m of road, land and scenery, and the tulips grow right up to the asphalt's edge.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t25_desert.jpg" alt="Desert Canyons with the settled lens"><figcaption><b>Desert Canyons</b> · road and scatter sharp, the mesas soft</figcaption></figure>
-        <figure><img src="journal_assets/t25_alpine.jpg" alt="Alpine Peaks with the settled lens"><figcaption><b>Alpine Peaks</b> · foam firs and snow clumps along the verge</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass. <b>Open:</b> the stage-change hold (about 300 ms while the next stage builds in one frame). <b>Next:</b> the Ghibli gouache direction, which the owner feels is closer to the spirit they had in mind.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 24 · Model railway, pushed</h2>
-    <div class="now">
-      <p><b>Results.</b> Beside the concept, the owner could not tell the first railway build from the game before it. The verdict was why: the lens was gentle, the grain too fine to see, the verges bare, the car no model and the trees the same shapes. Five slices, each held to 60 fps at 1920&times;1080 on a Retina Mac mini:</p>
-      <ul>
-        <li><b>A macro lens.</b> Only the car and the lane lines just ahead stay sharp; past 25 m (38 m flat out) everything goes soft, with a blur about 1.4% of the frame's height.</li>
-        <li><b>Model cars.</b> The paint, chrome, rims and glass are lacquer, lit as themselves rather than banded: clear-coated paint and mirror chrome. A figure sits at every car's wheel.</li>
-        <li><b>Crowded verges.</b> Each stage scatters its own foam clumps, grass mounds, plaster stones, shells, snowy shrubs, bloom clumps and cactus stems in clusters by the road, drawn as thin instances in 300 m chunks near the camera.</li>
-        <li><b>Grain you can see.</b> The ground tiles every 9 m and comes in broad lighter and darker patches. Beach sand and cobble were repainted and kept.</li>
-        <li><b>Lumpy foam trees.</b> Every tree and shrub canopy was rebuilt with noise lumps along its skin.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t24_coconut.jpg" alt="Coconut Beach with the macro lens, a driver and scattered verges"><figcaption><b>Coconut Beach</b> &middot; lens, driver, glued sand and verge scatter</figcaption></figure>
-        <figure><img src="journal_assets/t24_tulip.jpg" alt="Tulip Gardens with bloom clumps along the verge"><figcaption><b>Tulip Gardens</b> &middot; bloom clumps by the road, soft distance</figcaption></figure>
-      </div>
-      <p><b>Still short of the concept.</b> The props are cartoon models, not hobby ones; the scatter is sparser and simpler than the concept's packed verges; the canopy lumps are subtle; and the lens is kept milder than the concept's so the road ahead reads.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 23 · Model railway</h2>
-    <div class="now">
-      <p><b>Results.</b> Asked for a big change, the owner compared six directions, then pushed toy diorama and painted world, and chose the model railway, with Ghibli gouache next. It came first on cost: the owner's Mac mini already stutters, and the railway lives in textures and one lens pass.</p>
-      <ul>
-        <li><b>Scenery material.</b> Eight ground sets repainted as layout material: static grass, clump-foam turf, ballast grit, plaster rock and walls, baking-soda snow, painted fine-grit road. Cobble, field soil and beach sand came out wrong and keep their cartoon sets.</li>
-        <li><b>Foam and plaster.</b> Canopies are clump foam and rocks painted plaster, by a world-space grain on their colour.</li>
-        <li><b>A macro lens.</b> A tilt-shift holds the car and the road ahead sharp and lets the near ground and the distance go soft, less at speed.</li>
-        <li><b>Studio light.</b> Softer bands, softer shadows, lifted shade, a pencil-weight ink.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t23_railway_desert.jpg" alt="Desert Canyons as a model railway: ballast grit verge, soft distance"><figcaption><b>Desert Canyons</b> · ballast grit, the far mesas soft</figcaption></figure>
-        <figure><img src="journal_assets/t23_railway_alpine.jpg" alt="Alpine Peaks as a model railway: foam firs, baking-soda snow"><figcaption><b>Alpine Peaks</b> · clump-foam firs on baking-soda snow</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass. At 1920×1080 on a Retina display, every stage holds 60 fps at full resolution with no long frames once its shaders have compiled. Next: Ghibli gouache.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 22 · The animation pass</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner pointed at Snow White (1937) and the 1940s Superman shorts: smooth, eased motion. The car was a rigid block and the marshal's arm moved at one speed. Now:</p>
-      <ul>
-        <li><b>A sprung body.</b> The car squats pulling away and dives under braking. Into a lane change it leans in for a moment (anticipation), rolls out of the move, swings back past level and settles. Nitro's kick stretches it a few percent and it springs back.</li>
-        <li><b>In the simulation's step.</b> The springs are sim state, advanced at 60 Hz, so replays and scrubs pose the body exactly as live; the renderer only interpolates between ticks.</li>
-        <li><b>The marshal.</b> Each move slows in and out: a wind-up before the lift, an overshoot overhead, a wave that swings up from still, a GO sweep that follows through, and a flag that trails the arm.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t22_roll.jpg" alt="The car rolled as it straightens after a lane change"><figcaption><b>Roll</b> · swinging back past level as the car straightens</figcaption></figure>
-        <figure><img src="journal_assets/t22_dive.jpg" alt="The car's tail lifted as it dives under braking"><figcaption><b>Dive</b> · the tail lifts under braking</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 21 · Rocks of three stones</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner found the rocks regular and paper-like, all of one shape. Each was a single model stretched to 1.4 m, so a flat slab stood up as a wall. Now:</p>
-      <ul>
-        <li><b>Three stones, fifteen shapes.</b> Banded sandstone (six shapes) in the desert stages; grey-blue granite with lichen (five) in the mountains, on the coast and on the beach; pale limestone (four) at the ruins and the castle. Slabs, domed boulders, split blocks and tall stacks.</li>
-        <li><b>Sized as a set.</b> A stage's rocks scale together to average 1.4 m, so a slab stays knee-high and a stack stands twice a person's height.</li>
-        <li><b>Off the road.</b> The widest boulder at its largest placement is held clear of the asphalt; five stages moved their rocks out 0.4–1.1 m to make room.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t21_granite.jpg" alt="Alpine Peaks with granite boulders and stacks"><figcaption><b>Granite</b> · Alpine Peaks, boulders and stacks with lichen</figcaption></figure>
-        <figure><img src="journal_assets/t21_sandstone.jpg" alt="Desert Canyons with sandstone rocks"><figcaption><b>Sandstone</b> · Desert Canyons, banded slabs and pillars</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 20 · Steering by the book, the hood beside traffic, readable gantries</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner could not correct a small drift on a straight and asked for the established technique rather than more tuning. Racing games build on the kinematic bicycle model, so the car now runs on it:</p>
-      <ul>
-        <li><b>Steering.</b> The stick turns the wheels; the car yaws at v·tan(δ)/L and moves along its own heading. The wheels reach less as speed rises, as arcade racers do, so a tap at speed is a fine correction. Self-aligning torque straightens the car when the stick is released.</li>
-        <li><b>The hood beside traffic.</b> A car alongside takes the chase camera all the way onto the hood; nitro still pushes it back. The camera switch (the C key, the pill and the HUD button) is gone.</li>
-        <li><b>Fork gantry.</b> Each lane's board names its branch, white on cyan or orange; before, they were blank colour and flashed.</li>
-        <li><b>Metropolis climbs.</b> Towers, castle towers and the lighthouse stand on the lowest ground along the road as well as across it, so no underside shows going uphill.</li>
-      </ul>
-      <div class="grid">
-        <figure><img src="journal_assets/t20_gantry.jpg" alt="Coconut Beach fork gantry with the Desert Canyons board"><figcaption><b>Fork gantry</b> · Coconut Beach, the left board names Desert Canyons</figcaption></figure>
-        <figure><img src="journal_assets/t20_metro_climb.jpg" alt="Metropolis Night on a climb, towers seated in the ground"><figcaption><b>Metropolis climb</b> · towers seated, the camera drawn in by a pickup 40 m ahead</figcaption></figure>
-      </div>
-      <p><b>Gates.</b> <code>sayt lint</code>, <code>sayt test</code> and <code>sayt integrate</code> pass. Next: the varied rock set, then the animation pass.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 19 · The cartoon pass</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner found the game still pixelated and photoreal, and asked for "nice, continuous round corners, perfect cartoonish feeling". A filter over photo inputs cannot round a corner, so the inputs changed:</p>
-      <ul>
-        <li><b>A crisp frame.</b> It was drawn at half a Retina display's own resolution; anti-aliasing ran before the ink, leaving pixel-stair outlines; a sharpener pulled grain out of every photo. Now it is drawn at the display's density, anti-aliased after the ink, with no sharpener.</li>
-        <li><b>Painted ground.</b> SDXL repainted each photo texture set with its grain flattened first; grass moved to a cartoon meadow green.</li>
-        <li><b>Cartoon models.</b> Vegetation, rocks, the cactus, columns and poles are procedural cartoon geometry: puffy canopies, solid fronds, bevelled rock facets. Mesas and sea cliffs are closed solids, where the photoscans had been open shells. The cars are faired smooth with round arches and clean colour blocks.</li>
-        <li><b>Baked light.</b> Every new model carries ambient occlusion in its vertex colours, and the wind now moves model fronds, grass and leaves.</li>
-      </ul>
-      <p>Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0. Still to tune: the grass is vivid on some stages, the forest floor reads as camouflage, and the painted motifs repeat on large stretches.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t19_cartoon.jpg" alt="Six stages after the cartoon pass"><figcaption><b>The cartoon pass</b>: Wilderness Run, Alpine Peaks, Desert Canyons; Coconut Beach, Ancient Ruins, the colosseum.</figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 18 · Peaks, the car on curves, the tulip field</h2>
-    <div class="now">
-      <p><b>Results.</b> Three reports from the owner's play:</p>
-      <ul>
-        <li><b>Floating peaks.</b> Alpine Peaks climbs to 232 m while the land 440 m out settles to the stage's lowest point, so a peak's flat base hung up to 56 m in the air on its downhill side. Large landforms now stand on the lowest ground under their footprint.</li>
-        <li><b>The car in the snow.</b> A car's height came from the centreline at its own z, but the road and ground run out along each point's right vector: off the centre on a climbing curve the car floated on one side and sank into the road or snow on the other. Heights now come from the surface under the car.</li>
-        <li><b>Tulips as obstacles.</b> The beds beside the road read as things to avoid. The field is now the ground: stripes of bloom to the horizon, behind a grass verge.</li>
-      </ul>
-      <p>Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t18_field.jpg" alt="Tulip Gardens and Alpine Peaks"><figcaption><b>Tulip Gardens</b>: the field as ground; <b>Alpine Peaks</b>: peaks standing on the land.</figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 17 · Direction B: painted skies, ink, and a modelled world</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner picked direction B, a stylised look built down from offline renders (<code>DESIGN.md</code>, "Stylised AAA"):</p>
-      <ul>
-        <li><b>Skies and ink.</b> Each stage's photo sky is repainted by SDXL as a painted dome. One pass inks silhouettes, bands the light and lifts the colour; the ink thins with distance as the fog does. The fog takes each painted sky's own horizon colour, so the land meets the sky without a seam.</li>
-        <li><b>Seventeen new models.</b> Night-city towers with lit windows, street lamps that glow, cypresses, windmills whose sails turn, tulip beds in single-colour stripes, broken arches, a lighthouse, sailboats, castle towers, the colosseum at its real 48 m, hangars, and a repainted traffic set that drives on its own axles.</li>
-        <li><b>Procedural won twelve.</b> Generation with Hunyuan3D-2 beat procedural only for the box truck; the arches came out intact and the colosseum melted at that scale.</li>
-        <li><b>Metropolis Night has its city.</b> At first the photo sky's street light floodlit every wall cream; at a third of its strength, the towers are dark with lit windows.</li>
-      </ul>
-      <p>Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t17_world.jpg" alt="Six stages with the new models"><figcaption><b>The world</b>: Metropolis Night, Tulip Gardens and Grand Castle; the colosseum, Ancient Ruins and Marina Bay.</figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 16 · The hero car, the camera on grades, the mix</h2>
-    <div class="now">
-      <p><b>Results.</b> The player's and the rivals' car is the art pack's generated late-80s convertible: a Hunyuan3D-2 body from an SDXL reference, picked from seven shape candidates, its materials cut from its geometry, its wheels separate nodes that spin and steer. Each character wears its own paint; the brake lights and the nitro flame sit on the model's tail. The procedural car, its loft builder and the neural PBR module that only it used are gone.</p>
-      <p>The chase camera now rides the car's pitch, as the hood cam does: on climbs it had aimed at the road ahead, tilted up, and let the car slide down the frame onto the road. The radio leads the mix; the engine and wind sit under a third of it. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t16_hero.jpg" alt="The hero car"><figcaption><b>Hero car</b>: chase, steering into a nitro burst, and at night.</figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 15 · Nitro, hills, pop-in and the stage hand-over</h2>
-    <div class="now">
-      <p><b>Results.</b> Four reports from the owner's play:</p>
-      <ul>
-        <li><b>Nitro.</b> It burnt only while held, so a tap, the arcade way to fire a boost, gave a few frames and the tank read 100% again at once. A press now fires a whole 2.5 s burst; the tank holds three charges, shown as NITRO ×3; the rotating speed lines are gone.</li>
-        <li><b>Hills.</b> On a climb the chase camera sat 2.1 m over the road behind the car, 0.57 m over the roof, and the car read as sunk into the road. It now rides over the car or the road behind, whichever is higher.</li>
-        <li><b>Pop-in.</b> A 40 m mesa appeared at 520 m like a shrub. Detail and draw distances now grow with a prop's height, capped where the fog hides it.</li>
-        <li><b>Stage end.</b> One card from the arch: STAGE CLEAR, +45 s, the rival's result and the next stage. The haze hides the swap only for a moment, the wheel comes back on GO on a road clear of traffic, and the finish holds GOAL! before the results say all five stages were cleared.</li>
-      </ul>
-      <p>Integrate found the art seed's uploads dropped on pooled connections rclone had closed; the seed now opens one per request. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0. A generated hero car is in progress.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t15_handover.jpg" alt="The stage hand-over"><figcaption><b>Hand-over</b>: the clear card, the swap, GO.</figcaption></figure>
-      <figure><img src="journal_assets/t15_goal.jpg" alt="The finish"><figcaption><b>Finish</b>: GOAL!, then the results.</figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 14 · The art pack</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner asked for the limit, judged in the game. Every stage is now dressed by an art pack:</p>
-      <ul>
-        <li><b>Skies.</b> A photographed HDR sky (CC0, Poly Haven) lights each stage and is drawn from the same cube, under ACES. Its sun comes back as the light that casts the shadows.</li>
-        <li><b>Surfaces.</b> Photoscanned road, sand, snow, forest floor, cobbles and grass.</li>
-        <li><b>Props.</b> Photoscanned rocks, mesas, cliffs, firs, broadleaf trees, shrubs and grass, plus generated palms, cacti and columns, at each prop kind's existing placements and collisions. Each placement is drawn at one of three levels of detail by distance; 60 fps on every stage played.</li>
-        <li><b>Traffic.</b> The generated 80s sedan, convertible, pickup and box truck, each in its own paint.</li>
-      </ul>
-      <p>The bytes are not in git. The pack lives in a public bucket, named by sha256; at launch an <code>assets</code> container copies it into the blob service, refusing any file that does not hash to its name, and the game reads <code>/blobs/</code>. Git holds the manifest, the recipes and the tools (<code>assets/README.md</code>).</p>
-      <p>Bugs found while playing it:</p>
-      <ul>
-        <li><b>Black screen on Apple GPUs.</b> Each map's own tiling cost a shader input and passed Apple's 16; tiling moved into the meshes' UVs.</li>
-        <li><b>Black road.</b> The photoscanned asphalt averages 0.014 linear; it is lifted to a worn grey.</li>
-        <li><b>Black lines on sunless stages.</b> A zero sun was normalised to NaN.</li>
-        <li><b>Overexposure.</b> The sky lit the pack's surfaces twice; the hemispheric fill now leaves them out.</li>
-      </ul>
-      <p>Review fixes: a stage whose art fails to load now stops the game and says why, the sky's light file is awaited, and shadows are off when there is no sun. Not fixed: the palms' far detail level changes crown shape (the pack script draws its random values out of order; fixing it means regenerating the palms), and the traffic paint still has speckled patches from generation. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t14_desert.jpg" alt="Desert Canyons with the art pack"><figcaption><b>Desert</b>: photoscanned mesas and rocks, generated cacti.</figcaption></figure>
-      <figure><img src="journal_assets/t14_alpine.jpg" alt="Alpine Peaks with the art pack"><figcaption><b>Alpine</b>: firs on snow under a photographed sky.</figcaption></figure>
-      <figure><img src="journal_assets/t14_wilderness.jpg" alt="Wilderness Run with the art pack"><figcaption><b>Wilderness</b>: broadleaf trees under an overcast sky with no sun.</figcaption></figure>
-      <figure><img src="journal_assets/t14_night.jpg" alt="Metropolis Night"><figcaption><b>Night</b>: the procedural towers under the city sky.</figcaption></figure>
-      <figure><img src="journal_assets/t14_trial.jpg" alt="The one-off asset trial"><figcaption><b>Trial</b>: the first one-off generation the owner reviewed.</figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 13 · Hills, nitro and the gauge</h2>
-    <div class="now">
-      <p><b>Results.</b> Three reports from the owner's play, each reproduced in the browser before it was fixed:</p>
-      <ul>
-        <li><b>Hills.</b> The car sat level on every grade, so on Alpine Peaks its nose and tail sank into the road. Cars and traffic now ride the line through the road under both axles, pitched with it. The hood cam pitches with the car, so the hood holds its place in the frame on climbs and descents.</li>
-        <li><b>The gauge.</b> The panel read "NITRO READY" at any fuel over 10%. Held on an empty tank, nitro also refilled a sliver and burnt it every tick, so the HUD showed "BOOST ACTIVE!" while the car gained nothing. An emptied tank now locks until it refills to 25%. The panel is a bar with three states: NITRO, BOOST and CHARGING. A tick on the bar marks the unlock point.</li>
-        <li><b>Nitro feel.</b> Boost eases in. The camera lags back and drops, so the car surges away from it. The view widens three times more than before, the edge blur roughly triples, the flame is long and additive, and speed lines streak the edges.</li>
-      </ul>
-      <p>Review found that a spin or a finished race while boosting left the effects on. This is fixed, and traffic now pitches on its own axles. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0. Studio seats and simplify were skipped for this fix-only turn.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t13_climb.jpg" alt="Alpine Peaks climb before and after"><figcaption><b>Climb</b>: before, the car is buried; after, it rides the grade.</figcaption></figure>
-      <figure><img src="journal_assets/t13_boost.jpg" alt="Nitro on an Alpine climb"><figcaption><b>Nitro</b>: the car surges away from a wider, blurred view.</figcaption></figure>
-      <figure><img src="journal_assets/t13_hood.jpg" alt="Hood cam on flat, climb and descent"><figcaption><b>Hood cam</b>: flat, climb and descent, with the hood in the same place.</figcaption></figure>
-      <figure><img src="journal_assets/t13_gauge.png" alt="Nitro gauge charging"><figcaption><b>Gauge</b>: charging, with the 25% unlock tick.</figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 12 · Babylon 9 and ambient occlusion</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner agreed to a newer Babylon. Apexrun moved from 7.54.3 to 9.31.0, pinned with integrity. The shared CSP admits both versions, so doom and supertux stay on 7.54.3 untouched. On 9.31.0 SSAO2 runs under WebGPU with the custom sky intact, so ambient occlusion is back on WebGPU through its own geometry buffer.</p>
-      <p>The upgrade's WebGL2 run exposed a turn-11 bug: the wind plugin's GLSL never declared its uniform, so its shader failed to compile on WebGL2. It is fixed.</p>
-      <p>Played on WebGPU (chase and hood) and forced WebGL2: no errors, about a 16.7 ms median frame. Gates: <code>lint</code> (all 13 apps the CSP touches), <code>test</code> and <code>integrate</code> exit 0.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t12_ao.jpg" alt="Coconut Beach on Babylon 9 with ambient occlusion"><figcaption><b>Babylon 9.31.0</b>: contact shading under the cars, on WebGPU.</figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Turn 11 · The owner's graphics packs</h2>
-    <div class="now">
-      <p><b>Results.</b> All four packs the owner picked, on WebGPU and WebGL2:</p>
-      <ul>
-        <li>The field of view widens with speed (more on nitro), the screen edges blur above 200 km/h, and the camera shakes on the rumble strips.</li>
-        <li>The haze warms toward the sun's colour as the camera faces it, flare ghosts trail along the sun's axis, and palm fronds glow when backlit.</li>
-        <li>Fronds and grass sway in the wind, through a material plugin with GLSL and WGSL code.</li>
-        <li>A reflection probe follows the car, so its paint reflects the sky, road and horizon (WebGPU only).</li>
-        <li>Night stages light a soft headlight pool on the road ahead.</li>
-      </ul>
-      <p>Not shipped:</p>
-      <ul>
-        <li>Ambient occlusion was tried again. Its geometry-buffer path throws on the first frame under WebGPU in Babylon 7.54.3.</li>
-        <li>Screen-space reflections came out after the owner played: in the hood cam they flashed black blocks in front of the car.</li>
-      </ul>
-      <p>About a 16.7 ms median frame on Coconut Beach. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t11_speed.jpg" alt="Speed feel at Coconut Beach"><figcaption><b>Speed</b>: a wider view and edge blur at 295 km/h.</figcaption></figure>
-      <figure><img src="journal_assets/t11_night.jpg" alt="Headlight pool at night"><figcaption><b>Night</b>: the headlight pool on Metropolis Night.</figcaption></figure>
-      <figure><img src="journal_assets/t11_hood.jpg" alt="Hood cam after removing SSR"><figcaption><b>Hood cam</b>: clean sand where the reflection artefacts flashed.</figcaption></figure>
-    </div>
-    <h3>Open after turn 11</h3>
-    <ul>
-      <li>Ambient occlusion waits on a newer Babylon (the owner agreed to try one), or on a sky that writes the prepass buffers.</li>
-      <li>From the review:
-        <ul>
-          <li>The horizon ridges keep the plain fog colour while the fog warms.</li>
-          <li>The flare ghosts aren't corrected for aspect ratio.</li>
-          <li>Frond shadows don't sway.</li>
-          <li>The speed blur samples even at zero strength.</li>
-        </ul>
-      </li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Turn 10 · The start and the checkpoints</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner found the non-racing moments weak: no real 3-2-1, no flag, an abrupt stage end, and an automatic start to the next stage. On the design canvas they chose:</p>
-      <ul>
-        <li><b>The start:</b> the camera swoops from above the grid with the stage card showing. Big 3-2-1 numerals follow while a flag marshal waves the chequered flag, and he sweeps it down on GO.</li>
-        <li><b>The stage end, with their change:</b> an arch over each branch triggers EXTENDED PLAY +45, and the car then drives itself at cruising speed with the clock frozen. A haze hides the stage swap at the road's end. The car keeps driving itself for 2 s into the new stage, under its name card and "CLICK OR ENTER TO TAKE THE WHEEL", until a click or Enter takes over.</li>
-      </ul>
-      <p>The blob shadows under the cars are gone, at the owner's request. Played embedded: racing, checkpoint, stage 2, racing, with no errors. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t10_swoop.jpg" alt="Camera swoop over the grid"><figcaption><b>Swoop</b>: the camera comes down from above the grid with the stage card.</figcaption></figure>
-      <figure><img src="journal_assets/t10_countdown.jpg" alt="Countdown with the marshal"><figcaption><b>3-2-1</b>: the marshal waves the flag beside the grid.</figcaption></figure>
-      <figure><img src="journal_assets/t10_extended.jpg" alt="Extended play at the arch"><figcaption><b>The arch</b>: EXTENDED PLAY +45 as the autopilot takes over.</figcaption></figure>
-      <figure><img src="journal_assets/t10_depart.jpg" alt="Driving into the next stage"><figcaption><b>Drive-on</b>: the next stage clears through the haze while the car drives itself.</figcaption></figure>
-    </div>
-    <h3>Open after turn 10</h3>
-    <ul>
-      <li>Two older pit-lane presets ("Uso de Itens", "Linha de Chegada") edit a copy of the state and have never worked. A new "Checkpoint" preset uses a real start option.</li>
-      <li>The score ceiling doesn't count the distance covered while the clock is frozen at checkpoints. The current bound still covers a full run.</li>
-      <li>From the seats:
-        <ul>
-          <li>The race flow isn't yet in <code>ir.html</code>'s flows and acceptance.</li>
-          <li>A click during the approach to the arch is dropped; only a click after the swap takes the wheel.</li>
-          <li>The HUD mixes Portuguese ("VAI!", the presets) with English.</li>
-          <li>The new colours are literals, not tokens.</li>
-        </ul>
-      </li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Turn 9 · WebGPU and modern lighting</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner asked for 2025-era graphics, with modern lighting on WebGPU. The game now runs on WebGPU where the browser offers it and on WebGL2 otherwise. The custom shaders (sky, CAS, a new god-ray pass) ship native WGSL, so WebGPU never fetches the unpinned glslang and twgsl converters. Each stage's own sky, captured into an environment map, lights clear-coated PBR car paint, glass and metals. Three cascades of sun shadows fall from palms, props and cars. The road carries screen-space reflections, and the sun throws shafts. A colour grade, MSAA and FXAA finish the frame. Played on an Apple GPU: zero WebGPU errors and about a 17 ms median frame at 1280×600. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t9_coconut.jpg" alt="Coconut Beach lit under WebGPU"><figcaption><b>Coconut Beach</b>: clear-coated paint lit by the sunset sky, shafts through the haze.</figcaption></figure>
-      <figure><img src="journal_assets/t9_alpine.jpg" alt="Alpine Peaks lit"><figcaption><b>Alpine Peaks</b>: pines throwing shadows on the snow.</figcaption></figure>
-      <figure><img src="journal_assets/t9_castle.jpg" alt="Grand Castle lit"><figcaption><b>Grand Castle</b>: twilight graded cool.</figcaption></figure>
-      <figure><img src="journal_assets/t9_webgl2.jpg" alt="WebGL2 fallback"><figcaption><b>WebGL2 fallback</b>, forced: shadows and shafts, no errors, a 17.7 ms median frame.</figcaption></figure>
-    </div>
-    <h3>What it took</h3>
-    <ul>
-      <li>The game calls <code>scene.render()</code> from its own loop. WebGPU acquires and presents its drawing surface in <code>beginFrame</code> and <code>endFrame</code>, so until each render was bracketed by those calls the WebGPU canvas stayed black.</li>
-      <li>About 16,000 prop instance nodes cost 39 ms of CPU a frame. As thin instances, one mesh per prop part, they cost 4 ms. The glow pass now redraws only what glows.</li>
-      <li>Tried and dropped, recorded in <code>DESIGN.md</code>:
-        <ul>
-          <li>Ambient occlusion turned the custom sky black.</li>
-          <li>Screen-based motion blur smeared the player's car.</li>
-          <li>Object-based motion blur and temporal AA overflowed Apple's 32-byte colour-attachment budget.</li>
-          <li>The headlight and nitro point lights pushed shaders past 16 fragment inputs.</li>
-        </ul>
-      </li>
-      <li>A correction to earlier turns: the "half resolution" and 30 fps in their evidence partly came from a second copy of the game running in a background tab of the test browser and competing for the GPU.</li>
-    </ul>
-    <h3>Open after turn 9</h3>
-    <ul>
-      <li>SSR and the god rays run after the default pipeline's grade, vignette and FXAA.</li>
-      <li>Thin-instance buffers span the whole track, so props are never culled.</li>
-      <li>Each kart has both a blob shadow and a cascaded shadow.</li>
-      <li>Coconut Beach sits at the edge of the 16.7 ms budget.</li>
-      <li>Everything was measured on one Apple desktop GPU, on both WebGPU and WebGL2; there is no phone evidence.</li>
-      <li>From the seats:
-        <ul>
-          <li>Metropolis Night's road nearly disappears into black now that the headlight light is gone.</li>
-          <li>Alpine Peaks shows a faint coloured band on one mountain face.</li>
-          <li>The player sees nothing while the renderer starts, and gets no words if WebGPU fails.</li>
-          <li>The WGSL tests check text rather than compiling it.</li>
-          <li>No acceptance row covers rendering or a frame budget.</li>
-        </ul>
-      </li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Turn 8 · Fixes from play: the clone, floating bushes, traffic and solid palms</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner played turn 7 and found four problems, all fixed:</p>
-      <ul>
-        <li>A red "clone" stayed on the start grid. It was the hero mesh of a character no kart uses; only cars in the race are now drawn.</li>
-        <li>Bushes floated over the sea. Scatter on the sea side was placed past the shoreline; land props now stop short of it.</li>
-        <li>Traffic was stacked boxes with no wheels. Sedans, convertibles, pickups and trucks are now lofted bodies with glass, wheels and paired lamps.</li>
-        <li>The car drove through palms. Props existed only in the renderer. One placement function now feeds both the renderer and the simulation, so solid props (trunks, rocks, cliffs, poles) crash the car, and the crash slides it back to the road's edge, as in Out Run.</li>
-      </ul>
-      <p>Each fix has a regression test that fails without it. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t8_traffic.jpg" alt="New traffic vehicles"><figcaption><b>Traffic</b>: sedan, convertible, pickup and truck on wheels.</figcaption></figure>
-      <figure><img src="journal_assets/t8_crash.jpg" alt="Crash against a palm"><figcaption><b>Solid palms</b>: driving into a trunk spins the car out.</figcaption></figure>
-    </div>
-    <h3>Not done this turn</h3>
-    <ul>
-      <li>No code review or studio seats ran. The owner asked for the fixes during play, and each is guarded by a test.</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Turn 7 · Generated scenery, direction A</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner compared three scenery directions on a design canvas against the Stitch frame and chose A, everything in procedural 3D: "I don't want nostalgia, I want something great". Everything is generated in the browser at stage load, with no downloaded art:</p>
-      <ul>
-        <li>a sky shader with sun-lit cirrus and cumulus, a horizon haze band and stars at night;</li>
-        <li>three noise ridges a side, shaped per stage (hills, mesas, peaks, dunes, skyline, headlands) and coloured by aerial perspective;</li>
-        <li>a drifting wave map and a foam line on the sea;</li>
-        <li>ground detail in world space;</li>
-        <li>hero palms with curved ringed trunks, 14 leaflet-cut fronds, coconuts and a dry skirt, at today's count;</li>
-        <li>rocks, shrubs and grass on 13 stages.</li>
-      </ul>
-      <p>A cliff wall that had covered half the screen on Coastal Cliffs since turn 2 now stands clear of the road. Every stage I drove held 60 fps at full resolution. Gates: <code>lint</code>, <code>test</code> (a new <code>scenery</code> check) and <code>integrate</code> exit 0.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t6_steer.jpg" alt="Coconut Beach before turn 7"><figcaption><b>Before</b>: box-segment palms, a flat horizon.</figcaption></figure>
-      <figure><img src="journal_assets/t7_coconut-beach.jpg" alt="Coconut Beach after turn 7"><figcaption><b>After</b>: drooping palm crowns, shrubs and grass, headlands across the bay, sand ripples.</figcaption></figure>
-      <figure><img src="journal_assets/t7_desert-canyons.jpg" alt="Desert Canyons"><figcaption><b>Desert Canyons</b>: mesas, saguaros, rocks and scrub.</figcaption></figure>
-      <figure><img src="journal_assets/t7_alpine-peaks.jpg" alt="Alpine Peaks"><figcaption><b>Alpine Peaks</b>: snow peaks, pines and boulders.</figcaption></figure>
-      <figure><img src="journal_assets/t7_castle.jpg" alt="Grand Castle"><figcaption><b>Grand Castle</b>: jagged ridges against a violet dusk.</figcaption></figure>
-    </div>
-    <h3>Open after turn 7</h3>
-    <ul>
-      <li>The clouds are still faint, and the sky near the sun washes toward cream rather than the deep Stitch blue.</li>
-      <li>Older signature props (tulip fields, cliffs, mesas) are still box-built next to the new palms.</li>
-      <li>Each palm is 31 instanced parts. Merging them per material would cut the instance count about 6×.</li>
-      <li>The sea's ripples stretch about 2× along the road.</li>
-      <li>From the seats: the tulip beds are flat coloured slabs; the Coastal Cliffs cliff is an untextured grey block; on Grand Castle and Metropolis Night the road and verge barely separate from the background; and the palms' trunk rings and coconuts aren't visible at play distance.</li>
-      <li>The new maps are generated on the main thread, about 120 ms the first time a ground kind appears, instead of in the existing worker. One stage's look is also split between <code>STAGE_LOOKS</code> and <code>SCENERY</code>.</li>
-      <li>No throwaway build (a three.js sandbox or a free palm model) set the quality bar before the procedural port. All evidence is desktop width in headless Chromium, which renders at half resolution; there is no phone evidence.</li>
-      <li>Metropolis Night's status strip still reads "WEATHER: SUNSET".</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Turn 6 · The car on the road, steady under steering</h2>
-    <div class="now">
-      <p><b>Results.</b> The owner played and found two bugs: the car floated above the road, and every steer made it jump. Both came from how the renderer reads the road. It took each road segment's start point without interpolating, so the car and the camera stepped at every seam, each at a different moment. The camera also followed the sim's raw lane while the car was drawn interpolated between ticks, so the car lurched sideways against the camera on every tick. And the car's root sat 0.35 above the road, a leftover from the kart era. Now the car, the camera, traffic and items all read one interpolated road lookup (position, height and heading). The camera follows the car as drawn, and the car sits on the asphalt. Replayed with hard left-right steering: 0.0 sideways jump between the car and the camera across 200 frames. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0. The three new regression tests fail on the turn-5 renderer.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t6_steer.jpg" alt="Car steering on the road"><figcaption><b>Steering</b>: the car rests on the asphalt and turns with the road.</figcaption></figure>
-      <figure><img src="journal_assets/t6_hood.jpg" alt="Hood cam after the fix"><figcaption><b>Hood cam</b>: same framing as before; the eye still clears the deck.</figcaption></figure>
-    </div>
-    <h3>Open after turn 6</h3>
-    <ul>
-      <li>The road lookup allocates a small object per call, about 20 to 40 per frame.</li>
-      <li>The wheels-on-road test compares the car with the road lookup, not the wheel geometry. No test yet checks that traffic, balls, bananas, shadows or lights follow the road.</li>
-      <li>Drift sparks sometimes draw as dark squares on the sand, which suggests a particle texture without alpha.</li>
-      <li>The chase camera's height and distance are written in four places with nothing tying them together. The steepest stage climb now has about 3% headroom before it would block the sightline.</li>
-      <li>All evidence is desktop width; the new camera heights have not been checked on a phone.</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Turn 5 · The hero car, neural materials and adaptive resolution</h2>
-    <div class="now">
-      <p><b>Results.</b> The box-built car is now a curved GT. Its body and cabin are lofted from rounded cross-sections. The tail has four round lamps in two pairs over a carbon grille, with twin titanium exhausts and a carbon diffuser, and the rear tyres are wider than the front. The neural PBR worker finally feeds the car's carbon and titanium materials as well as the road's asphalt normal map. Adaptive resolution aims for 60 fps, or the display's own rate when it is slower, which is measured once from a bare animation loop at start-up. It ignores pauses and scrubbed history, backs off after a failed climb, and sharpens harder as it scales down. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0. Mutation runs confirm that the stall guard and the history guard each have a test that fails without them.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t4_rival.jpg" alt="Box-built car before turn 5"><figcaption><b>Before</b>: the box-built car from turn 4.</figcaption></figure>
-      <figure><img src="journal_assets/t5_chase.jpg" alt="Curved GT from the chase camera"><figcaption><b>After</b>: the curved GT, with four distinct lamps.</figcaption></figure>
-      <figure><img src="journal_assets/t5_hood.jpg" alt="Hood cam over the curved body"><figcaption><b>Hood cam</b>: the new red deck frames the bottom of the view, and the eye clears it, as a test now checks.</figcaption></figure>
-    </div>
-    <h3>What changed</h3>
-    <ul>
-      <li>Design canvas (hero car) with three rear views: a curved GT, an 80s wedge and the box-built car. Chosen while the owner was away: the curved GT.</li>
-      <li><code>renderer.js</code>: <code>_loft</code> builds a closed, capped body through squircle stations. The carbon and titanium materials are shared by every car; only the paint differs.</li>
-      <li>Adaptive resolution measures the interval between presented frames against a calibrated refresh rate. Review rounds replaced two earlier designs. Timing only the render call missed GPU stalls. Taking the fastest interval seen as the refresh rate never stepped down on a GPU that was slow from its first frame.</li>
-      <li>Review fixes: nitro flames come from the twin exhausts; one stutter no longer drops resolution; a frame stamped at time 0 no longer reads as "no previous frame"; the controller and sharpening tests now fail when the code they guard is removed.</li>
-    </ul>
-    <h3>Open after turn 5</h3>
-    <ul>
-      <li>The 3D form was shaped in code from two flat rear sketches; no 3D draft or side view was drawn first.</li>
-      <li>From the chase camera, the grille and exhausts sit behind the status strip and show only a few pixels of their textures. The tyres are still plain cylinders.</li>
-      <li>Every car rebuilds the same two lofts, double-sided. Sharing the geometry and going single-sided needs the face winding checked in a browser first.</li>
-      <li>Single-step and play renders in the shared game loop still count as frames for the controller; the fix belongs in omnishell's <code>kinetic.js</code>.</li>
-      <li>Calibration happens once. A display that changes rate mid-race, such as battery saver switching on, is not re-measured. Babylon's SceneOptimizer was not compared.</li>
-      <li>There is no phone evidence of the scaler at work, and the screenshots don't record the scale they were taken at.</li>
-      <li>Top-right HUD chips overlap the distance readout (from before this turn).</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Turn 4 · Endings, the rival and the shared high-score table</h2>
-    <div class="now">
-      <p><b>Results.</b> A run now ends on a card that says how. At a destination it reads GOAL! with the ending's letter; when the clock runs out it reads TIME OVER with the stage reached. Both show the score line by line: distance, close passes, rivals beaten and, on a goal, the time left. Each stage places one named rival ahead of the player, worth +1,000 if passed before the checkpoint. A run that ranks in the shared top ten asks for three arcade initials. The saved row then appears live on every player's board with its ending, time and score, marked in gold for its owner. The table is public to read and insert-only. The server stamps the time and admits one row per player per 75 s. A refused save, or initials the board denies, is explained on the form instead of being lost. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0, including the new <code>leaderboard-access</code> (database) and <code>finish</code> (browser and database) checks.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t4_rival.jpg" alt="Rival callout while racing"><figcaption><b>Rival</b>: Wilber GT is 5.4 s ahead on Coconut Beach, worth +1,000 if passed before the checkpoint.</figcaption></figure>
-      <figure><img src="journal_assets/t4_timeover.jpg" alt="Time over card with the initials panel"><figcaption><b>TIME OVER</b> after a real 75 s run: the score breakdown, and the top ten asking for initials beside it.</figcaption></figure>
-      <figure><img src="journal_assets/t4_saved.jpg" alt="Saved row in the live board"><figcaption><b>Saved</b>: the form gives way to its outcome and the row joins the live board.</figcaption></figure>
-      <figure><img src="journal_assets/t4_phone_saved.jpg" alt="Phone layout bottom sheet"><figcaption><b>Phone</b>: the board docks as a bottom sheet so the results card keeps the middle of the screen.</figcaption></figure>
-    </div>
-    <h3>What changed</h3>
-    <ul>
-      <li>Design canvas (finish line): GOAL! and TIME OVER cards, the board and the rival callout. The owner chose a shared online table, three arcade initials and one rival per stage.</li>
-      <li><code>HighScore</code> is a live, public-read entity; players are guest sessions. A raw migration adds insert-only access, revokes update and delete, and adds a trigger that stamps the time and enforces the 75 s cadence. A replayed insert keeps its id and passes. CEL checks limit a row to what the engine's clock can produce, and the score to a ceiling derived from every scoring line at its maximum.</li>
-      <li>The game frame posts <code>run-ended</code> with the run's row; <code>shell/boot.js</code> fills the declared form, and the omnishell store writes it. The board is a <code>data-live</code> region with two renderers for the ending and the time.</li>
-      <li>Review fixes: a refusal now stays on screen instead of closing the form; the initials ask only for a top-ten run; the board gained time and readable endings; the panel no longer covers the route matrix, and becomes a bottom sheet on a phone. <code>ir.html</code> storyboards the saving, saved and refused states, with acceptance ids.</li>
-      <li>Platform: the pronto replay database container now receives every compose variable it needs.</li>
-    </ul>
-    <h3>Decisions made while the owner was away</h3>
-    <ul>
-      <li>The run reaches the shell through the iframe bridge rather than as a store write from inside the game frame.</li>
-      <li>The guest session box is hidden; there is nothing to sign out of.</li>
-      <li>The HUD and pit lane now show at <code>/</code> as well; the duplicate shell pit-lane was removed.</li>
-      <li>A refused save is not retried: the message tells the player to race again.</li>
-    </ul>
-    <h3>Open after turn 4</h3>
-    <ul>
-      <li>Score spoofing is bounded by the CEL checks and the cadence, not prevented: a modified client can still post any plausible row.</li>
-      <li>There is no release target yet, so "shared" means everyone on the same running cluster.</li>
-      <li>An offline-queued save can collide with the 75 s cadence if the player finishes a second run before reconnecting.</li>
-      <li>The player's row is matched by initials and score; two equal rows would both highlight.</li>
-      <li>Simplify skips: qualifying and marking read the rendered board rather than the store; the per-frame HUD writes are not change-only; the denylist lives in both the CEL and the JS (a parity test guards it).</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Turn 3 · Live sound and the FM radio</h2>
-    <div class="now">
-      <p><b>Results.</b> The game has sound for the first time; the previous audio module loaded files that never existed. Everything is synthesized live with WebAudio, and the app ships no audio files. The engine note follows RPM and gear, wind rises with speed, tyres squeal in drifts and spins, and race events have their own cues. A three-station FM radio plays original 4-bar compositions on the glass HUD tuner, with live equalizer bars, NEXT, MUTE and a title-card station picker with volume. Gates: <code>lint</code>, <code>test</code> (10 audio tests) and <code>integrate</code> exit 0, with check-visual reporting no critical findings.</p>
-    </div>
-    <div class="grid">
-      <figure><img src="journal_assets/t3_tuner.jpg" alt="Glass HUD tuner while racing"><figcaption><b>Glass HUD tuner</b> (top right): live bars from the actual mix, station and genre, NEXT and MUTE.</figcaption></figure>
-      <figure><img src="journal_assets/t3_title.jpg" alt="Title card station picker"><figcaption><b>Title card</b>: pick one of the three stations and set the volume before the start.</figcaption></figure>
-    </div>
-    <h3>What changed</h3>
-    <ul>
-      <li>Design canvas: a glass HUD tuner against an in-dash amber stereo LCD. The owner chose the glass tuner and original station names: FM 88.5 Palm Drive (synth samba, 132 bpm), FM 92.1 Tidal Breeze (jazz fusion, 104 bpm), FM 97.3 Neon Surf (synthwave, 118 bpm). No title is borrowed from the Out Run soundtrack.</li>
-      <li><code>shell/engine/audio.js</code>: the station data, a deterministic 16th-note sequencer, the engine-voice mapping and the WebAudio mix. The mix has a two-operator FM lead, synthesized drums, an engine, wind and tyre beds, event cues, a limiter and an analyser.</li>
-      <li>Sound starts on the first gesture, as browsers require, and retries until the mix runs. Embedded at <code>/</code>, the game frame is allowed autoplay so the shell's key presses count.</li>
-      <li>Engine, wind and tyres go quiet under the pause card. Changing station cuts off the old station's queued notes. Missed notes after a stall are dropped rather than played in a burst.</li>
-      <li>Review fixes: a HUD button left focused by a click no longer catches Space (nitro). MUTE keeps a fixed label with <code>aria-pressed</code>, and the station picker shows its selection with more than colour.</li>
-    </ul>
-    <h3>Open after turn 3</h3>
-    <ul>
-      <li>Nobody on the build side can listen: the mix is verified through its analyser, not by ear.</li>
-      <li>The debug time-travel pause leaves the engine note at its last pitch. Suspending the audio clock with the host's pause would cover it and a hidden tab too.</li>
-      <li>Simplify follow-ups: throttle engine automation below 60 Hz, pool the drum filters, keep keyboard ownership in one capture-phase handler instead of blurring buttons.</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Turn 2 · Branching route and stage identity</h2>
-    <div class="now">
-      <p><b>Results.</b> The deployed game boots and plays on every route. A stage at top speed takes about 54 s of a 75 s clock that each checkpoint extends by 45 s. Each of the 15 stages has its own light, haze and roadside, and both fork branches are marked roads. The second camera is a hood cam. Title, countdown and pause work. Gates: <code>lint</code>, <code>test</code> and <code>integrate</code> exit 0, with check-visual reporting no critical findings across four viewports and both themes.</p>
-    </div>
-    <p>The turn opened on a game that did not run. The deployed page booted nothing, the game's own CSP blocked its 3D engine, and hills climbed into 60° walls. A rival "won" twenty seconds in. Stabilizing came first, then the per-stage look against the reference.</p>
-
-    <h3>Before</h3>
-    <div class="grid">
-      <figure><img src="journal_assets/t2_before_wall.jpg" alt="Car seen from below on a road wall"><figcaption><b>Road walls.</b> Pitch accumulated without easing, so the camera sat below the car.</figcaption></figure>
-      <figure><img src="journal_assets/t2_before_rival_finish.jpg" alt="Race ended by a rival with time left"><figcaption><b>False finish.</b> A rival lapping Stage 2 ended the race with 97 s left.</figcaption></figure>
-    </div>
-
-    <h3>After: each stage reads as a place</h3>
-    <div class="grid">
-      <figure><img src="journal_assets/t2_live_coconut.jpg" alt="Coconut Beach in live play"><figcaption><b>Coconut Beach</b>, live: golden hour, palm rows, ocean on the left, four marked lanes.</figcaption></figure>
-      <figure><img src="journal_assets/t2_desert.jpg" alt="Desert Canyons"><figcaption><b>Desert Canyons</b>: red mesas, saguaros, white-gold haze.</figcaption></figure>
-      <figure><img src="journal_assets/t2_alpine.jpg" alt="Alpine Peaks"><figcaption><b>Alpine Peaks</b>: snow peaks behind pine forest.</figcaption></figure>
-      <figure><img src="journal_assets/t2_metropolis.jpg" alt="Metropolis Night"><figcaption><b>Metropolis Night</b>: lit towers and amber street lamps under a dim moon.</figcaption></figure>
-      <figure><img src="journal_assets/t2_tulip.jpg" alt="Tulip Gardens"><figcaption><b>Tulip Gardens</b>: striped fields and windmills.</figcaption></figure>
-      <figure><img src="journal_assets/t2_coastal.jpg" alt="Coastal Cliffs"><figcaption><b>Coastal Cliffs</b>: cliff wall left, sea right.</figcaption></figure>
-      <figure><img src="journal_assets/t2_marina.jpg" alt="Marina Bay ending"><figcaption><b>Marina Bay</b> (ending A): sailboats on the left, palms on the right.</figcaption></figure>
-      <figure><img src="journal_assets/t2_fork_left.jpg" alt="Left branch past the fork"><figcaption><b>Left branch.</b> Its own lane divider and edge line, with the right branch across the verge.</figcaption></figure>
-      <figure><img src="journal_assets/t2_fork_right.jpg" alt="Right branch past the fork"><figcaption><b>Right branch.</b> The sim routes by the same side the car is drawn on.</figcaption></figure>
-      <figure><img src="journal_assets/t2_hood.jpg" alt="Hood cam"><figcaption><b>Hood cam</b> (C), chosen on the design canvas over a GT3 interior and an open cockpit.</figcaption></figure>
-    </div>
-
-    <h3>After: the race lifecycle</h3>
-    <div class="grid">
-      <figure><img src="journal_assets/t2_title.jpg" alt="Title card"><figcaption><b>Title card</b> with controls and radio; Enter starts the grid countdown.</figcaption></figure>
-      <figure><img src="journal_assets/t2_paused.jpg" alt="Paused race"><figcaption><b>Paused.</b> Escape freezes the clock and the car; Continue resumes.</figcaption></figure>
-      <figure><img src="journal_assets/t2_cdn_down.jpg" alt="Engine failed to load notice"><figcaption><b>CDN down.</b> A worded notice with a reload, not a dead screen.</figcaption></figure>
-      <figure><img src="journal_assets/t2_arena.jpg" alt="Arena route in the shell"><figcaption><b>Arena at /</b>: the game fills the viewport under the nav, with no scroll and no clipping.</figcaption></figure>
-    </div>
-
-    <h3>What changed</h3>
-    <ul>
-      <li>The page boots: <code>boot.js</code> calls omnishell's real <code>createShell</code>. Babylon loads from its pinned jsdelivr package, allowed in the shared CSP by the owner's choice over vendoring. The game script moved out of the inline tag into <code>showcase.js</code>.</li>
-      <li>Pacing: distance advances at 0.08 units per km/h per tick, so a stage at top speed takes about a minute of the clock.</li>
-      <li>Rivals only wrap the stage, and a destination ends the run on arrival.</li>
-      <li>Road geometry eases curve and pitch back to straight and level, and uses its own screen-right frame. Babylon's <code>Path3D</code> binormal mirrored every left and right.</li>
-      <li>The fork's branches are each side's half of the road peeling outward: each keeps its two lanes, its divider and edge line, with the stage's verge between them. Karts and traffic ride the branch the sim routes them to.</li>
-      <li>Second camera: the GT3 interior placed its eye below its own dash top, giving a black wall with the dash screen floating in the sky. Of three directions drawn on the design canvas, the hood cam was chosen, and the interior was removed.</li>
-      <li>Stage looks live in <code>shell/engine/stage_look.js</code>: sky dome, sun, fog, light, ground, asphalt and instanced signature props for all 15 stages.</li>
-      <li>The world matches the sim: 8 world units per sim unit across the road, so the rumble strip sits at the off-road edge; 0.06 along it, so 295 km/h reads as about 82 m/s.</li>
-      <li>Title and pause are sim states. The close-pass banner and the route matrix are drawn from sim state, so the time-travel scrubber stays correct.</li>
-      <li>Removed: the vestigial shell overlays, ten unused Kenney models and their notice, and the Babylon loaders script.</li>
-    </ul>
-
-    <h3>Gates and review</h3>
-    <div class="scroll">
-      <table>
-        <tr><th>Gate</th><th>What it covers</th><th>Result</th></tr>
-        <tr><td><code>sayt doctor</code></td><td>All seven tool tiers</td><td class="pass">exit 0</td></tr>
-        <tr><td><code>sayt lint</code></td><td>facts, derive, ir↔program, cue vet, handlers, markup, types</td><td class="pass">exit 0</td></tr>
-        <tr><td><code>sayt test</code></td><td>Simulation, renderer, kinetic, referee, neural PBR, battery; new regression tests for pacing, rival finish, road slope and heading, fork split and placement, per-stage look, title and pause, close-pass banner</td><td class="pass">exit 0</td></tr>
-        <tr><td><code>sayt integrate</code></td><td>Full stack in compose plus check-visual across four viewports and both themes</td><td class="pass">exit 0 · no critical findings</td></tr>
-        <tr><td>Code review (high, fix)</td><td>10 findings; 9 fixed (finish position, traffic types, truck hitbox, cross-branch collisions, countdown, fork distance, material leaks, camera key, swallowed error)</td><td>1 skipped: shared CSP, the owner's decision</td></tr>
-        <tr><td>Studio seats</td><td>7 blocking findings, all verified and fixed: dead pause and title states, screen timers, route matrix, DESIGN.md claims and tokens, CDN failure state, untested stage light; backend had nothing to report</td><td>advisories recorded below</td></tr>
-      </table>
-    </div>
-
-    <h3>Open after turn 2</h3>
-    <ul>
-      <li>Dark squares along the frame's bottom edge appeared in offline renders only; no live frame reproduced them.</li>
-      <li>The Stitch cockpit reference plate was deleted as unreferenced and is not recoverable from git; re-export it from Stitch if it is still wanted.</li>
-      <li>The hero car is still box-built; the reference's glossy car belongs to turn 5.</li>
-      <li>Platform advisor: <code>program.cue</code> and <code>ir.html</code> still describe the old kart game's Match, Kart and LapRecord entities, while the game lives in <code>showcase.html</code>, outside the program.</li>
-      <li>Simplify follow-ups: one road-placement function owning lateral scale and fork shift, shared world-scale constants, HUD writes only on change.</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Turn 1 · Highway traffic</h2>
-    <p>Procedural civilian traffic in four archetypes, with lane changes, turn signals, braking behind slower cars and +50 close-pass scoring. <b>Revised by turn 2:</b> these frames came from a page served without its CSP. The deployed game did not run until turn 2, and turn 2 restored the truck's wider hitbox and stopped collisions across the fork.</p>
-    <div class="grid">
-      <figure><img src="journal_assets/traffic_overtaking.png" alt="Overtaking traffic"><figcaption><b>Overtaking</b> · turn-1 renderer</figcaption></figure>
-      <figure><img src="journal_assets/traffic_closepass.png" alt="Close pass banner"><figcaption><b>Close pass</b> · +50 banner</figcaption></figure>
-      <figure><img src="journal_assets/traffic_cockpit.png" alt="Cockpit view"><figcaption><b>Cockpit</b> · turn-1 dash view, replaced by the hood cam in turn 2</figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Foundation · Out Run core</h2>
-    <p>The kart track became a branching highway with a red wedge supercar, a two-speed gearbox and a full-screen Babylon renderer.</p>
-    <div class="grid">
-      <figure><img src="journal_assets/outrun_chase_gameplay.png" alt="Chase view foundation"><figcaption><b>Chase view</b> · foundation renderer</figcaption></figure>
-      <figure><img src="journal_assets/outrun_cockpit_gameplay.png" alt="Cockpit foundation"><figcaption><b>Cockpit</b> · foundation renderer</figcaption></figure>
-    </div>
-  </section>
-
-  <section>
-    <h2>Roadmap</h2>
-    <ul>
-      <li><b>Turn 3</b>: WebAudio FM radio and engine sound — done.</li>
-      <li><b>Turn 4</b>: race endings, the rival and the shared arcade leaderboard — done.</li>
-      <li><b>Turn 5</b>: PBR materials, the hero car and adaptive resolution — done.</li>
-      <li><b>Turn 6</b>: the car on the road, steady under steering — done.</li>
-      <li><b>Turn 7</b>: generated scenery, direction A — done.</li>
-      <li><b>Turn 8</b>: fixes from play — done.</li>
-      <li><b>Turn 9</b>: WebGPU and modern lighting — done.</li>
-      <li><b>Turn 10</b>: the start and the checkpoints — done.</li>
-      <li><b>Turn 11</b>: the graphics packs — done (ambient occlusion pending a newer Babylon).</li>
-      <li><b>Turn 12</b>: Babylon 9.31.0 and ambient occlusion — done.</li>
-      <li><b>Turn 13</b>: hills, nitro and the gauge — done.</li>
-      <li><b>Turn 14</b>: the art pack on the blob service — done.</li>
-      <li><b>Turn 15</b>: nitro, hills, pop-in and the stage hand-over — done.</li>
-      <li><b>Turn 16</b>: the generated hero car — done.</li>
-      <li><b>Turn 17</b>: direction B, painted skies and a modelled world — done.</li>
-      <li><b>Turn 18</b>: peaks, the car on curves, the tulip field — done.</li>
-      <li><b>Turn 19</b>: the cartoon pass — done.</li>
-    </ul>
-  </section>
+  </article>
 </div>
 </body>
 </html>
