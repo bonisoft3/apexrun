@@ -89,8 +89,10 @@
 # Each upstream's bound is `import bounded-<hop>`, a snippet emitted ahead of
 # this file from plugins/pronto/resilience.
 (app) {
-  @terminal not path /assets/manifest.json /shell/engine/art.js /shell/engine/effects.js /shell/engine/hud.js /shell/engine/present.js /shell/engine/prng.js /shell/engine/renderer.js /shell/engine/scatter.js /shell/engine/scenery.js /shell/engine/simulation.js /shell/engine/stage_look.js /omnishell/interpreter/presenter.js
+  @terminal not path /docs/* /assets/manifest.json /shell/engine/art.js /shell/engine/effects.js /shell/engine/hud.js /shell/engine/present.js /shell/engine/prng.js /shell/engine/renderer.js /shell/engine/scatter.js /shell/engine/scenery.js /shell/engine/simulation.js /shell/engine/stage_look.js /omnishell/interpreter/presenter.js
   header @terminal Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' {$PRONTO_RELEASE_SCRIPTS} 'unsafe-eval' 'inline-speculation-rules' https://cdn.jsdelivr.net/npm/babylonjs@7.54.3/ https://cdn.jsdelivr.net/npm/babylonjs@9.31.0/ https://cdn.jsdelivr.net/npm/babylonjs-loaders@9.31.0/; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://cdn.jsdelivr.net/npm/babylonjs-loaders@9.31.0/babylonjs.loaders.min.js https://cdn.jsdelivr.net/npm/babylonjs@9.31.0/babylon.js; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob:; frame-src 'self'; worker-src 'self' blob:; form-action 'self'; require-trusted-types-for 'script'; trusted-types omnishell-markup omnishell-url default"
+  @ladder path /docs/*
+  header @ladder Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net/npm/marked@16.4.2/lib/marked.umd.js 'sha256-6ZoE2MzsuJRzSNxFVn9sEGmwr4upjZH423uYzEEtajk='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'self'"
   @presenter path /omnishell/interpreter/presenter.js
   header @presenter Content-Security-Policy "default-src 'none'; script-src 'self' 'unsafe-eval'; connect-src blob:; worker-src 'self'"
   @scripted {

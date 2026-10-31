@@ -2460,6 +2460,8 @@
     {"file":"shell/engine/scenery.js","target":"/srv/shell/engine/scenery.js"},
     {"file":"shell/engine/simulation.js","target":"/srv/shell/engine/simulation.js"},
     {"file":"shell/engine/stage_look.js","target":"/srv/shell/engine/stage_look.js"},
+    {"file":"brief.md","target":"/srv/docs/brief.md"},
+    {"file":"brief.html","target":"/srv/docs/brief.html"},
     {"file":"journal.html","target":"/srv/docs/journal.html"},
     {"file":"ir.html","target":"/srv/docs/ir.html"},
     {"file":"ir/card.css","target":"/srv/docs/ir/card.css"},

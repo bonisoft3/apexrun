@@ -80,6 +80,12 @@ services:
         path: ../shell/engines/sound.json
         target: /srv/shell/engines/sound.json
       - action: rebuild
+        path: ../brief.md
+        target: /srv/docs/brief.md
+      - action: rebuild
+        path: ../brief.html
+        target: /srv/docs/brief.html
+      - action: rebuild
         path: ../journal.html
         target: /srv/docs/journal.html
       - action: rebuild

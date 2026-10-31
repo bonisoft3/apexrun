@@ -139,6 +139,16 @@
         },
         {
           "action": "rebuild",
+          "path": "../brief.md",
+          "target": "/srv/docs/brief.md"
+        },
+        {
+          "action": "rebuild",
+          "path": "../brief.html",
+          "target": "/srv/docs/brief.html"
+        },
+        {
+          "action": "rebuild",
           "path": "../journal.html",
           "target": "/srv/docs/journal.html"
         },

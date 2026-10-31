@@ -669,6 +669,8 @@
           "shell/engine/scenery.js",
           "shell/engine/simulation.js",
           "shell/engine/stage_look.js",
+          "brief.md",
+          "brief.html",
           "journal.html",
           "ir.html",
           "ir/card.css",
