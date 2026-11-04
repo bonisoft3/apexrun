@@ -8,8 +8,6 @@ services:
         apexrun-crud: service:apexrun-crud
         apexrun-electric: service:apexrun-electric
         apexrun-auth: service:apexrun-auth
-        apexrun-rclone-s3: service:apexrun-rclone-s3
-        apexrun-imgproxy: service:apexrun-imgproxy
         apexrun-clock: service:apexrun-clock
         apexrun-assets: service:apexrun-assets
         apexrun-render: service:apexrun-render
@@ -38,16 +36,11 @@ services:
         restart: true
       apexrun-auth:
         condition: service_started
-      apexrun-rclone-s3:
-        condition: service_healthy
-        restart: true
-      apexrun-imgproxy:
-        condition: service_healthy
-        restart: true
       apexrun-clock:
         condition: service_started
       apexrun-assets:
-        condition: service_completed_successfully
+        condition: service_healthy
+        restart: true
       apexrun-render:
         condition: service_healthy
         restart: true
@@ -72,8 +65,6 @@ services:
         apexrun-crud_bayt: service:apexrun-crud_bayt
         apexrun-electric_bayt: service:apexrun-electric_bayt
         apexrun-auth_bayt: service:apexrun-auth_bayt
-        apexrun-rclone-s3_bayt: service:apexrun-rclone-s3_bayt
-        apexrun-imgproxy_bayt: service:apexrun-imgproxy_bayt
         apexrun-clock_bayt: service:apexrun-clock_bayt
         apexrun-assets_bayt: service:apexrun-assets_bayt
         apexrun-render_bayt: service:apexrun-render_bayt

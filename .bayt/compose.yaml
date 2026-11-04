@@ -231,20 +231,6 @@ services:
     profiles:
     - electric
     scale: 1
-  rclone-s3:
-    extends:
-      file: ./compose.rclone-s3.yaml
-      service: apexrun-rclone-s3
-    profiles:
-    - rclone-s3
-    scale: 1
-  imgproxy:
-    extends:
-      file: ./compose.imgproxy.yaml
-      service: apexrun-imgproxy
-    profiles:
-    - imgproxy
-    scale: 1
   assets:
     extends:
       file: ./compose.assets.yaml

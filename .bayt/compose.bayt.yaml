@@ -66,10 +66,6 @@ include:
   required: false
 - path: ./compose.electric.yaml
   required: false
-- path: ./compose.rclone-s3.yaml
-  required: false
-- path: ./compose.imgproxy.yaml
-  required: false
 - path: ./compose.assets.yaml
   required: false
 - path: ../monorepo/${MONOREPO_COMPOSE_MODE:-docker-image}.yaml

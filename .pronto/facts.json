@@ -999,13 +999,13 @@
     {"path":"shell/screens/arena.css","token":"--duel-pedal"}
   ],
   "artifact": [
-    {"path":"program.cue","sha256":"94e546e3c8c4982d8c9e0b1d9fca7607f590cee695b7f4c8e4f7e22f94d7c0f3","derived":false},
+    {"path":"program.cue","sha256":"b7e2f24a9c94160740b3634a9d9ae2422612e73ceb4abe45935944a9674ec39a","derived":false},
     {"path":"DESIGN.md","sha256":"20313a8680b035a576c500f4b0fcb6b01dcbd5d71315f551bccb98f21d846051","derived":false},
     {"path":"ir.html","sha256":"d75743b8c33ef9ddc4542bcb0183c99dda7d62ffbedecbec0ece27d17e568f3a","derived":false},
     {"path":"acceptance.md","sha256":"0e126bc9793c506f6696c23d2d12bd83d93994cf32e86776666d6a82c14dc35c","derived":false},
     {"path":".pronto/cel.json","sha256":"3715eb3a53445e785a6100bbf36dfb4f8ed8c66d9a7594127d7656e87a48dd66","derived":true},
     {"path":"program_cel.cue","sha256":"f03afcf4b7e9b5e3e9a689ed6350b190654b50a401598e6a1cb0ef3384434455","derived":true},
-    {"path":"program_derived.cue","sha256":"f1a2dc91ae96b9ead2c7c715f0928043da3627d416353d6bc5b8f736240b586d","derived":true},
+    {"path":"program_derived.cue","sha256":"b70ba123b1bea3a77cbcb2cb8246ec2269de5c5fa53d7820afcb78698568cd69","derived":true},
     {"path":"shell/screens/arena.css","sha256":"8637ed98aca62ea8a142e3860e732176d4443b4675a5c0473162585446c2f2be","derived":false},
     {"path":"shell/design.css","sha256":"a40a66949619f1b97e787dedab2416ff60d5f5567fbb349f8eb97fd2f7a2e342","derived":true}
   ],
@@ -2467,6 +2467,8 @@
     {"file":"ir/card.css","target":"/srv/docs/ir/card.css"},
     {"file":"acceptance.md","target":"/srv/docs/acceptance.md"},
     {"file":"DESIGN.md","target":"/srv/docs/DESIGN.md"},
+    {"file":"ir/neighbourhood-app.svg","target":"/srv/docs/ir/neighbourhood-app.svg"},
+    {"file":"ir/neighbourhood-arena.svg","target":"/srv/docs/ir/neighbourhood-arena.svg"},
     {"file":"journal/2026-10-16-stitch-hud-telemetry.png","target":"/srv/docs/journal/2026-10-16-stitch-hud-telemetry.png"},
     {"file":"journal/2026-10-16-stitch-outrun-vision.png","target":"/srv/docs/journal/2026-10-16-stitch-outrun-vision.png"},
     {"file":"journal/2026-10-23-t40-challenged.jpg","target":"/srv/docs/journal/2026-10-23-t40-challenged.jpg"},

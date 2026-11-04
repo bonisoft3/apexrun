@@ -829,9 +829,8 @@ code: pronto.#App & {
 	]
 
 	capabilities: {
-		blobs: true
-		blobSeed: {manifest: "assets/manifest.json", origin: "https://storage.googleapis.com/trash-362115-supertuxkart-assets"}
-		hatches: assets: {ir: "hatch-assets", kind: "container", note: "One-shot seed of the art pack into the blob store from its public origin, each file checked against the manifest's sha256."}
+		seedAssets: {manifest: "assets/manifest.json", origin: "https://storage.googleapis.com/trash-362115-supertuxkart-assets"}
+		hatches: assets: {ir: "hatch-assets", kind: "container", note: "Serves the art pack in a cluster, fetched from its public origin as it starts, each file checked against the manifest's sha256."}
 		// The renderer paints the kinetic host's frames on a canvas its seat
 		// transfers, in a worker that reaches nothing but that canvas: raw
 		// Babylon cannot run sealed (pronto's endowed-Babylon record), so the
@@ -966,8 +965,9 @@ loop: surface: checks: "simulation": {
 }
 
 // The art pack: generated and CC0 files live in a public bucket, named by
-// their sha256 in assets/manifest.json; each launch copies them into the blob
-// store, which the game reads at /blobs/mecha-objects/<file>.
+// their sha256 in assets/manifest.json. They are part of the app, read by its
+// code at /seed-assets/<file>: the edge ships them with the release, and a cluster's
+// door routes to this server, which fetches them as it starts.
 cluster: surface: targets: {
 	assets: {
 		visibility: "internal"
@@ -979,19 +979,23 @@ cluster: surface: targets: {
 			workdir: "/app"
 			copy: [{srcs: ["services/assets/seed.ts", "assets/manifest.json"], dst: "/app/"}]
 			epilogue: ["RUN deno cache seed.ts"]
-			cmd: ["run", "--cached-only", "--allow-read=/app", "--allow-env", "--allow-net=storage.googleapis.com,rclone-s3:3900", "seed.ts"]
+			cmd: ["run", "--cached-only", "--allow-read=/app,/data", "--allow-write=/data", "--allow-env", "--allow-net=storage.googleapis.com,0.0.0.0:8787", "seed.ts"]
 		}
 		compose: {
-			depends_on: "rclone-s3": {condition: "service_healthy"}
 			environment: {
 				ASSET_MANIFEST: "/app/manifest.json"
-				ASSET_ORIGIN:   code.capabilities.blobSeed.origin
-				BLOB_STORE:     "http://rclone-s3:3900/mecha-objects"
+				ASSET_ORIGIN:   code.capabilities.seedAssets.origin
+				ASSET_DIR:      "/data"
 			}
-			restart: "no"
+			healthcheck: {
+				test: ["CMD", "deno", "eval", "const r = await fetch('http://127.0.0.1:8787/health'); Deno.exit(r.ok ? 0 : 1)"]
+				interval:     "2s"
+				retries:      150
+				start_period: "60s"
+			}
 		}
 	}
-	launch: compose: depends_on: assets: {condition: "service_completed_successfully"}
+	launch: compose: depends_on: assets: {condition: "service_healthy"}
 }
 
 loop: surface: checks: "assets": {

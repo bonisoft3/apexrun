@@ -2,8 +2,6 @@
 services:
   apexrun-assets:
     build:
-      additional_contexts:
-        apexrun-rclone-s3: service:apexrun-rclone-s3
       context: ..
       dockerfile: .bayt/Dockerfile.assets
       target: assets
@@ -14,24 +12,26 @@ services:
         BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
         BUILDKIT_SYNTAX: >-
           docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
-    depends_on:
-      apexrun-rclone-s3:
-        condition: service_healthy
-        restart: true
     environment:
       ASSET_MANIFEST: /app/manifest.json
       ASSET_ORIGIN: https://storage.googleapis.com/trash-362115-supertuxkart-assets
-      BLOB_STORE: http://rclone-s3:3900/mecha-objects
+      ASSET_DIR: /data
+    healthcheck:
+      test:
+      - CMD
+      - deno
+      - eval
+      - "const r = await fetch('http://127.0.0.1:8787/health'); Deno.exit(r.ok ? 0 : 1)"
+      interval: 2s
+      retries: 150
+      start_period: 60s
     image: bayt-apexrun-assets:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
     networks:
       default:
         aliases:
         - assets
-    restart: no
   apexrun-assets_bayt:
     build:
-      additional_contexts:
-        apexrun-rclone-s3_bayt: service:apexrun-rclone-s3_bayt
       context: ..
       dockerfile: .bayt/Dockerfile.assets
       target: assets_bayt

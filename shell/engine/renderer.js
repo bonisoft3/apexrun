@@ -3603,7 +3603,10 @@ export class ApexrunRenderer {
     const arm = new B.VertexData();
     arm.positions = used.flatMap((v) => [positions[v * 3] - px, positions[v * 3 + 1] - py, positions[v * 3 + 2] - pz]);
     arm.normals = used.flatMap((v) => [normals[v * 3], normals[v * 3 + 1], normals[v * 3 + 2]]);
-    if (colors) arm.colors = used.flatMap((v) => [0, 1, 2, 3].map((c) => colors[v * 4 + c]));
+    if (colors) {
+      const stride = colors.length / (positions.length / 3);
+      arm.colors = used.flatMap((v) => [colors[v * stride], colors[v * stride + 1], colors[v * stride + 2], stride === 4 ? colors[v * stride + 3] : 1]);
+    }
     arm.indices = cut.map((v) => at.get(v));
     const shoulder = new B.TransformNode(`${name}_girl_shoulder`, this.scene);
     shoulder.parent = skin.parent;

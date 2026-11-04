@@ -5,7 +5,7 @@
     "manual": true,
     "build": {
       "additional_contexts": {
-        "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.21.3@sha256:7ef00827641a0198cca0094402f16933541913c5f915f151bf306e3177abf1c2}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+        "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.21.7@sha256:300583571c8a5434d59c7ada9a3b5c2f6319d5768b3950a9f06504d96237d1a8}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
       },
       "secrets": [],
       "args": {}
@@ -131,8 +131,6 @@
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
         "./.bayt/compose.auth.yaml",
-        "./.bayt/compose.rclone-s3.yaml",
-        "./.bayt/compose.imgproxy.yaml",
         "./.bayt/compose.clock.yaml",
         "./.bayt/compose.ticker.yaml",
         "./.bayt/compose.assets.yaml",
@@ -174,8 +172,6 @@
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
         "./.bayt/compose.auth.yaml",
-        "./.bayt/compose.rclone-s3.yaml",
-        "./.bayt/compose.imgproxy.yaml",
         "./.bayt/compose.clock.yaml",
         "./.bayt/compose.ticker.yaml",
         "./.bayt/compose.assets.yaml",
@@ -241,8 +237,6 @@
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
         "./.bayt/compose.auth.yaml",
-        "./.bayt/compose.rclone-s3.yaml",
-        "./.bayt/compose.imgproxy.yaml",
         "./.bayt/compose.clock.yaml",
         "./.bayt/compose.ticker.yaml",
         "./.bayt/compose.assets.yaml",
@@ -281,8 +275,6 @@
     "./.bayt/compose.served.yaml",
     "./.bayt/compose.electric.yaml",
     "./.bayt/compose.auth.yaml",
-    "./.bayt/compose.rclone-s3.yaml",
-    "./.bayt/compose.imgproxy.yaml",
     "./.bayt/compose.clock.yaml",
     "./.bayt/compose.ticker.yaml",
     "./.bayt/compose.assets.yaml",

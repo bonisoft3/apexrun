@@ -1,4 +1,26 @@
 {
+  "cortex": {
+    "root": {
+      "id": "root",
+      "initial": "arena",
+      "states": {
+        "arena": {
+          "meta": {
+            "screen": "arena"
+          },
+          "invoke": [
+            {
+              "src": "race"
+            },
+            {
+              "src": "lobby"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "machines": {},
   "version": 1,
   "types": {
     "types": {
@@ -4473,7 +4495,7 @@
     "assets": {
       "ir": "hatch-assets",
       "kind": "container",
-      "note": "One-shot seed of the art pack into the blob store from its public origin, each file checked against the manifest's sha256."
+      "note": "Serves the art pack in a cluster, fetched from its public origin as it starts, each file checked against the manifest's sha256."
     }
   },
   "rawMigrations": [

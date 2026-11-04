@@ -1,10 +1,10 @@
 /**
  * The art pack (assets/README.md): photo skies with their light, PBR ground
  * and road, and models, every file named by its sha256 in the manifest and
- * served by the blob store.
+ * served with the app.
  */
 
-export const BLOB_BASE = '/blobs/mecha-objects/';
+export const ASSET_BASE = '/seed-assets/';
 
 // For a prop up to LOD_SIZE metres tall: past LOD_FAR it is not drawn, and
 // LOD_SPLITS hand each level of detail over to the next. A taller one keeps
@@ -112,7 +112,7 @@ export function artEntry(manifest, id) {
 }
 
 export function artUrl(manifest, id) {
-  return BLOB_BASE + artEntry(manifest, id).file;
+  return ASSET_BASE + artEntry(manifest, id).file;
 }
 
 /** The painted distance's strips per stage, far to near (assets/tools/ghibli/backdrops). */

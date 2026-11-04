@@ -1,6 +1,6 @@
 {
   "imports": {
-    "/omnishell/": "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.4/"
+    "/omnishell/": "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/"
   },
   "compilerOptions": {
     "strict": true

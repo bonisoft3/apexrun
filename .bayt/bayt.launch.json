@@ -22,17 +22,11 @@
       "apexrun-auth": {
         "condition": "service_started"
       },
-      "apexrun-rclone-s3": {
-        "condition": "service_healthy"
-      },
-      "apexrun-imgproxy": {
-        "condition": "service_healthy"
-      },
       "apexrun-clock": {
         "condition": "service_started"
       },
       "apexrun-assets": {
-        "condition": "service_completed_successfully"
+        "condition": "service_healthy"
       },
       "apexrun-render": {
         "condition": "service_healthy"
@@ -180,8 +174,6 @@
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
         "./.bayt/compose.auth.yaml",
-        "./.bayt/compose.rclone-s3.yaml",
-        "./.bayt/compose.imgproxy.yaml",
         "./.bayt/compose.clock.yaml",
         "./.bayt/compose.ticker.yaml",
         "./.bayt/compose.assets.yaml",
@@ -221,8 +213,6 @@
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
         "./.bayt/compose.auth.yaml",
-        "./.bayt/compose.rclone-s3.yaml",
-        "./.bayt/compose.imgproxy.yaml",
         "./.bayt/compose.clock.yaml",
         "./.bayt/compose.ticker.yaml",
         "./.bayt/compose.assets.yaml",
@@ -238,8 +228,6 @@
     "crud_outs",
     "electric_outs",
     "auth_outs",
-    "rclone-s3_outs",
-    "imgproxy_outs",
     "clock_outs",
     "assets_outs",
     "render_outs"
@@ -250,8 +238,6 @@
     "crud_outs",
     "electric_outs",
     "auth_outs",
-    "rclone-s3_outs",
-    "imgproxy_outs",
     "clock_outs",
     "assets_outs",
     "render_outs"
@@ -262,8 +248,6 @@
     "crud_outs",
     "electric_outs",
     "auth_outs",
-    "rclone-s3_outs",
-    "imgproxy_outs",
     "clock_outs",
     "assets_outs",
     "render_outs"
@@ -278,8 +262,6 @@
     "./.bayt/compose.served.yaml",
     "./.bayt/compose.electric.yaml",
     "./.bayt/compose.auth.yaml",
-    "./.bayt/compose.rclone-s3.yaml",
-    "./.bayt/compose.imgproxy.yaml",
     "./.bayt/compose.clock.yaml",
     "./.bayt/compose.ticker.yaml",
     "./.bayt/compose.assets.yaml",
@@ -324,24 +306,6 @@
     },
     {
       "name": "auth_outs",
-      "project": "apexrun",
-      "dir": ".",
-      "outs": {
-        "globs": [],
-        "exclude": []
-      }
-    },
-    {
-      "name": "rclone-s3_outs",
-      "project": "apexrun",
-      "dir": ".",
-      "outs": {
-        "globs": [],
-        "exclude": []
-      }
-    },
-    {
-      "name": "imgproxy_outs",
       "project": "apexrun",
       "dir": ".",
       "outs": {

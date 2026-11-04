@@ -27,7 +27,7 @@ Deno.test("art: every kind a stage draws with models has a height", () => {
 });
 
 Deno.test("art: files are read from the blob store by their content address", () => {
-  assertEquals(artUrl({ x: { file: "ab.glb" } }, "x"), "/blobs/mecha-objects/ab.glb");
+  assertEquals(artUrl({ x: { file: "ab.glb" } }, "x"), "/seed-assets/ab.glb");
   assertThrows(() => artUrl({}, "model/missing/lod0"), Error, "no model/missing/lod0");
 });
 

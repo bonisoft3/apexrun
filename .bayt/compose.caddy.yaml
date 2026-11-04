@@ -101,6 +101,12 @@ services:
         path: ../DESIGN.md
         target: /srv/docs/DESIGN.md
       - action: rebuild
+        path: ../ir/neighbourhood-app.svg
+        target: /srv/docs/ir/neighbourhood-app.svg
+      - action: rebuild
+        path: ../ir/neighbourhood-arena.svg
+        target: /srv/docs/ir/neighbourhood-arena.svg
+      - action: rebuild
         path: ../journal/2026-10-16-stitch-hud-telemetry.png
         target: /srv/docs/journal/2026-10-16-stitch-hud-telemetry.png
       - action: rebuild

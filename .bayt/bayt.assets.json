@@ -6,15 +6,11 @@
     "environment": {
       "ASSET_MANIFEST": "/app/manifest.json",
       "ASSET_ORIGIN": "https://storage.googleapis.com/trash-362115-supertuxkart-assets",
-      "BLOB_STORE": "http://rclone-s3:3900/mecha-objects"
+      "ASSET_DIR": "/data"
     },
     "ports": [],
     "volumes": [],
-    "depends_on": {
-      "apexrun-rclone-s3": {
-        "condition": "service_healthy"
-      }
-    },
+    "depends_on": {},
     "networks": {
       "default": {
         "aliases": [
@@ -22,7 +18,17 @@
         ]
       }
     },
-    "restart": "no"
+    "healthcheck": {
+      "test": [
+        "CMD",
+        "deno",
+        "eval",
+        "const r = await fetch('http://127.0.0.1:8787/health'); Deno.exit(r.ok ? 0 : 1)"
+      ],
+      "interval": "2s",
+      "retries": 150,
+      "start_period": "60s"
+    }
   },
   "dockerfile": {
     "preamble": [],
@@ -58,9 +64,10 @@
     "cmd": [
       "run",
       "--cached-only",
-      "--allow-read=/app",
+      "--allow-read=/app,/data",
+      "--allow-write=/data",
       "--allow-env",
-      "--allow-net=storage.googleapis.com,rclone-s3:3900",
+      "--allow-net=storage.googleapis.com,0.0.0.0:8787",
       "seed.ts"
     ]
   },
@@ -116,8 +123,7 @@
         "similar": false
       },
       "upClosure": [
-        "./.bayt/compose.assets.yaml",
-        "./.bayt/compose.rclone-s3.yaml"
+        "./.bayt/compose.assets.yaml"
       ]
     },
     "outs": {
@@ -145,8 +151,7 @@
         "similar": false
       },
       "upClosure": [
-        "./.bayt/compose.assets.yaml",
-        "./.bayt/compose.rclone-s3.yaml"
+        "./.bayt/compose.assets.yaml"
       ]
     },
     "srcs": {
@@ -168,9 +173,7 @@
       "env": {},
       "visibility": "internal",
       "deps": [],
-      "transitiveDeps": [
-        "rclone-s3_outs_srcs"
-      ],
+      "transitiveDeps": [],
       "transitiveCrossDeps": [],
       "chainedDeps": [],
       "cmds": [],
@@ -179,38 +182,20 @@
         "similar": false
       },
       "upClosure": [
-        "./.bayt/compose.assets.yaml",
-        "./.bayt/compose.rclone-s3.yaml"
+        "./.bayt/compose.assets.yaml"
       ]
     }
   },
   "visibility": "internal",
   "emitsSrcs": true,
-  "deps": [
-    "rclone-s3_outs"
-  ],
-  "sameProjectDeps": [
-    "rclone-s3_outs"
-  ],
-  "transitiveDeps": [
-    "rclone-s3_outs"
-  ],
+  "deps": [],
+  "sameProjectDeps": [],
+  "transitiveDeps": [],
   "transitiveCrossDeps": [],
   "upClosure": [
-    "./.bayt/compose.assets.yaml",
-    "./.bayt/compose.rclone-s3.yaml"
+    "./.bayt/compose.assets.yaml"
   ],
-  "chainedDeps": [
-    {
-      "name": "rclone-s3_outs",
-      "project": "apexrun",
-      "dir": ".",
-      "outs": {
-        "globs": [],
-        "exclude": []
-      }
-    }
-  ],
+  "chainedDeps": [],
   "cmds": [],
   "cache": {
     "full": false,

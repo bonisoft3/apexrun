@@ -138,12 +138,14 @@ class MockEngine {
 
 /**
  * The riders' girl's skin, as the pack's: three pieces, her face and her two
- * arms, the outer one (+X) reaching forward from her shoulder to the wheel.
+ * arms, the outer one (+X) reaching forward from her shoulder to the wheel,
+ * with VEC3 ambient-occlusion vertex colours (manifest.json `vertex_colors`).
  */
 function girlSkin(name: (n: string) => string) {
-  const positions = [0, 0.6, 0.05, 0.05, 0.62, 0.05, 0, 0.66, 0.05, 0.16, 0.38, 0.02, 0.18, 0.3, 0.2, 0.14, 0.39, 0.47, -0.16, 0.38, 0.02, -0.18, 0.3, 0.2, -0.14, 0.39, 0.47];
+  const positions = [0, 0.6, 0.05, 0.05, 0.62, 0.05, 0, 0.66, 0.05, -0.16, 0.38, 0.02, -0.18, 0.3, 0.2, -0.14, 0.39, 0.47, 0.16, 0.38, 0.02, 0.18, 0.3, 0.2, 0.14, 0.39, 0.47];
+  const colors = positions.map((_, i) => (i + 1) / 30);
   const skin: any = Object.assign(new MockMesh(), { name: name("girl_primitive0"), material: { name: "skin" }, indices: [0, 1, 2, 3, 4, 5, 6, 7, 8] });
-  skin.getVerticesData = (kind: string) => (kind === "position" ? positions : kind === "normal" ? positions.map(() => 0) : null);
+  skin.getVerticesData = (kind: string) => (kind === "position" ? positions : kind === "normal" ? positions.map(() => 0) : kind === "color" ? colors : null);
   skin.getIndices = () => skin.indices;
   skin.setIndices = (indices: number[]) => { skin.indices = indices; };
   return skin;
@@ -1400,8 +1402,14 @@ Deno.test("renderer: pulled up at her ending, the girl lifts her outer arm from 
   const player = state.karts.find((k: any) => k.isPlayer);
   const { greet, riders } = renderer.bKartMeshes.get(player.character);
   const skin = riders[0].flatMap((r: any) => [r, ...r.getDescendants()]).find((n: any) => n.name.endsWith("girl_primitive0"));
-  assertEquals(skin.indices, [0, 1, 2, 6, 7, 8], "her face and her inner arm stay in her skin");
+  assertEquals(skin.indices, [0, 1, 2, 3, 4, 5], "her face and her inner arm stay in her skin");
   assertEquals(greet.arm.vertexData.positions.length, 9, "her outer arm is a mesh of its own");
+  // The pack stores COLOR_0 as VEC3 float AO while VertexData.applyToMesh
+  // uploads RGBA4: reading stride 4 from a stride-3 buffer walked past the end
+  // on the outer arm's tail vertices, uploading undefined -> NaN colours that
+  // bloomed into two glare rings in a black square behind her hair.
+  assertEquals(greet.arm.vertexData.colors, [19 / 30, 20 / 30, 21 / 30, 1, 22 / 30, 23 / 30, 24 / 30, 1, 25 / 30, 26 / 30, 27 / 30, 1]);
+  assert(new Float32Array(greet.arm.vertexData.colors).every(Number.isFinite), "her cut arm uploads finite RGBA vertex colours");
   const hand = greet.arm.vertexData.positions.slice(6, 9);
   const B = (globalThis as any).BABYLON;
   const lifted = () => B.Vector3.TransformCoordinates(B.Vector3.TransformCoordinates(new MockVector3(hand[0], hand[1], hand[2]), B.Matrix.RotationX(greet.raise.rotation.x)), B.Matrix.RotationZ(greet.shoulder.rotation.z));
