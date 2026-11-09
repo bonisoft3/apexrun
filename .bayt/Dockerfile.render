@@ -8,6 +8,7 @@ COPY --from=plugins_omnishell-runtime-image /server /render/plugins/omnishell/se
 COPY --from=apexrun-served /served/shell/index.html /render/entry.html
 COPY --parents shell/index.html shell/shell.css shell/boot.js shell/shell.yaml shell/shell.json shell/design.css shell/screens/arena.html shell/screens/arena.css shell/handlers/lease.js shell/handlers/lobby.js shell/handlers/run.js shell/renderers/ending.js shell/renderers/run_time.js shell/renderers/stage.js shell/engines/apexrun.json shell/engines/sound.json shell/engine/art.js shell/engine/effects.js shell/engine/hud.js shell/engine/present.js shell/engine/prng.js shell/engine/renderer.js shell/engine/scatter.js shell/engine/scenery.js shell/engine/simulation.js shell/engine/stage_look.js ./
 COPY .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/bayt.render.json ./.bayt/
+EXPOSE 8090
 CMD ["deno", "run", "--frozen", "--cached-only", "--config", "plugins/omnishell/server/deno.json", "--allow-net", "--allow-env", "--allow-read=/render", "plugins/omnishell/server/render.ts"]
 RUN deno cache --frozen --config plugins/omnishell/server/deno.json plugins/omnishell/server/render.ts
 HEALTHCHECK --interval=1s --timeout=5s --retries=30 --start-period=120s CMD ["httpcheck","http://127.0.0.1:8090/health"]

@@ -3,7 +3,7 @@
 // drift particles, exhaust nitro flames, and arcade racing HUD.
 
 import { WAVE_TICKS, OUTRUN_STAGES, CHARACTERS, METRES_PER_UNIT, LATERAL_UNITS, INTRO_TICKS, ARCH_LEAD, COUNTDOWN_TICKS, GO_TICKS, STEER_FULL } from './simulation.js';
-import { STAGE_LOOKS, PROP_BUILDERS, PROP_FOOTPRINT, PROP_RADIUS, SHORE, placeProps } from './stage_look.js';
+import { DRY_TERRAIN_OFFSETS, STAGE_LOOKS, PROP_BUILDERS, PROP_FOOTPRINT, PROP_RADIUS, SHORE, WATER_OFFSETS, WET_TERRAIN_OFFSETS, placeProps, terrainHeightAt } from './stage_look.js';
 import { createPrng } from './prng.js';
 import { NIGHT_STAGES, brushStrokes, flowerCarpet, frondTexture, waveNormals } from './scenery.js';
 import { lerp, lerpAngle } from '/omnishell/interpreter/kinetic.js';
@@ -147,7 +147,16 @@ toonCol *= mix(GRADE_FOOT, vec3(1.0), smoothstep(0.0, GRADE_METRES, vStkLift)) *
 toonCol *= 1.0 - CONTOUR * smoothstep(0.6, 0.92, 1.0 - abs(dot(normalW, viewDirectionW)));
 #endif
 #ifdef STK_PATCH
-toonCol *= 0.8 + 0.4 * stkGrain(vec3(vPositionW.x, 0.0, vPositionW.z) * PATCH_PER_METRE);
+float stkMacro = stkGrain(vec3(vPositionW.x, 0.0, vPositionW.z) * PATCH_PER_METRE);
+float stkMicro = stkNoise(vec3(vPositionW.x * 0.42, vPositionW.y * 0.42, vPositionW.z * 0.42));
+toonCol *= 0.84 + 0.32 * stkMacro;
+float stkSlope = 1.0 - smoothstep(0.55, 0.76, abs(normalW.y));
+float stkCrag = smoothstep(0.55, 0.85, stkMicro) * smoothstep(0.76, 0.94, 1.0 - abs(normalW.y));
+float stkRockMask = clamp(stkSlope * 1.05 + stkCrag * 0.55, 0.0, 1.0);
+float stkStrata = 0.78 + 0.44 * stkNoise(vec3(vPositionW.x * 0.09, vPositionW.y * 0.85, vPositionW.z * 0.09));
+float stkCleavage = smoothstep(0.35, 0.75, stkNoise(vec3(vPositionW.x * 0.28, vPositionW.y * 1.45, vPositionW.z * 0.28)));
+vec3 stkRockCol = mix(surfaceAlbedo * vec3(0.68, 0.63, 0.58), vec3(0.56, 0.52, 0.47), 0.40) * stkStrata * (0.82 + 0.32 * stkCleavage);
+toonCol = mix(toonCol, stkRockCol * mix(toonShade, toonSun, toonBand), stkRockMask * 0.82);
 #endif
 float toonEdge = 1.0 - max(dot(normalW, viewDirectionW), 0.0);
 toonCol += toonRim * smoothstep(0.8, 0.95, toonEdge) * (1.0 - smoothstep(0.5, 0.85, normalW.y));
@@ -177,7 +186,16 @@ toonCol *= mix(GRADE_FOOT, vec3f(1.0), smoothstep(0.0, GRADE_METRES, fragmentInp
 toonCol *= 1.0 - CONTOUR * smoothstep(0.6, 0.92, 1.0 - abs(dot(normalW, viewDirectionW)));
 #endif
 #ifdef STK_PATCH
-toonCol *= 0.8 + 0.4 * stkGrain(vec3f(fragmentInputs.vPositionW.x, 0.0, fragmentInputs.vPositionW.z) * PATCH_PER_METRE);
+let stkMacro: f32 = stkGrain(vec3f(fragmentInputs.vPositionW.x, 0.0, fragmentInputs.vPositionW.z) * PATCH_PER_METRE);
+let stkMicro: f32 = stkNoise(vec3f(fragmentInputs.vPositionW.x * 0.42, fragmentInputs.vPositionW.y * 0.42, fragmentInputs.vPositionW.z * 0.42));
+toonCol *= 0.84 + 0.32 * stkMacro;
+let stkSlope: f32 = 1.0 - smoothstep(0.55, 0.76, abs(normalW.y));
+let stkCrag: f32 = smoothstep(0.55, 0.85, stkMicro) * smoothstep(0.76, 0.94, 1.0 - abs(normalW.y));
+let stkRockMask: f32 = clamp(stkSlope * 1.05 + stkCrag * 0.55, 0.0, 1.0);
+let stkStrata: f32 = 0.78 + 0.44 * stkNoise(vec3f(fragmentInputs.vPositionW.x * 0.09, fragmentInputs.vPositionW.y * 0.85, fragmentInputs.vPositionW.z * 0.09));
+let stkCleavage: f32 = smoothstep(0.35, 0.75, stkNoise(vec3f(fragmentInputs.vPositionW.x * 0.28, fragmentInputs.vPositionW.y * 1.45, fragmentInputs.vPositionW.z * 0.28)));
+let stkRockCol: vec3f = mix(surfaceAlbedo * vec3f(0.68, 0.63, 0.58), vec3f(0.56, 0.52, 0.47), 0.40) * stkStrata * (0.82 + 0.32 * stkCleavage);
+toonCol = mix(toonCol, stkRockCol * mix(uniforms.toonShade, uniforms.toonSun, toonBand), stkRockMask * 0.82);
 #endif
 let toonEdge: f32 = 1.0 - max(dot(normalW, viewDirectionW), 0.0);
 toonCol += uniforms.toonRim * smoothstep(0.8, 0.95, toonEdge) * (1.0 - smoothstep(0.5, 0.85, normalW.y));
@@ -701,6 +719,207 @@ export function marshalPose(state) {
   });
   return { arm, flag: -MARSHAL_FLAG_DRAG * (arm - before) };
 }
+
+/**
+ * The road under world depth `z` for a car at lane `x`, interpolated
+ * between centreline points: everything placed on the road reads it here.
+ */
+export function sampleRoadPoint(centerline, z, x) {
+  const { pts, rights, headings, segLen, rumbleW, forkDiverge, endOn } = centerline;
+  const laneShift = (segIdx) => {
+    const shift = (forkDiverge[segIdx] || 0) * rights[segIdx].x;
+    return x < 0 ? -shift : shift;
+  };
+  const end = pts[pts.length - 1];
+  if (z > end.z) {
+    const k = pts.length - 1;
+    const prev = pts[Math.max(0, k - 1)];
+    const endRun = Math.hypot(end.x - prev.x, end.z - prev.z) || 1;
+    const onX = endOn ? endOn.x : (end.x - prev.x) / endRun;
+    const onZ = endOn ? endOn.z : (end.z - prev.z) / endRun;
+    const along = (z - end.z) / (onZ || 1);
+    return { x: end.x + onX * along + laneShift(k) + x * rumbleW, y: end.y, z, yaw: headings[k] };
+  }
+  const last = pts.length - 1.000001;
+  const f = Math.max(0, Math.min(last, z / segLen));
+  const i = Math.floor(f);
+  const t = f - i;
+  const a = pts[i];
+  const b = pts[i + 1];
+  const X = lerp(a.x + laneShift(i), b.x + laneShift(i + 1), t) + x * rumbleW;
+  let g = f;
+  for (let k = 0; k < 2; k++) {
+    const j = Math.floor(g);
+    const u = g - j;
+    const rx = lerp(rights[j].x, rights[j + 1].x, u);
+    const rz = lerp(rights[j].z, rights[j + 1].z, u);
+    const d = (X - lerp(pts[j].x, pts[j + 1].x, u)) * rx + (z - lerp(pts[j].z, pts[j + 1].z, u)) * rz;
+    g = Math.max(0, Math.min(last, (z - rz * d) / segLen));
+  }
+  const j = Math.floor(g);
+  return {
+    x: X,
+    y: lerp(pts[j].y, pts[j + 1].y, g - j),
+    z,
+    yaw: lerpAngle(headings[i], headings[i + 1], t),
+  };
+}
+
+/** A car's pose at `z`: on the line through the road under both axles, pitched with it. */
+export function sampleRoadPose(centerline, z, x, axleFront = 1.38, axleRear = 1.38) {
+  const road = sampleRoadPoint(centerline, z, x);
+  const front = sampleRoadPoint(centerline, z + axleFront, x).y;
+  const rear = sampleRoadPoint(centerline, z - axleRear, x).y;
+  const grade = (front - rear) / (axleFront + axleRear);
+  return { ...road, y: rear + grade * axleRear, pitch: Math.atan(grade) };
+}
+
+/**
+ * The moments the chase camera swings wide for: the stage's hero
+ * landmark, which it turns to, and the fork's checkpoint arch, then the
+ * rarer set pieces where they keep LANDMARK_SPACING from every other.
+ */
+export function buildStageLandmarks(ahead, destination, spot, pts, forkStart) {
+  const mark = (pl) => {
+    const at = spot(pl);
+    return { z: at.z, side: pl.side, x: at.x, y: at.y, height: (KIND_HEIGHT[pl.kind] ?? 0) * pl.scale, hero: !!pl.landmark };
+  };
+  const heroes = ahead.filter((pl) => pl.landmark).map(mark);
+  if (destination.length) {
+    const [place] = destination;
+    heroes.push({ z: place.z, side: 0, x: place.x, y: place.y, height: KIND_HEIGHT[place.kind] * place.scale, hero: true });
+  }
+  if (forkStart < pts.length) heroes.push({ z: pts[forkStart].z, side: 0, hero: false });
+  const z0 = pts[0].z + LANDMARK_START;
+  const landmarks = heroes.filter((m) => m.z >= z0);
+  for (const m of ahead.filter((pl) => LANDMARKS.has(pl.kind) && !pl.landmark).map(mark).sort((a, b) => a.z - b.z)) {
+    if (m.z >= z0 && landmarks.every((o) => Math.abs(m.z - o.z) >= LANDMARK_SPACING)) landmarks.push(m);
+  }
+  landmarks.sort((a, b) => a.z - b.z);
+  return landmarks;
+}
+
+/**
+ * Shared rider gesture rig (passenger wave arm, head glances, and girl arrival wave)
+ * used by both Web (`renderer.js`) and Native (`pose_buffer.js`).
+ */
+export function computeRiderPose(state, kart, windTime, index = 0) {
+  const u = 1 - (kart.waveTimer ?? 0) / WAVE_TICKS;
+  const lift = kart.waveTimer > 0 ? smoothstep(0, 0.2, u) * (1 - smoothstep(0.8, 1, u)) : 0;
+  const waveZ = lerp(WAVE_REST, Math.sin(windTime * 13) * 0.3, lift);
+  const t = windTime + index * 3.7;
+  const glance = smoothstep(0, 1.2, t % GLANCE_PERIOD) * (1 - smoothstep(2.6, 3.8, t % GLANCE_PERIOD));
+  const headY = (Math.floor(t / GLANCE_PERIOD) % 2 ? GLANCE_GIRL : GLANCE_SCENERY) * glance;
+  const parked = kart.isPlayer && state.parkedAt != null ? state.endTicks - state.parkedAt : -1;
+  const greet = parked < 0 ? 0 : smoothstep(0, 20, parked) * (1 - smoothstep(GIRL_WAVE_TICKS - 20, GIRL_WAVE_TICKS, parked));
+  return {
+    waveZ,
+    waving: (kart.waveTimer ?? 0) > 0,
+    headY,
+    greet,
+    girlRaise: GIRL_ARM.raise * greet,
+    girlOut: greet * GIRL_ARM.out,
+    girlSwing: greet * GIRL_ARM.swing * Math.sin(windTime * GIRL_ARM.rate),
+  };
+}
+
+/**
+ * Shared chase + hood + intro swoop + hero landmark camera rig
+ * used by both Web (`renderer.js`) and Native (`pose_buffer.js`).
+ */
+export function computeCameraPose(state, player, heroPose, roadAt, landmarks, camState, aspect, cut = null) {
+  const px = heroPose.x;
+  const py = heroPose.y;
+  const pz = heroPose.z;
+  const playerLx = player.x || 0;
+  const playerSwing = player.heading || 0;
+  const playerPitch = heroPose.pitch || 0;
+  const ahead = roadAt(pz + 18.0, playerLx);
+  const pace = Math.min(1, Math.max(0, (player.speed || 0) / 315));
+  let near = 0;
+  for (const other of [...(state.traffic || []), ...(state.karts || []).filter((k) => !k.isPlayer)]) {
+    const d = Math.hypot((other.z - player.z) * METRES_PER_UNIT, (other.x - player.x) * LATERAL_UNITS);
+    near = Math.max(near, 1 - smoothstep(NEAR_FULL, NEAR_GONE, d));
+  }
+  let pull = 0;
+  let pullSide = 0;
+  let hero = null;
+  for (const m of landmarks) {
+    const w = landmarkPull(m.z - pz);
+    if (w > pull) { pull = w; pullSide = m.side; hero = m.hero ? m : null; }
+  }
+  const gradeAhead = (roadAt(pz + 40, playerLx).y - roadAt(pz + 30, playerLx).y) / 10;
+  const crest = Math.min(0.3, Math.max(0, playerPitch - Math.atan(gradeAhead)));
+  const lag = CHASE_BACK + 2.0 * pace + 4 * camState.boostT + PULL_BACK * pull;
+  const back = roadAt(pz - lag, playerLx);
+
+  const cos = Math.cos(playerPitch);
+  const sin = Math.sin(playerPitch);
+  const intro = state.stageState === 'warmup' ? Math.max(0, Math.min(1, (state.countdown - COUNTDOWN_TICKS) / INTRO_TICKS)) : 0;
+  const e = intro * intro * (3 - 2 * intro);
+  const hoodTarget = near * (1 - camState.boostT) * (1 - e);
+  camState.hoodT += (hoodTarget - camState.hoodT) * (hoodTarget > camState.hoodT ? HOOD_IN : HOOD_OUT);
+  if (cut) camState.hoodT = 0;
+  const hood = camState.hoodT;
+
+  const rise = CREST_LIFT * crest;
+  const up = CHASE_UP - 0.15 * pace - 0.5 * camState.boostT + rise + PULL_UP * pull;
+  const trail = pullSide * PULL_SWING * pull;
+  const look = playerSwing * CAMERA_LOOK;
+  const aim = CHASE_AIM + 4 * camState.boostT + 4 * pull;
+  const aimUp = 0.3 + 0.6 * camState.boostT;
+  const chaseEyeX = back.x - trail - 14 * e;
+  const chaseEyeY = py - lag * sin + up * cos + 30 * e;
+  const chaseEyeZ = pz - lag * cos - up * sin - 18 * e;
+  let chaseAtX = ahead.x - trail * 0.5 + look + pullSide * 4.7 * pull;
+  let chaseAtY = py + aim * sin + aimUp * cos - 0.6 * rise - 6 * e;
+  let chaseAtZ = pz + aim * cos - aimUp * sin - 8 * e;
+  if (hero) {
+    const rx = chaseAtX - chaseEyeX;
+    const ry = chaseAtY - chaseEyeY;
+    const rz = chaseAtZ - chaseEyeZ;
+    const reach = Math.hypot(rx, ry, rz) || 1;
+    const rnx = rx / reach;
+    const rny = ry / reach;
+    const rnz = rz / reach;
+    const hx = hero.x - chaseEyeX;
+    const hy = (hero.y + hero.height * HERO_AIM) - chaseEyeY;
+    const hz = hero.z - chaseEyeZ;
+    const hLen = Math.hypot(hx, hy, hz) || 1;
+    const hnx = hx / hLen;
+    const hny = hy / hLen;
+    const hnz = hz / hLen;
+    const turn = HERO_TURN * pull;
+    const tx = lerp(rnx, hnx, turn);
+    const ty = lerp(rny, hny, turn);
+    const tz = lerp(rnz, hnz, turn);
+    const tLen = Math.hypot(tx, ty, tz) || 1;
+    chaseAtX = chaseEyeX + (tx / tLen) * reach;
+    chaseAtY = chaseEyeY + (ty / tLen) * reach;
+    chaseAtZ = chaseEyeZ + (tz / tLen) * reach;
+  }
+
+  const vibe = Math.sin((state.tick || 0) * 0.8) * ((player.speed || 0) / 300) * 0.006;
+  const hoodUp = HOOD_EYE.up + vibe;
+  const hoodEyeX = px;
+  const hoodEyeY = py + hoodUp * cos + HOOD_EYE.ahead * sin;
+  const hoodEyeZ = pz + HOOD_EYE.ahead * cos - hoodUp * sin;
+  const hoodAtX = ahead.x + look;
+  const hoodAtZ = pz + 24.0;
+  const hoodAtY = hoodEyeY - 0.05 + Math.tan(playerPitch) * (hoodAtZ - hoodEyeZ);
+
+  camState.lens = lerp(
+    camState.lens,
+    lerp(speedFov(player.speed || 0, camState.boostT) + PULL_LENS * pull, 0.92 + 0.1 * camState.boostT, hood),
+    0.1,
+  );
+  const fov = coverFov(camState.lens, aspect);
+  return {
+    eye: [lerp(chaseEyeX, hoodEyeX, hood), lerp(chaseEyeY, hoodEyeY, hood), lerp(chaseEyeZ, hoodEyeZ, hood)],
+    at: [lerp(chaseAtX, hoodAtX, hood), lerp(chaseAtY, hoodAtY, hood), lerp(chaseAtZ, hoodAtZ, hood)],
+    fov,
+  };
+}
 // Windmill sails, radians a second.
 const SAIL_TURN = 0.7;
 const INK_METRES = 400;
@@ -829,11 +1048,11 @@ export function windCode(lang) {
   return lang === 'WGSL'
     ? {
       CUSTOM_VERTEX_DEFINITIONS: 'fn stkSway(p: vec3f, reach: f32, windTime: f32) -> vec2f { return vec2f(sin(windTime * 1.7 + p.z * 0.08 + p.x * 0.03), cos(windTime * 1.3 + p.x * 0.08)) * reach; }',
-      CUSTOM_VERTEX_UPDATE_WORLDPOS: 'let stkS = stkSway(worldPos.xyz, max(positionUpdated.y + 0.5, abs(positionUpdated.z)) * 0.05, uniforms.windTime); worldPos = vec4f(worldPos.x + stkS.x, worldPos.y, worldPos.z + stkS.y * 0.5, worldPos.w);',
+      CUSTOM_VERTEX_UPDATE_WORLDPOS: 'let stkS = stkSway(worldPos.xyz, max(positionUpdated.y, 0.0) * 0.05, uniforms.windTime); worldPos = vec4f(worldPos.x + stkS.x, worldPos.y, worldPos.z + stkS.y * 0.5, worldPos.w);',
     }
     : {
       CUSTOM_VERTEX_DEFINITIONS: 'vec2 stkSway(vec3 p, float reach, float t) { return vec2(sin(t * 1.7 + p.z * 0.08 + p.x * 0.03), cos(t * 1.3 + p.x * 0.08)) * reach; }',
-      CUSTOM_VERTEX_UPDATE_WORLDPOS: 'vec2 stkS = stkSway(worldPos.xyz, max(positionUpdated.y + 0.5, abs(positionUpdated.z)) * 0.05, windTime); worldPos.x += stkS.x; worldPos.z += stkS.y * 0.5;',
+      CUSTOM_VERTEX_UPDATE_WORLDPOS: 'vec2 stkS = stkSway(worldPos.xyz, max(positionUpdated.y, 0.0) * 0.05, windTime); worldPos.x += stkS.x; worldPos.z += stkS.y * 0.5;',
     };
 }
 
@@ -1647,48 +1866,38 @@ export class ApexrunRenderer {
    * between centreline points: everything placed on the road reads it here.
    */
   _roadAt(z, x) {
-    const pts = this.trackPts;
-    const end = pts[pts.length - 1];
-    // Past its end the road runs straight on along its closing heading.
-    if (z > end.z) {
-      const along = (z - end.z) / this.endOn.z;
-      const k = pts.length - 1;
-      return { x: end.x + this.endOn.x * along + this._laneShift(k, x) + x * this.lateralScale, y: end.y, yaw: this.headings[k] };
-    }
-    const last = pts.length - 1.000001;
-    const f = Math.max(0, Math.min(last, z / this.segLen));
-    const i = Math.floor(f);
-    const t = f - i;
-    const a = pts[i];
-    const b = pts[i + 1];
-    const X = lerp(a.x + this._laneShift(i, x), b.x + this._laneShift(i + 1, x), t) + x * this.lateralScale;
-    // The road and the ground run out along each point's right vector, so the
-    // surface under (X, z) belongs to the point whose right line passes through
-    // it: off the centreline on a curve, further along or back.
-    let g = f;
-    for (let k = 0; k < 2; k++) {
-      const j = Math.floor(g);
-      const u = g - j;
-      const rx = lerp(this.rights[j].x, this.rights[j + 1].x, u);
-      const rz = lerp(this.rights[j].z, this.rights[j + 1].z, u);
-      const d = (X - lerp(pts[j].x, pts[j + 1].x, u)) * rx + (z - lerp(pts[j].z, pts[j + 1].z, u)) * rz;
-      g = Math.max(0, Math.min(last, (z - rz * d) / this.segLen));
-    }
-    const j = Math.floor(g);
-    return {
-      x: X,
-      y: lerp(pts[j].y, pts[j + 1].y, g - j),
-      yaw: lerpAngle(this.headings[i], this.headings[i + 1], t),
-    };
+    return sampleRoadPoint(
+      {
+        pts: this.trackPts,
+        rights: this.rights,
+        headings: this.headings,
+        segLen: this.segLen,
+        rumbleW: this.lateralScale,
+        forkDiverge: this.forkDiverge,
+        endOn: this.endOn,
+      },
+      z,
+      x,
+    );
   }
 
   /** A car's pose at `z`: on the line through the road under both axles, pitched with it. */
   _poseOnRoad(z, x, axleFront = this.heroAxles.front, axleRear = this.heroAxles.rear) {
-    const road = this._roadAt(z, x);
-    const front = this._roadAt(z + axleFront, x).y;
-    const rear = this._roadAt(z - axleRear, x).y;
-    const grade = (front - rear) / (axleFront + axleRear);
-    return { ...road, y: rear + grade * axleRear, pitch: Math.atan(grade) };
+    return sampleRoadPose(
+      {
+        pts: this.trackPts,
+        rights: this.rights,
+        headings: this.headings,
+        segLen: this.segLen,
+        rumbleW: this.lateralScale,
+        forkDiverge: this.forkDiverge,
+        endOn: this.endOn,
+      },
+      z,
+      x,
+      axleFront,
+      axleRear,
+    );
   }
 
   // Past a fork the sim routes by the sign of x, so a kart drawn around the
@@ -2658,9 +2867,9 @@ export class ApexrunRenderer {
       mat.setColor3('hazeColor', this.scene.fogColor);
     }
     const rim = this.hasSun ? Math.max(0, facing) ** 2 * TOON_RIM : 0;
-    const ahead = cam.getForwardRay(1).direction;
-    const run = Math.hypot(ahead.x, ahead.z) || 1;
-    for (const mat of Object.values(this.bBackdropMats)) mat.setVector2('heading', new B.Vector2(ahead.x / run, ahead.z / run));
+    const roadYaw = this._roadAt(cam.position.z, 0).yaw;
+    const roadHeading = new B.Vector2(Math.sin(roadYaw), Math.cos(roadYaw));
+    for (const mat of Object.values(this.bBackdropMats)) mat.setVector2('heading', roadHeading);
     for (const strip of this.bHorizon) strip.position.set(cam.position.x, 0, cam.position.z);
     // An overcast or night sky has no sunlit cumulus to tower.
     for (const card of this.bClouds) {
@@ -2857,15 +3066,14 @@ export class ApexrunRenderer {
     this.bWaterMat.diffuseColor = color(look.water?.color ?? look.ground);
     this.bWaterMat.specularColor = color(look.sun.color);
 
-    // Terrain follows the road's height out to the props, then settles to the
-    // stage's lowest point so far silhouettes stand on ground, not in the air.
+    // Terrain follows the road's height out to the props, sculpts 3D stage
+    // embankments and hills across 20 lateral bands, then settles to baseY.
     const baseY = Math.min(...pts.map((p) => p.y)) - 2;
     const waterY = baseY - 1;
-    const terrainY = (p, offset) => offset <= 40 ? p.y - 0.05 : p.y + (baseY - p.y) * Math.min(1, (offset - 40) / 400);
-    // The sea side is level to 18 out, then a beach down to the water at the shore.
+    const zEnd = pts[pts.length - 1]?.z ?? Infinity;
     const isWet = (side) => !!look.water && side !== 0 && (look.water.side === 'left') === (side < 0);
-    const groundY = (p, side, offset) => !isWet(side) ? terrainY(p, offset)
-      : offset >= SHORE ? waterY : lerp(p.y - 0.05, waterY, Math.max(0, offset - 18) / (SHORE - 18));
+    const groundY = (p, side, offset) =>
+      terrainHeightAt(stage.id, p, baseY, waterY, side, offset, isWet(side), zEnd);
     this.groundY = groundY;
     const band = (side, offsets, along = pts, across = rights, diverge = this.forkDiverge) => {
       const paths = offsets.map((offset) => along.map((p, i) => {
@@ -2877,13 +3085,14 @@ export class ApexrunRenderer {
     };
     for (const side of [-1, 1]) {
       const wet = isWet(side);
-      const pathArray = band(side, wet ? [0, 18, SHORE] : [0, 40, 440, 1400]);
+      const offsets = wet ? WET_TERRAIN_OFFSETS : DRY_TERRAIN_OFFSETS;
+      const pathArray = band(side, offsets);
       const terrain = B.MeshBuilder.CreateRibbon(`bTerrain_${side}`, { pathArray, uvs: this._groundUVs(B, pathArray), closeArray: false, sideOrientation: B.Mesh.DOUBLESIDE }, scene);
       terrain.material = this.bGroundMat;
       skyLit(terrain);
       this.bTerrain.push(terrain);
-      const leadPath = band(side, wet ? [0, 18, SHORE] : [0, 40, 440, 1400], this.leadPts, this.leadRights, []);
-      const outPath = band(side, wet ? [0, 18, SHORE] : [0, 40, 440, 1400], this.leadOutPts, this.leadOutRights, this.leadOutPts.map(() => this.forkDiverge[this.forkDiverge.length - 1]));
+      const leadPath = band(side, offsets, this.leadPts, this.leadRights, []);
+      const outPath = band(side, offsets, this.leadOutPts, this.leadOutRights, this.leadOutPts.map(() => this.forkDiverge[this.forkDiverge.length - 1]));
       const out = B.MeshBuilder.CreateRibbon(`bTerrainOut_${side}`, { pathArray: outPath, uvs: this._groundUVs(B, outPath), closeArray: false, sideOrientation: B.Mesh.DOUBLESIDE }, scene);
       out.material = this.bGroundMat;
       skyLit(out);
@@ -2895,7 +3104,7 @@ export class ApexrunRenderer {
       if (wet) {
         // The sea starts at the shore all along the road, as the beach ends
         // there, behind the start and past a fork too.
-        const seaOffsets = [SHORE, SHORE + SEA_REACH];
+        const seaOffsets = [...WATER_OFFSETS.map((o) => SHORE + Math.max(0, o)), SHORE + SEA_REACH];
         const seas = [
           ['bWater', band(side, seaOffsets)],
           ['bWaterLead', band(side, seaOffsets, this.leadPts, this.leadRights, [])],
@@ -2936,6 +3145,7 @@ export class ApexrunRenderer {
         for (let j = Math.max(0, i - span); j <= Math.min(pts.length - 1, i + span); j++) {
           for (const o of [offset - reach, offset, offset + reach]) y = Math.min(y, groundY(pts[j], side, o));
         }
+        if (kind === 'shrub' || kind === 'grassTuft') y -= 0.06;
       }
       return {
         x: p.x + side * b.x * d,
@@ -3027,25 +3237,7 @@ export class ApexrunRenderer {
     }
     this.bDecorMeshes = decor;
     this._hangWires(B, ahead.filter((pl) => pl.kind === 'powerPole').sort((a, b) => a.i - b.i).map(spot));
-    // The moments the chase camera swings wide for: the stage's hero
-    // landmark, which it turns to, and the fork's checkpoint arch, then the
-    // rarer set pieces where they keep LANDMARK_SPACING from every other.
-    const mark = (pl) => {
-      const at = spot(pl);
-      return { z: at.z, side: pl.side, x: at.x, y: at.y, height: (KIND_HEIGHT[pl.kind] ?? 0) * pl.scale, hero: !!pl.landmark };
-    };
-    const heroes = ahead.filter((pl) => pl.landmark).map(mark);
-    if (destination.length) {
-      const [place] = destination;
-      heroes.push({ z: place.z, side: 0, x: place.x, y: place.y, height: KIND_HEIGHT[place.kind] * place.scale, hero: true });
-    }
-    if (forkStart < pts.length) heroes.push({ z: pts[forkStart].z, side: 0, hero: false });
-    const z0 = pts[0].z + LANDMARK_START;
-    this.landmarks = heroes.filter((m) => m.z >= z0);
-    for (const m of ahead.filter((pl) => LANDMARKS.has(pl.kind) && !pl.landmark).map(mark).sort((a, b) => a.z - b.z)) {
-      if (m.z >= z0 && this.landmarks.every((o) => Math.abs(m.z - o.z) >= LANDMARK_SPACING)) this.landmarks.push(m);
-    }
-    this.landmarks.sort((a, b) => a.z - b.z);
+    this.landmarks = buildStageLandmarks(ahead, destination, spot, pts, forkStart);
     this.lodFrame = 0;
     this._limitGlow();
     this._shadowStage();
@@ -3191,11 +3383,10 @@ export class ApexrunRenderer {
         const matrices = new Float32Array(items.length * 16);
         items.forEach(({ x, y, z, size, yaw }, n) => {
           // A cactus is a tall narrow stem, a tuft a low grass mound, a flower
-          // a bright dot held up among the grass.
+          // a bright grounded blossom cluster among the grass.
           const [w, h] = kind === 'cactus' ? [size * 0.32, size * 2] : kind === 'tuft' ? [size, size * 0.5] : kind === 'stone' ? [size, size * 0.55] : kind === 'flower' ? [size, size] : [size, size * 0.8];
-          // Flowers dot the bushes' faces as well as the grass beneath them.
-          const lift = kind === 'flower' ? 0.2 + 1.3 * ((yaw * 7.13) % 1) : 0;
-          B.Matrix.Compose(new B.Vector3(w, h, w), B.Quaternion.RotationYawPitchRoll(yaw, 0, 0), new B.Vector3(x, y + lift, z)).copyToArray(matrices, n * 16);
+          const sink = kind === 'bush' || kind === 'tuft' ? -0.05 : 0;
+          B.Matrix.Compose(new B.Vector3(w, h, w), B.Quaternion.RotationYawPitchRoll(yaw, 0, 0), new B.Vector3(x, y + sink, z)).copyToArray(matrices, n * 16);
         });
         mesh.thinInstanceSetBuffer('matrix', matrices, 16, true);
         mesh.thinInstanceRefreshBoundingInfo();
@@ -3220,7 +3411,7 @@ export class ApexrunRenderer {
     const rand = createPrng(0x5c7b + k * 977 + kind.length * 131);
     const lean = (part, x, z, tilt, h) => {
       const turn = Math.atan2(x, z);
-      part.bakeTransformIntoVertices(B.Matrix.Translation(0, h / 2, 0)
+      part.bakeTransformIntoVertices(B.Matrix.Translation(0, h / 2 - 0.04, 0)
         .multiply(B.Matrix.RotationX(tilt))
         .multiply(B.Matrix.RotationY(turn))
         .multiply(B.Matrix.Translation(x, 0, z)));
@@ -3235,18 +3426,20 @@ export class ApexrunRenderer {
     if (kind === 'bush') {
       parts = ring(9, 0.32).map(([x, z, out]) => {
         const h = 0.55 + 0.45 * rand() * (1 - 0.5 * out);
-        return lean(B.MeshBuilder.CreateCylinder(name, { diameterTop: 0.05, diameterBottom: 0.3, height: h, tessellation: 5 }, scene), x, z, 0.15 + 0.35 * out, h);
+        return lean(B.MeshBuilder.CreateCylinder(name, { diameterTop: 0.05, diameterBottom: 0.34, height: h, tessellation: 5 }, scene), x, z, 0.15 + 0.35 * out, h);
       });
     } else if (kind === 'tuft') {
       parts = ring(8, 0.18).map(([x, z, out]) => {
         const h = 0.6 + 0.4 * rand();
-        return lean(B.MeshBuilder.CreateCylinder(name, { diameterTop: 0, diameterBottom: 0.08, height: h, tessellation: 3 }, scene), x, z, 0.2 + 0.45 * out, h);
+        return lean(B.MeshBuilder.CreateCylinder(name, { diameterTop: 0, diameterBottom: 0.10, height: h, tessellation: 3 }, scene), x, z, 0.2 + 0.45 * out, h);
       });
     } else if (kind === 'flower' || kind === 'poppies') {
-      parts = ring(kind === 'poppies' ? 9 : 5, 0.4).map(([x, z]) => {
-        const head = B.MeshBuilder.CreateSphere(name, { diameter: 0.3, segments: 2 }, scene);
-        head.bakeTransformIntoVertices(B.Matrix.Translation(x, 0.45 + 0.45 * rand(), z));
-        return head;
+      parts = ring(kind === 'poppies' ? 9 : 5, 0.38).flatMap(([x, z, out]) => {
+        const h = 0.18 + 0.24 * rand();
+        const stem = lean(B.MeshBuilder.CreateCylinder(name, { diameterTop: 0.03, diameterBottom: 0.06, height: h, tessellation: 4 }, scene), x, z, 0.08 * out, h);
+        const head = B.MeshBuilder.CreateSphere(name, { diameter: 0.26, segments: 2 }, scene);
+        head.bakeTransformIntoVertices(B.Matrix.Translation(x, h, z));
+        return [stem, head];
       });
     } else if (kind === 'drift') {
       // A snow bank: low overlapping mounds strung along the road, so drifts
@@ -3801,22 +3994,11 @@ export class ApexrunRenderer {
         node.rotation[axis] = turn;
         for (const twin of twins) twin.rotation[axis] = turn;
       });
-      // The boy's arm rests on the door, gripping its edge; a moment (the sim's
-      // wave timer) swaps in the waving arm, lifts it, waves it and lowers it,
-      // eased. His head glances about now and then.
-      const u = 1 - (kart.waveTimer ?? 0) / WAVE_TICKS;
-      const lift = kart.waveTimer > 0 ? smoothstep(0, 0.2, u) * (1 - smoothstep(0.8, 1, u)) : 0;
-      const waveZ = lerp(WAVE_REST, Math.sin(this.windTime * 13) * 0.3, lift);
-      const t = this.windTime + i * 3.7;
-      const glance = smoothstep(0, 1.2, t % GLANCE_PERIOD) * (1 - smoothstep(2.6, 3.8, t % GLANCE_PERIOD));
-      const headY = (Math.floor(t / GLANCE_PERIOD) % 2 ? GLANCE_GIRL : GLANCE_SCENERY) * glance;
-      for (const n of [meshObj.wave.node, ...meshObj.wave.twins]) { n.rotation.z = waveZ; this._setNodeEnabled(n, kart.waveTimer > 0); }
-      for (const n of [meshObj.rest.node, ...meshObj.rest.twins]) this._setNodeEnabled(n, !(kart.waveTimer > 0));
-      for (const n of [meshObj.head.node, ...meshObj.head.twins]) n.rotation.y = headY;
-      // Pulled up at her ending, the girl lifts her hand from the wheel and waves.
-      const parked = kart.isPlayer && state.parkedAt != null ? state.endTicks - state.parkedAt : -1;
-      const greet = parked < 0 ? 0 : smoothstep(0, 20, parked) * (1 - smoothstep(GIRL_WAVE_TICKS - 20, GIRL_WAVE_TICKS, parked));
-      meshObj.greet.pose(greet, this.windTime);
+      const rPose = computeRiderPose(state, kart, this.windTime, i);
+      for (const n of [meshObj.wave.node, ...meshObj.wave.twins]) { n.rotation.z = rPose.waveZ; this._setNodeEnabled(n, rPose.waving); }
+      for (const n of [meshObj.rest.node, ...meshObj.rest.twins]) this._setNodeEnabled(n, !rPose.waving);
+      for (const n of [meshObj.head.node, ...meshObj.head.twins]) n.rotation.y = rPose.headY;
+      meshObj.greet.pose(rPose.greet, this.windTime);
       // The car the player drives carries the full detail, the others the light.
       meshObj.riders.forEach((roots, lod) => { for (const r of roots) this._setNodeEnabled(r, (lod === 0) === !!kart.isPlayer); });
 
@@ -3865,80 +4047,19 @@ export class ApexrunRenderer {
       const px = playerKx;
       const py = playerKy;
       const pz = playerKz;
-      const steerAngle = playerSteer;
-      const ahead = this._roadAt(pz + 18.0, playerLx);
-      // The camera breathes (DESIGN.md "Chase camera"): close over the cockpit
-      // by default, it pulls back as speed builds and much further on nitro,
-      // closes in toward the hood when a car comes close, lifts over a crest,
-      // and swings up and wide for a landmark ahead. Each is a smooth function
-      // of the state.
-      const pace = Math.min(1, Math.max(0, (player.speed || 0) / 315));
-      let near = 0;
-      for (const other of [...(state.traffic || []), ...state.karts.filter((k) => !k.isPlayer)]) {
-        const d = Math.hypot((other.z - player.z) * S, (other.x - player.x) * this.lateralScale);
-        near = Math.max(near, 1 - smoothstep(NEAR_FULL, NEAR_GONE, d));
-      }
-      let pull = 0;
-      let pullSide = 0;
-      let hero = null;
-      for (const m of this.landmarks) {
-        const w = landmarkPull(m.z - pz);
-        if (w > pull) { pull = w; pullSide = m.side; hero = m.hero ? m : null; }
-      }
-      const gradeAhead = (this._roadAt(pz + 40, playerLx).y - this._roadAt(pz + 30, playerLx).y) / 10;
-      const crest = Math.min(0.3, Math.max(0, playerPitch - Math.atan(gradeAhead)));
-      const lag = CHASE_BACK + 2.0 * pace + 4 * this.boostT + PULL_BACK * pull;
-      const back = this._roadAt(pz - lag, playerLx);
-
-      const cos = Math.cos(playerPitch);
-      const sin = Math.sin(playerPitch);
-      // DESIGN.md "Race flow": before 3-2-1 the camera swoops down from
-      // above the grid and lands on the chase pose.
-      const intro = state.stageState === 'warmup' ? Math.max(0, Math.min(1, (state.countdown - COUNTDOWN_TICKS) / INTRO_TICKS)) : 0;
-      const e = intro * intro * (3 - 2 * intro);
-      // A car close by draws the camera onto the hood, for concentration;
-      // nitro and the start keep it in chase. It eases in over seconds, so a
-      // car passing by draws it part way and only one kept alongside takes
-      // it all the way.
-      const hoodTarget = near * (1 - this.boostT) * (1 - e);
-      this.hoodT += (hoodTarget - this.hoodT) * (hoodTarget > this.hoodT ? HOOD_IN : HOOD_OUT);
-      // A replay frames the landmark from the chase, never the hood.
-      if (cut) this.hoodT = 0;
-      const hood = this.hoodT;
-
-      // Chase: in the car's own pitched frame, so on any grade the car holds
-      // its place in the view and the road reads as level beneath it. Behind
-      // the car, as in racing games, it looks a little along the heading, so
-      // a turn rotates the view rather than sliding the car across it.
-      const rise = CREST_LIFT * crest;
-      const up = CHASE_UP - 0.15 * pace - 0.5 * this.boostT + rise + PULL_UP * pull;
-      const trail = pullSide * PULL_SWING * pull;
-      const look = playerSwing * CAMERA_LOOK;
-      const aim = CHASE_AIM + 4 * this.boostT + 4 * pull;
-      const aimUp = 0.3 + 0.6 * this.boostT;
-      const chaseEye = new B.Vector3(back.x - trail - 14 * e, py - lag * sin + up * cos + 30 * e, pz - lag * cos - up * sin - 18 * e);
-      const chaseAt = new B.Vector3(ahead.x - trail * 0.5 + look + pullSide * 4.7 * pull, py + aim * sin + aimUp * cos - 0.6 * rise - 6 * e, pz + aim * cos - aimUp * sin - 8 * e);
-      // A hero landmark turns the aim toward itself, keeping its distance, so
-      // it stands in the frame beside the road while the camera pulls back.
-      if (hero) {
-        const toRoad = chaseAt.subtract(chaseEye);
-        const reach = toRoad.length();
-        const toHero = new B.Vector3(hero.x, hero.y + hero.height * HERO_AIM, hero.z).subtract(chaseEye).normalize();
-        const turned = B.Vector3.Lerp(toRoad.normalize(), toHero, HERO_TURN * pull).normalize();
-        chaseAt.copyFrom(chaseEye.add(turned.scale(reach)));
-      }
-
-      // Hood: low over the front deck, the hood's edge framing the bottom of
-      // the view; fixed to the car, so on a grade it pitches with the hood.
-      const vibe = Math.sin((state.tick || 0) * 0.8) * ((player.speed || 0) / 300) * 0.006;
-      const hoodUp = HOOD_EYE.up + vibe;
-      const hoodEye = new B.Vector3(px, py + hoodUp * cos + HOOD_EYE.ahead * sin, pz + HOOD_EYE.ahead * cos - hoodUp * sin);
-      const hoodAt = new B.Vector3(ahead.x + look, hoodEye.y - 0.05 + Math.tan(playerPitch) * (pz + 24.0 - hoodEye.z), pz + 24.0);
-
-      this.bCamera.position.copyFrom(B.Vector3.Lerp(chaseEye, hoodEye, hood));
-      this.bCamera.setTarget(B.Vector3.Lerp(chaseAt, hoodAt, hood));
-      this.lens = lerp(this.lens, lerp(speedFov(player.speed || 0, this.boostT) + PULL_LENS * pull, 0.92 + 0.1 * this.boostT, hood), 0.1);
-      this.bCamera.fov = coverFov(this.lens, this.width / this.height);
+      const cam = computeCameraPose(
+        state,
+        { ...player, x: playerLx, heading: playerSwing },
+        { x: px, y: py, z: pz, pitch: playerPitch },
+        (z, x) => this._roadAt(z, x),
+        this.landmarks,
+        this,
+        this.width / this.height,
+        cut,
+      );
+      this.bCamera.position.set(cam.eye[0], cam.eye[1], cam.eye[2]);
+      this.bCamera.setTarget(new B.Vector3(cam.at[0], cam.at[1], cam.at[2]));
+      this.bCamera.fov = cam.fov;
       const shot = cut && this._replayShot(B, cut, state, a, new B.Vector3(px, py, pz));
       this.shotHeld = !!shot;
       if (shot) {

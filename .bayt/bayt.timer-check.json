@@ -5,7 +5,7 @@
     "manual": false,
     "build": {
       "additional_contexts": {
-        "libraries_mecha-database-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/mecha-database:0.20.6@sha256:d3eb729237d5bcdead34c500e4f482b86f4cfce00994b98a7c5a27745880b624}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image}"
+        "libraries_mecha-database-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/mecha-database:0.22.0@sha256:ed58b6be6cd69658fbb4e6daff1f91b8923b333f364905c4dacdec2974a05d82}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image}"
       },
       "secrets": [],
       "args": {}
@@ -21,6 +21,9 @@
     "depends_on": {
       "apexrun-database": {
         "condition": "service_healthy"
+      },
+      "apexrun-migrate": {
+        "condition": "service_completed_successfully"
       }
     },
     "networks": {
@@ -58,7 +61,40 @@
     "healthcheck": null,
     "incremental": false
   },
+  "entrypoint": {
+    "do": "open .bayt/bayt.timer-check.json | get dockerfile.epilogue.0 | lines | skip 1 | drop 1 | str join (char nl) | ^psql -X --set=ON_ERROR_STOP=1 --single-transaction",
+    "shell": "nu",
+    "env": {
+      "PGHOST": {
+        "peer": "database",
+        "port": "pg",
+        "part": "host",
+        "prefix": "",
+        "suffix": ""
+      },
+      "PGUSER": "${POSTGRES_USER:-postgres}",
+      "PGPASSWORD": "${POSTGRES_PASSWORD:-postgres}",
+      "PGDATABASE": "${POSTGRES_DB:-apexrun}"
+    },
+    "after": {
+      "database": "healthy",
+      "migrate": "completed"
+    },
+    "host": true
+  },
   "name": "timer-check",
+  "process-compose": {
+    "activate": "mise x --",
+    "env": {
+      "PGPORT": {
+        "peer": "database",
+        "port": "pg",
+        "part": "port",
+        "prefix": "",
+        "suffix": ""
+      }
+    }
+  },
   "project": "apexrun",
   "dir": ".",
   "activate": "",
@@ -108,7 +144,8 @@
       },
       "upClosure": [
         "./.bayt/compose.timer-check.yaml",
-        "./.bayt/compose.database.yaml"
+        "./.bayt/compose.database.yaml",
+        "./.bayt/compose.migrate.yaml"
       ]
     },
     "outs": {
@@ -137,29 +174,43 @@
       },
       "upClosure": [
         "./.bayt/compose.timer-check.yaml",
-        "./.bayt/compose.database.yaml"
+        "./.bayt/compose.database.yaml",
+        "./.bayt/compose.migrate.yaml"
       ]
     }
   },
   "visibility": "internal",
   "emitsSrcs": false,
   "deps": [
-    "database_outs"
+    "database_outs",
+    "migrate_outs"
   ],
   "sameProjectDeps": [
-    "database_outs"
+    "database_outs",
+    "migrate_outs"
   ],
   "transitiveDeps": [
-    "database_outs"
+    "database_outs",
+    "migrate_outs"
   ],
   "transitiveCrossDeps": [],
   "upClosure": [
     "./.bayt/compose.timer-check.yaml",
-    "./.bayt/compose.database.yaml"
+    "./.bayt/compose.database.yaml",
+    "./.bayt/compose.migrate.yaml"
   ],
   "chainedDeps": [
     {
       "name": "database_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    },
+    {
+      "name": "migrate_outs",
       "project": "apexrun",
       "dir": ".",
       "outs": {

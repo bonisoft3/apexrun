@@ -2,8 +2,8 @@
 // runs: presence leases, the challenge's answers and deadline, the duel's
 // signalling, its joined milestones, the desync dispute, the result and the
 // disconnect timeout.
-import { assertEquals } from "jsr:@std/assert@1.0.11";
-import { machine, uuid } from "./online-fixture.ts";
+import { assert, assertEquals } from "jsr:@std/assert@1.0.11";
+import { engine, machine, sha256, uuid } from "./online-fixture.ts";
 
 Deno.test("presence separates a racer's visibility from its tabs' expiring leases", async () => {
   type Presence = { phase: string; name: string; leases: { id: string; until: number }[]; until: number };
@@ -139,5 +139,16 @@ Deno.test("either racer can release a duel after connection failure, before its 
       assertEquals([cancelled.state.phase, cancelled.state.deadline], ["abandoned", 0]);
       assertEquals((await step(cancelled.state, "describe", { description: "late" }, 1400, actor)).reason, "illegal_event");
     }
+  }
+});
+
+Deno.test("the retained runtime upgrade contains the current engine for every mecha", async () => {
+  const upgrade = await Deno.readTextFile(new URL("../services/database/sql/018_mecha_engines.sql", import.meta.url));
+  assert(upgrade.includes("-- tier: container\n"));
+  assert(upgrade.endsWith("-- tier: any\n"));
+  for (const name of ["challenge", "duel", "presence"]) {
+    const installed = upgrade.match(new RegExp(`CREATE OR REPLACE FUNCTION hybrid_apexrun_${name}\\.engine\\(input jsonb\\) RETURNS jsonb LANGUAGE plv8 AS \\$mecha\\$[\\s\\S]*?\\$mecha\\$;`))?.[0];
+    assert(installed, `the upgrade installs no engine for ${name}`);
+    assertEquals(await sha256(installed), await engine(name), `the upgrade has a stale engine for ${name}`);
   }
 });

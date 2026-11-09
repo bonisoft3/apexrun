@@ -43,6 +43,7 @@
       "scope": "private"
     }
   },
+  "actors": {},
   "app": "apexrun",
   "auth": {
     "required": false,
@@ -344,20 +345,20 @@
         "strip": false
       },
       "files": {
-        "html": "shell/screens/arena.html",
-        "css": "shell/screens/arena.css",
+        "adapters": [],
         "handlers": [
           "shell/handlers/lease.js",
           "shell/handlers/lobby.js",
           "shell/handlers/run.js"
         ],
-        "adapters": [],
         "shared": [],
         "renderers": [
           "shell/renderers/ending.js",
           "shell/renderers/run_time.js",
           "shell/renderers/stage.js"
-        ]
+        ],
+        "html": "shell/screens/arena.html",
+        "css": "shell/screens/arena.css"
       },
       "ssr": "ssr",
       "states": [
@@ -773,6 +774,15 @@
           "required": true
         },
         {
+          "enum": [
+            "grid",
+            "start",
+            "landmark",
+            "checkpoint",
+            "time-over",
+            "finish",
+            "duel-finish"
+          ],
           "name": "kind",
           "type": "string",
           "required": true
@@ -798,13 +808,168 @@
           "required": true
         },
         {
-          "name": "detail",
-          "type": "string",
+          "bounds": {
+            "kind": "object",
+            "fields": {
+              "close_passes": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "close_points": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "distance_points": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "duel": {
+                "kind": "boolean"
+              },
+              "entry_stage": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "final_stage": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "goal_a": {
+                "kind": "integer",
+                "intMin": -1,
+                "intMax": 1000000
+              },
+              "goal_b": {
+                "kind": "integer",
+                "intMin": -1,
+                "intMax": 1000000
+              },
+              "hold": {
+                "kind": "integer",
+                "intMin": 0,
+                "intMax": 8000
+              },
+              "metres": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "next": {
+                "kind": "object",
+                "fields": {
+                  "final": {
+                    "kind": "boolean"
+                  },
+                  "id": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "left": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "name": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "num": {
+                    "kind": "integer",
+                    "intMin": 0,
+                    "intMax": 5
+                  },
+                  "right": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  }
+                }
+              },
+              "outcome": {
+                "kind": "string",
+                "sizeMax": 64
+              },
+              "per_close_pass": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "per_rival": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "rival_points": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "rivals_beaten": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "run_ms": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "score": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "stage": {
+                "kind": "object",
+                "fields": {
+                  "final": {
+                    "kind": "boolean"
+                  },
+                  "id": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "left": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "name": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "num": {
+                    "kind": "integer",
+                    "intMin": 0,
+                    "intMax": 5
+                  },
+                  "right": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  }
+                }
+              },
+              "time_points": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "winner": {
+                "kind": "integer",
+                "intMin": -1,
+                "intMax": 1
+              }
+            }
+          },
+          "name": "detail_value",
+          "type": "json",
           "required": true
         },
         {
-          "name": "snapshot",
-          "type": "string",
+          "name": "snapshot_value",
+          "type": "json",
           "required": true
         }
       ]
@@ -2288,6 +2453,7 @@
     "services/database/migrations/006_policies.sql",
     "services/database/migrations/007_txid.sql",
     "services/database/migrations/008_publication.sql",
+    "services/database/migrations/003_rls.sql",
     "services/database/migrations/016_mecha_actors.sql",
     "services/database/migrations/010_high_score_writes.sql"
   ],
@@ -2297,19 +2463,8 @@
       "isolation": "agent",
       "ports": {
         "reads": [],
-        "raises": []
+        "raises": {}
       },
-      "role": "presenter",
-      "scripts": [
-        {
-          "url": "https://cdn.jsdelivr.net/npm/babylonjs@9.31.0/babylon.js",
-          "integrity": "sha384-GbwOam+gaf7GWvN708CvUiGqRFPFMS/lpYod2JfIip04KMa4TIJ8HXRjhwvT9DMC"
-        },
-        {
-          "url": "https://cdn.jsdelivr.net/npm/babylonjs-loaders@9.31.0/babylonjs.loaders.min.js",
-          "integrity": "sha384-4Lrx0JNQdcaB2SaX4xPoA2b15Fnq+ZEdBNyjRNds6RUVsA5oVRIh9GoVvIQLwBJ4"
-        }
-      ],
       "files": [
         "shell/engine/present.js",
         "shell/engine/renderer.js",
@@ -2322,6 +2477,17 @@
         "shell/engine/simulation.js",
         "shell/engine/prng.js",
         "assets/manifest.json"
+      ],
+      "role": "presenter",
+      "scripts": [
+        {
+          "url": "https://cdn.jsdelivr.net/npm/babylonjs@9.31.0/babylon.js",
+          "integrity": "sha384-GbwOam+gaf7GWvN708CvUiGqRFPFMS/lpYod2JfIip04KMa4TIJ8HXRjhwvT9DMC"
+        },
+        {
+          "url": "https://cdn.jsdelivr.net/npm/babylonjs-loaders@9.31.0/babylonjs.loaders.min.js",
+          "integrity": "sha384-4Lrx0JNQdcaB2SaX4xPoA2b15Fnq+ZEdBNyjRNds6RUVsA5oVRIh9GoVvIQLwBJ4"
+        }
       ],
       "seed": true,
       "src": "shell/engine/present.js"

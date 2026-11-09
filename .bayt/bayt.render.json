@@ -5,7 +5,7 @@
     "manual": false,
     "build": {
       "additional_contexts": {
-        "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.21.7@sha256:300583571c8a5434d59c7ada9a3b5c2f6319d5768b3950a9f06504d96237d1a8}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+        "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.23.0@sha256:9e7861696845c9de63969944d79722fb75810e338d7850a0dcd872806bea1d37}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
       },
       "secrets": [],
       "args": {}
@@ -156,7 +156,58 @@
       "plugins/omnishell/server/render.ts"
     ]
   },
+  "entrypoint": {
+    "do": "let omni = (if (($env.OMNISHELL_DIR? | default '') != '') { $env.OMNISHELL_DIR } else { (^mise where github:bonisoft3/omnishell | str trim) }); let served = ($env.BAYT_LOCAL_SERVED_DIR? | default ''); let cfg = ($env.BAYT_LOCAL_RENDER_ENTRY? | default (if $served != '' { ($served | path join 'srv/shell/index.html') } else { 'shell/index.html' })); let entry = (if ($cfg | path exists) { $cfg } else { 'shell/index.html' }); with-env { ENTRY: $entry } { ^deno run --frozen --config ($omni | path join 'server/deno.json') --allow-net --allow-env --allow-read ($omni | path join 'server/render.ts') }",
+    "shell": "nu",
+    "env": {
+      "DOOR": {
+        "peer": "caddy",
+        "port": "http",
+        "part": "addr",
+        "prefix": "http://",
+        "suffix": ""
+      },
+      "DOOR_TIMEOUT_MS": "41000",
+      "ORIGIN": "${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT}}"
+    },
+    "after": {
+      "caddy": "healthy",
+      "crud": "healthy",
+      "electric": "healthy",
+      "auth": "started"
+    },
+    "host": true
+  },
+  "expose": {
+    "http": {
+      "port": 8090,
+      "env": "PORT"
+    }
+  },
+  "healthcheck": {
+    "template": "http",
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "port": 8090,
+    "path": "/health",
+    "url": "http://127.0.0.1:8090/health",
+    "authorization": null,
+    "headers": [],
+    "start_interval": "200ms",
+    "interval": "1s",
+    "timeout": "5s",
+    "retries": 30,
+    "start_period": "120s"
+  },
   "name": "render",
+  "process-compose": {
+    "activate": "mise x --",
+    "availability": {
+      "restart": "on_failure",
+      "backoff_seconds": 1,
+      "max_restarts": 15
+    }
+  },
   "project": "apexrun",
   "dir": ".",
   "activate": "",
@@ -236,6 +287,7 @@
         "./.bayt/compose.caddy.yaml",
         "./.bayt/compose.crud.yaml",
         "./.bayt/compose.database.yaml",
+        "./.bayt/compose.migrate.yaml",
         "./.bayt/compose.timer-check.yaml",
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
@@ -271,6 +323,7 @@
         "./.bayt/compose.caddy.yaml",
         "./.bayt/compose.crud.yaml",
         "./.bayt/compose.database.yaml",
+        "./.bayt/compose.migrate.yaml",
         "./.bayt/compose.timer-check.yaml",
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
@@ -320,13 +373,7 @@
       "env": {},
       "visibility": "internal",
       "deps": [],
-      "transitiveDeps": [
-        "caddy_outs_srcs",
-        "crud_outs_srcs",
-        "electric_outs_srcs",
-        "auth_outs_srcs",
-        "served_outs_srcs"
-      ],
+      "transitiveDeps": [],
       "transitiveCrossDeps": [],
       "chainedDeps": [],
       "cmds": [],
@@ -339,6 +386,7 @@
         "./.bayt/compose.caddy.yaml",
         "./.bayt/compose.crud.yaml",
         "./.bayt/compose.database.yaml",
+        "./.bayt/compose.migrate.yaml",
         "./.bayt/compose.timer-check.yaml",
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
@@ -375,6 +423,7 @@
     "./.bayt/compose.caddy.yaml",
     "./.bayt/compose.crud.yaml",
     "./.bayt/compose.database.yaml",
+    "./.bayt/compose.migrate.yaml",
     "./.bayt/compose.timer-check.yaml",
     "./.bayt/compose.served.yaml",
     "./.bayt/compose.electric.yaml",

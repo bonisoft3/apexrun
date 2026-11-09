@@ -5,6 +5,7 @@ WORKDIR /app
 COPY services/assets/seed.ts assets/manifest.json /app/
 COPY --parents services/assets/seed.ts assets/manifest.json ./
 COPY .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/bayt.assets.json ./.bayt/
+EXPOSE 8787
 CMD ["run", "--cached-only", "--allow-read=/app,/data", "--allow-write=/data", "--allow-env", "--allow-net=storage.googleapis.com,0.0.0.0:8787", "seed.ts"]
 RUN deno cache seed.ts
 

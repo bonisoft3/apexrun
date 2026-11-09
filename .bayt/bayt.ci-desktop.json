@@ -1,0 +1,272 @@
+{
+  "_generated_from": "bayt.cue (do not edit)",
+  "compose": {
+    "up": false,
+    "manual": false,
+    "build": {
+      "additional_contexts": {
+        "workspaceroot-pronto-sources_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:workspaceroot-pronto-sources_srcs}"
+      },
+      "secrets": [],
+      "args": {}
+    },
+    "environment": {},
+    "ports": [],
+    "volumes": [],
+    "depends_on": {}
+  },
+  "dockerfile": {
+    "preamble": [
+      "COPY --from=bonitao/lazybox:0.8.5@sha256:091a3b63ba222777000acc3bf8327faebfea4870e23ee07c6eb42431dadb2ac6 /lazybox/ /root/.local/share/lazybox/",
+      "ENV PATH=/root/.local/bin:/root/.local/share/lazybox/bin:$PATH",
+      "ENV MISE_TRUSTED_CONFIG_PATHS=/monorepo"
+    ],
+    "preambleCopyContexts": [],
+    "from": {
+      "name": "rust:1.94.1-slim@sha256:cf09adf8c3ebaba10779e5c23ff7fe4df4cccdab8a91f199b0c142c53fef3e1a"
+    },
+    "add": [],
+    "mounts": [],
+    "secrets": {},
+    "extra_hosts": [],
+    "epilogue": [],
+    "copy": [
+      {
+        "from": {
+          "name": "denoland/deno:bin-2.9.7@sha256:bc5aa4466e21b6d3021226a85ba2e1911f7c386254d97b9d797903ab74edace2"
+        },
+        "srcs": [
+          "/deno"
+        ],
+        "dst": "/usr/local/bin/deno",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
+      {
+        "from": {
+          "name": "workspaceroot-pronto-sources_srcs"
+        },
+        "srcs": [
+          "/monorep[o]"
+        ],
+        "dst": "/monorepo/",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      }
+    ],
+    "healthcheck": null,
+    "expose": [],
+    "entrypoint": null,
+    "incremental": false,
+    "cmd": null
+  },
+  "name": "ci-desktop",
+  "project": "apexrun",
+  "dir": ".",
+  "activate": "",
+  "srcs": {
+    "globs": [
+      "services/assets/seed.ts",
+      "assets/manifest.json",
+      "desktop/Cargo.toml",
+      "desktop/Cargo.lock",
+      "desktop/build.rs",
+      "desktop/src/**/*",
+      "desktop/fixtures/**/*",
+      "[.]mise.toml",
+      "[m]ise.lock",
+      "[m]ise.local.toml"
+    ],
+    "exclude": []
+  },
+  "outs": {
+    "globs": [],
+    "exclude": []
+  },
+  "state": {
+    "globs": []
+  },
+  "env": {
+    "CARGO_HOME": "/root/.cargo",
+    "CARGO_TARGET_DIR": "/cargo-target"
+  },
+  "synthetics": {
+    "bayt": {
+      "name": "ci-desktop_bayt",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [
+          ".bayt/compose.ci-desktop.yaml",
+          ".bayt/Dockerfile.ci-desktop",
+          ".bayt/bayt.ci-desktop.json",
+          ".bayt/Taskfile.yml",
+          ".bayt/Taskfile.bayt.yml",
+          ".bayt/Taskfile.ci-desktop.yaml",
+          ".bayt/process-compose.yaml"
+        ],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.ci-desktop.yaml"
+      ]
+    },
+    "outs": {
+      "name": "ci-desktop_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.ci-desktop.yaml"
+      ]
+    },
+    "srcs": {
+      "name": "ci-desktop_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [
+          "services/assets/seed.ts",
+          "assets/manifest.json",
+          "desktop/Cargo.toml",
+          "desktop/Cargo.lock",
+          "desktop/build.rs",
+          "desktop/src/**/*",
+          "desktop/fixtures/**/*",
+          "[.]mise.toml",
+          "[m]ise.lock",
+          "[m]ise.local.toml"
+        ],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.ci-desktop.yaml"
+      ]
+    }
+  },
+  "taskfile": {
+    "run": "once",
+    "incremental": false,
+    "preconditions": []
+  },
+  "visibility": "internal",
+  "emitsSrcs": true,
+  "deps": [],
+  "sameProjectDeps": [],
+  "transitiveDeps": [],
+  "transitiveCrossDeps": [],
+  "upClosure": [
+    "./.bayt/compose.ci-desktop.yaml"
+  ],
+  "chainedDeps": [],
+  "cmds": [
+    {
+      "srcs": {
+        "globs": [
+          "services/assets/seed.ts",
+          "assets/manifest.json",
+          "desktop/Cargo.toml",
+          "desktop/Cargo.lock",
+          "desktop/build.rs",
+          "desktop/src/**/*",
+          "desktop/fixtures/**/*",
+          "[.]mise.toml",
+          "[m]ise.lock",
+          "[m]ise.local.toml"
+        ],
+        "exclude": [],
+        "defaultGlobs": null,
+        "defaultExclude": null
+      },
+      "shell": "sh",
+      "do": "mise install github:bonisoft3/omnishell && omnishell=\"$(mise where github:bonisoft3/omnishell)\" && deno eval 'import { seed } from \"./services/assets/seed.ts\"; const dir = \".seed-assets\"; await Deno.mkdir(dir, { recursive: true }); const m = JSON.parse(await Deno.readTextFile(\"assets/manifest.json\")); await seed(m, \"https://storage.googleapis.com/trash-362115-supertuxkart-assets\", { has: (f) => Deno.stat(`${dir}/${f}`).then(() => true, () => false), put: (f, b) => Deno.writeFile(`${dir}/${f}`, b) });' && cargo test --locked --manifest-path \"$omnishell/desktop/Cargo.toml\" --lib --bins --tests && cargo test --locked --manifest-path desktop/Cargo.toml --lib --bins --tests",
+      "dockerfile": {
+        "mounts": [
+          {
+            "type": "cache",
+            "target": "/root/.cargo/registry",
+            "scope": "project",
+            "required": false
+          },
+          {
+            "type": "cache",
+            "target": "/root/.cargo/git",
+            "scope": "project",
+            "required": false
+          },
+          {
+            "type": "cache",
+            "target": "/cargo-target",
+            "scope": "project",
+            "required": false
+          },
+          {
+            "type": "cache",
+            "target": ".seed-assets",
+            "scope": "project",
+            "required": false
+          }
+        ]
+      },
+      "name": "builtin",
+      "stop": false
+    }
+  ],
+  "cache": {
+    "full": false,
+    "similar": false
+  }
+}

@@ -6,7 +6,7 @@ services:
         apexrun-browser: service:apexrun-browser
         apexrun-launch: service:apexrun-launch
         plugins_omnishell-runtime-image: >-
-          ${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.21.7@sha256:300583571c8a5434d59c7ada9a3b5c2f6319d5768b3950a9f06504d96237d1a8}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}
+          ${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.23.0@sha256:9e7861696845c9de63969944d79722fb75810e338d7850a0dcd872806bea1d37}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}
       context: ..
       dockerfile: .bayt/Dockerfile.check-duel
       target: check-duel
@@ -21,12 +21,14 @@ services:
     - mise
     - x
     - --
-    - sh
+    - nu
     - -c
     - >-
-      deno run --config tests/deno.json --lock tests/deno.lock --frozen
-      --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run
-      --allow-sys --unsafely-ignore-certificate-errors=caddy tests/duel.ts .
+      let omnishell = (^mise where github:bonisoft3/omnishell | str trim); deno run
+      --config ($$omnishell | path join test deno.json) --lock ($$omnishell | path join
+      test deno.lock) --frozen --unstable-raw-imports --allow-read --allow-write
+      --allow-net --allow-env --allow-run --allow-sys
+      --unsafely-ignore-certificate-errors=caddy tests/duel.ts .
     depends_on:
       apexrun-launch:
         condition: service_healthy
@@ -35,6 +37,7 @@ services:
       APP_URL: https://caddy:8443
       DATABASE_URL: >-
         postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-apexrun}
+      DOOR: http://caddy:8080
       ORIGIN: ${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
       PGRST_JWT_SECRET: ${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
       SETTLE_TIMEOUT_MS: "50000"

@@ -12,12 +12,26 @@ from gltf_io import Prim, write_glb
 class Part:
     """One welded surface of a material. col: per-vertex RGB multiplier before AO."""
 
-    def __init__(self, mat, V, F, col=None, ao=True):
+    def __init__(self, mat, V, F, col=None, ao=True, dome_centre=None, dome_radii=None, dome_weight=0.0):
         V, F = np.asarray(V, float), np.asarray(F, np.int64)
         col = np.ones((len(V), 3)) if col is None else np.asarray(col(V) if callable(col) else col, float)
         V, F, keep = weld(V, F)
         self.mat, self.V, self.F, self.col = mat, V, F, col[keep]
         self.ao = ao
+        self.dome_centre = np.asarray(dome_centre, float) if dome_centre is not None else None
+        self.dome_radii = np.asarray(dome_radii, float) if dome_radii is not None else np.ones(3)
+        self.dome_weight = float(dome_weight)
+
+
+def part_normals(p):
+    N = normals(p.V, p.F)
+    if p.dome_centre is not None and p.dome_weight > 0.0:
+        d = (p.V - p.dome_centre[None, :]) / np.maximum(p.dome_radii[None, :] ** 2, 1e-6)
+        dn = d / np.maximum(np.linalg.norm(d, axis=1, keepdims=True), 1e-12)
+        w = p.dome_weight
+        N = (1.0 - w) * N + w * dn
+        N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)
+    return N
 
 
 def weld(V, F, eps=1e-6):
@@ -238,18 +252,23 @@ def blob(sdf, centre, n, relax=6):
     return V, F
 
 
-def ribbon(C, up, width, cols, fold=0.0, serr=None, twist=None, slant=0.0):
+def ribbon(C, up, width, cols, fold=0.0, serr=None, twist=None, slant=0.0, droop_edge=0.0):
     """Thin leaf/blade along centreline C (n,3): `up` the leaf's face normal hint, width(t) the half-width, cols in
     [-1, 1] across, fold lifts the sides into a V (fraction of the half-width), serr(t, side) scales edge columns
     (leaflet notches); slant moves full-width edge vertices toward the tip by that fraction of a row, so the notches
-    read as leaflets pointing forward. Returns V, F, t (per vertex, 0 at the base) and across (per vertex)."""
+    read as leaflets pointing forward; droop_edge pulls outer pinnae tips down along -up. Returns V, F, t and across."""
     C = np.asarray(C, float)
+    up_v = np.asarray(up, float)
+    up_v = up_v / max(np.linalg.norm(up_v), 1e-12)
     n = len(C)
     t = np.linspace(0, 1, n)
     T = np.gradient(C, axis=0); T /= np.linalg.norm(T, axis=1, keepdims=True)
     V, tv, av = [], [], []
     for i in range(n):
-        side = np.cross(T[i], up); side /= np.linalg.norm(side)
+        side = np.cross(T[i], up_v)
+        if np.linalg.norm(side) < 1e-6:
+            side = np.cross(T[i], np.array([1.0, 0.0, 0.0]))
+        side /= np.linalg.norm(side)
         if twist is not None:
             a = twist * t[i]
             side = side * np.cos(a) + np.cross(T[i], side) * np.sin(a)
@@ -258,8 +277,9 @@ def ribbon(C, up, width, cols, fold=0.0, serr=None, twist=None, slant=0.0):
         step = np.linalg.norm(C[min(i + 1, n - 1)] - C[max(i - 1, 0)]) / 2
         for k in cols:
             s = 1.0 if serr is None or abs(k) < 0.99 else serr(t[i], i)
-            fwd = T[i] * slant * step * abs(k) if (s >= 1.0 and serr is not None and 0 < i < n - 1) else 0
-            V.append(C[i] + side * k * w * s + nrm * fold * w * abs(k) + fwd)
+            fwd = T[i] * slant * step * abs(k) if (s >= 0.85 and serr is not None and 0 < i < n - 1) else 0
+            drp = -up_v * droop_edge * w * (abs(k) ** 1.45) * s
+            V.append(C[i] + side * k * w * s + nrm * fold * w * abs(k) + fwd + drp)
             tv.append(t[i]); av.append(k)
     A = len(cols)
     F = []
@@ -270,9 +290,41 @@ def ribbon(C, up, width, cols, fold=0.0, serr=None, twist=None, slant=0.0):
     return np.array(V), np.array(F), np.array(tv), np.array(av)
 
 
+def leaf_tuft_shell(centre, normal, rx, ry, lobes=5, cup=0.22, rings=2, segs=10):
+    """3D cupped, scalloped gouache leaf-cluster shell rooted at `centre - normal * cup * 0.45` and arching outward."""
+    c = np.asarray(centre, float)
+    nrm = np.asarray(normal, float)
+    nrm = nrm / max(np.linalg.norm(nrm), 1e-12)
+    up = np.array([0.0, 1.0, 0.0]) if abs(nrm[1]) < 0.92 else np.array([1.0, 0.0, 0.0])
+    u = np.cross(up, nrm); u /= max(np.linalg.norm(u), 1e-12)
+    v = np.cross(nrm, u)
+    V = [c + nrm * (cup * 0.35 * rx)]
+    for ir in range(1, rings + 1):
+        fr = ir / rings
+        for j in range(segs):
+            th = 2.0 * np.pi * j / segs
+            scallop = 1.0 + 0.22 * (fr ** 1.2) * np.cos(lobes * th)
+            px = np.cos(th) * rx * fr * scallop
+            py = np.sin(th) * ry * fr * scallop
+            pz = cup * rx * (0.35 - 0.85 * (fr ** 1.5) - 0.14 * np.max([0.0, -np.sin(th)]))
+            V.append(c + u * px + v * py + nrm * pz)
+    F = []
+    for j in range(segs):
+        j1 = (j + 1) % segs
+        F.append([0, 1 + j, 1 + j1])
+    for ir in range(1, rings):
+        b0 = 1 + (ir - 1) * segs
+        b1 = 1 + ir * segs
+        for j in range(segs):
+            j1 = (j + 1) % segs
+            F.append([b0 + j, b1 + j, b1 + j1])
+            F.append([b0 + j, b1 + j1, b0 + j1])
+    return np.array(V, float), np.array(F, np.int64)
+
+
 # ---------------------------------------------------------------- shading and output
 
-def bake_ao(parts, rays=256, ground=True, lo=0.5, gamma=0.6):
+def bake_ao(parts, rays=256, ground=True, lo=0.38, gamma=0.68):
     """Per-vertex ambient occlusion of all parts together (plus a ground plane) via pymeshlab, mapped to a multiplier in
     [lo, 1] and folded into each part's colour."""
     Vs, Fs, base = [], [], 0
@@ -299,7 +351,7 @@ def bake_ao(parts, rays=256, ground=True, lo=0.5, gamma=0.6):
             p.col = p.col * (lo + (1 - lo) * a ** gamma)[:, None]
 
 
-def write(path, name, parts, materials, ao=True, ao_lo=0.5):
+def write(path, name, parts, materials, ao=True, ao_lo=0.38):
     """materials: glTF dicts; parts sharing a material become one primitive."""
     if ao:
         bake_ao(parts, lo=ao_lo)
@@ -311,7 +363,7 @@ def write(path, name, parts, materials, ao=True, ao_lo=0.5):
         ps = [p for p in parts if p.mat == mn]
         Vs, Ns, Cs, Fs, base = [], [], [], [], 0
         for p in ps:
-            Vs.append(p.V); Ns.append(normals(p.V, p.F)); Cs.append(np.clip(p.col, 0, 1)); Fs.append(p.F + base); base += len(p.V)
+            Vs.append(p.V); Ns.append(part_normals(p)); Cs.append(np.clip(p.col, 0, 1)); Fs.append(p.F + base); base += len(p.V)
         pr = Prim(mi, np.vstack(Vs), np.vstack(Ns), None, np.vstack(Fs))
         pr.color = np.vstack(Cs)
         prims.append(pr)

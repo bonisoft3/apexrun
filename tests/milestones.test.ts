@@ -4,9 +4,24 @@
 // to any of them. Loading a milestone the way scrubbing the rows' history
 // does lands on the forward run's own frame, checksum for checksum.
 import { assert, assertEquals } from "jsr:@std/assert@1";
-import { createKineticHost, canonical, checksum, unpackInputs, ggrsWasm, evaluateEngine, createRollbackHost, loadMilestone } from "./platform.ts";
+import { run as evaluateCel } from "npm:@bufbuild/cel@0.5.0";
+import { createKineticHost, canonical, checksum, unpackInputs, ggrsWasm, evaluateEngine, createRollbackHost, loadMilestone, evaluateHandler } from "./platform.ts";
 const caged = await evaluateEngine(JSON.parse(await Deno.readTextFile(new URL("../shell/engines/apexrun.json", import.meta.url))));
 const solo = { width: 2, encode: caged.encodeCommand, decode: caged.decodeCommand, snapshots: caged.milestoneSnapshots };
+const handler = await evaluateHandler(await Deno.readTextFile(new URL("../shell/handlers/run.js", import.meta.url)));
+const inputs: { entities: Record<string, { table: string; fields: { name: string; cel: string }[] }> } = JSON.parse(await Deno.readTextFile(new URL("../.pronto/check-inputs.json", import.meta.url)));
+const fields = Object.values(inputs.entities).find((e) => e.table === "run_milestone")!.fields;
+const detailCel = fields.find((f) => f.name === "detail_value")!.cel;
+const kindCel = fields.find((f) => f.name === "kind")!.cel;
+
+// deno-lint-ignore no-explicit-any
+function admitted(m: any) {
+  const row = handler({ rows: {} }, { type: "milestone", detail: { ...m, race: "1" } }).updates[0].row;
+  assertEquals(evaluateCel(kindCel, { this: row.kind }), true, `kind ${m.kind}`);
+  assertEquals(evaluateCel(detailCel, { this: row.detail_value }), true, `detail ${m.kind}`);
+  if (m.snapshot !== undefined) assertEquals(row.snapshot_value, m.snapshot, "the replay snapshot survives the boundary");
+}
+
 
 const runs: Record<string, string[]> = {
   // Each run starts where it was recorded: from the title, or on the road.
@@ -30,6 +45,7 @@ for (const [name, kinds] of Object.entries(runs)) {
       }
     }
     assertEquals(rows.map((r) => r.kind), kinds);
+    rows.forEach(admitted);
     // Seconds to minutes apart, never per frame.
     for (let i = 1; i < rows.length; i++) assert(rows[i].frame - rows[i - 1].frame > 60, `${rows[i].kind} ${rows[i].frame - rows[i - 1].frame} frames after ${rows[i - 1].kind}`);
     const at = createKineticHost({ engine: caged, seed: run.seed, initOptions: run.initOptions, historyLimit: 64, milestones: { ...solo, onLift: () => {} } });
@@ -72,8 +88,14 @@ Deno.test("milestones: the recorded duel lifts its finish once through the rollb
   for (const [count, input] of run.inputs) for (let i = 0; i < count; i++) host.step(input);
   // The session settles what lies past its check distance; step it on idle.
   for (let i = 0; i < 10; i++) host.step([{}, {}]);
+  rows.forEach(admitted);
   assertEquals(rows.filter((r) => r.kind === "duel-finish").length, 1);
   const finish = rows.findIndex((r) => r.kind === "duel-finish");
+  const draw = { ...rows[finish], detail: { ...rows[finish].detail, winner: null, goal: [null, null] } };
+  admitted(draw);
+  const drawRow = handler({ rows: {} }, { type: "milestone", detail: { ...draw, race: "1" } }).updates[0].row;
+  assertEquals([drawRow.detail_value.winner, drawRow.detail_value.goal_a, drawRow.detail_value.goal_b], [-1, -1, -1]);
+  admitted({ ...rows[finish], kind: "time-over", detail: { ...rows[finish].detail, duel: true } });
   const replayed = loadMilestone(caged, { seed: run.seed, initOptions: run.initOptions, decode: (b: Uint8Array) => caged.decodeInputs(b, [0, 0]) }, rows, finish);
   assertEquals(replayed.duel, run.covers.duel);
   host.dispose();

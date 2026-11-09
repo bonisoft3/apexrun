@@ -465,11 +465,21 @@
       "9": {
         "name": "detail",
         "type": "string",
-        "retired": false
+        "retired": true
       },
       "10": {
         "name": "snapshot",
         "type": "string",
+        "retired": true
+      },
+      "11": {
+        "name": "detail_value",
+        "type": "json",
+        "retired": false
+      },
+      "12": {
+        "name": "snapshot_value",
+        "type": "json",
         "retired": false
       }
     }

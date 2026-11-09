@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "apexrun-desktop-host"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+build = "build.rs"
+
+[[bin]]
+name = "apexrun-mac"
+path = "src/bin/apexrun_mac.rs"
+
+[dependencies]
+omnishell-winio = { path = "../../../plugins/omnishell/desktop/winio" }
+omnishell-bevy-presenter = { path = "../../../plugins/omnishell/desktop/bevy-presenter" }
+omnishell-audio = { path = "../../../plugins/omnishell/desktop/audio" }

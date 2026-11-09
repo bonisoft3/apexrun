@@ -31,12 +31,12 @@
   // A milestone row as the duel machine joins it: a finish carries who won
   // (a seat, or a draw) and each car's frames to its goal, -1 for none.
   const lifted = m => {
-    const detail = JSON.parse(m.detail);
+    const detail = m.detail_value;
     const finish = m.kind === "duel-finish";
     return {
       frame: Number(m.frame), kind: m.kind, checksum: txt(m.checksum), inputs: m.inputs,
-      winner: !finish ? "" : detail.winner === null ? "draw" : ["a", "b"][detail.winner],
-      goal_a: finish ? detail.goal[0] ?? -1 : -1, goal_b: finish ? detail.goal[1] ?? -1 : -1,
+      winner: !finish ? "" : detail.winner === -1 ? "draw" : ["a", "b"][detail.winner],
+      goal_a: finish ? detail.goal_a : -1, goal_b: finish ? detail.goal_b : -1,
     };
   };
   const command = (name, instance, revision, seat, kind, payload) => {

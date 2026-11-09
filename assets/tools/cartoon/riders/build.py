@@ -15,10 +15,10 @@ from gltf_io import write_glb
 from mats import pbr, srgb
 
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
-H = 0.005
-BUDGET = {0: {"girl": 9000, "boy": 5000, "girl_hair": 1600, "girl_ribbon": 500, "boy_scarf": 600, "boy_wave": 1400, "boy_rest": 1400, "boy_head": 5000},
-          1: {"girl": 2400, "boy": 1300, "girl_hair": 400, "girl_ribbon": 140, "boy_scarf": 160, "boy_wave": 360, "boy_rest": 360, "boy_head": 1300}}
-AO = dict(radius=0.12, lo=0.6)
+H = 0.0044
+BUDGET = {0: {"girl": 12000, "boy": 6800, "girl_hair": 2200, "girl_ribbon": 700, "boy_scarf": 850, "boy_wave": 1900, "boy_rest": 1900, "boy_head": 6800},
+          1: {"girl": 2800, "boy": 1600, "girl_hair": 500, "girl_ribbon": 180, "boy_scarf": 200, "boy_wave": 440, "boy_rest": 440, "boy_head": 1600}}
+AO = dict(radius=0.14, lo=0.46)
 MATERIALS = [pbr("skin", srgb("#f2c49b"), rough=0.7), pbr("cheek", srgb("#ee8c86"), rough=0.7),
              pbr("eye", srgb("#1e1a18"), rough=0.3), pbr("mouth", srgb("#b2453a"), rough=0.6),
              pbr("hair", srgb("#8a3f1e"), rough=0.75), pbr("hairB", srgb("#3a2414"), rough=0.75),

@@ -83,6 +83,11 @@ def girl():
     for s in (-1, 1):
         add(ellipsoid([0.04 * s, 0.742, -0.098], [0.04, 0.024, 0.014], toon.rot_z(-0.3 * s)), "ribbon", 0.004)
     add(ring(WHEEL, 0.17, 0.014, WHEEL_TILT), "wheel", 0.0)
+    add(sphere(WHEEL, 0.032), "wheel", 0.005)                                                  # steering wheel hub boss
+    M_wheel = toon.rot_x(WHEEL_TILT)
+    for sp_ang in (-1.35, 1.35, 3.14159):                                                      # 3 sculpted steering wheel spokes
+        sp_dir = np.array([np.sin(sp_ang), 0.0, np.cos(sp_ang)]) @ M_wheel.T
+        add(capsule(WHEEL, WHEEL + sp_dir * 0.162, 0.009), "wheel", 0.004)
     add(capsule(WHEEL, WHEEL + [0, -0.12, 0.2], 0.022), "wheel", 0.0)                         # column
     return solid(comps, ([-0.36, -0.06, -0.3], [0.36, 0.86, 0.82]), "dress")
 
@@ -90,8 +95,17 @@ def girl():
 def girl_hair():
     """Long locks from the back of her head, streaming back; pivot at the nape."""
     comps = []
-    for k, (dx, dy, end) in enumerate(((0.0, 0.0, 0.42), (0.06, -0.02, 0.36), (-0.06, -0.015, 0.38), (0.03, 0.03, 0.3), (-0.03, 0.035, 0.32))):
-        comps.append((capsule([dx * 0.5, dy, 0.0], [dx, dy - 0.07, -end], taper(0.05, 0.012)), "hair", 0.02))
+    locks = (
+        (0.0, 0.0, 0.42),
+        (0.06, -0.02, 0.36),
+        (-0.06, -0.015, 0.38),
+        (0.03, 0.03, 0.31),
+        (-0.03, 0.035, 0.33),
+        (0.085, 0.01, 0.29),
+        (-0.085, 0.012, 0.30),
+    )
+    for dx, dy, end in locks:
+        comps.append((capsule([dx * 0.5, dy, 0.0], [dx, dy - 0.07, -end], taper(0.048, 0.011)), "hair", 0.016))
     return solid(comps, ([-0.16, -0.18, -0.5], [0.16, 0.12, 0.08]), "hair")
 
 

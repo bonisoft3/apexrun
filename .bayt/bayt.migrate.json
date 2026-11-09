@@ -1,0 +1,249 @@
+{
+  "_generated_from": "bayt.cue (do not edit)",
+  "compose": {
+    "up": false,
+    "manual": false,
+    "build": {
+      "additional_contexts": {
+        "libraries_mecha-database-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/mecha-database:0.22.0@sha256:ed58b6be6cd69658fbb4e6daff1f91b8923b333f364905c4dacdec2974a05d82}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image}"
+      },
+      "secrets": [],
+      "args": {}
+    },
+    "environment": {
+      "DATABASE_URL": "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-apexrun}?sslmode=disable"
+    },
+    "ports": [],
+    "volumes": [],
+    "depends_on": {
+      "apexrun-database": {
+        "condition": "service_healthy"
+      }
+    },
+    "networks": {
+      "default": {
+        "aliases": [
+          "migrate"
+        ]
+      }
+    }
+  },
+  "dockerfile": {
+    "preamble": [],
+    "preambleCopyContexts": [],
+    "from": {
+      "name": "libraries_mecha-database-image"
+    },
+    "add": [],
+    "mounts": [],
+    "secrets": {},
+    "extra_hosts": [],
+    "cmd": [
+      "/pgroll",
+      "00_initdb"
+    ],
+    "copy": [
+      {
+        "from": null,
+        "srcs": [
+          "services/database/pgroll/017_xstate_engines.json"
+        ],
+        "dst": "/pgroll/017_xstate_engines.json",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
+      {
+        "from": null,
+        "srcs": [
+          "services/database/pgroll/018_mecha_engines.json"
+        ],
+        "dst": "/pgroll/018_mecha_engines.json",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      }
+    ],
+    "entrypoint": [
+      "/migrate.sh"
+    ],
+    "epilogue": [],
+    "expose": [],
+    "healthcheck": null,
+    "incremental": false
+  },
+  "entrypoint": {
+    "do": "let os = (match $nu.os-info.name { 'macos' => 'macos', 'windows' => 'windows', _ => 'linux' }); let dir = (if (($env.PRONTO_REPLAY_PGROLL_DIR? | default '') != '') { $env.PRONTO_REPLAY_PGROLL_DIR } else if ('/pgroll' | path exists) { '/pgroll' } else { let d = (($env.BAYT_LOCAL_WORK_DIR? | default $nu.temp-dir) | path join 'pgroll'); rm -rf $d; mkdir $d; let m = (open .bayt/bayt.migrate.json | get dockerfile); ($m | get -o copy | default []) | each {|c| cp ($c.srcs.0) ($d | path join ($c.dst | path basename)) } | ignore; ($m | get -o epilogue | default []) | each {|e| let lines = ($e | lines); if ($lines.0 | str starts-with \"COPY <<'PGROLL' /tmp/\") { let name = ($lines.0 | parse \"COPY <<'PGROLL' /tmp/{name}.parts\" | get 0.name); ($lines | skip 1 | take while {|l| $l != \"PGROLL\" } | str join \"\" | decode base64) | save --raw -f ($d | path join $name) } else if ($lines.0 | str starts-with \"COPY <<'PGROLL' /pgroll/\") { let name = ($lines.0 | parse \"COPY <<'PGROLL' /pgroll/{name}\" | get 0.name); $lines.1 | save --raw -f ($d | path join $name) } else if ($lines.0 | str starts-with \"COPY <<'RECONCILE' /pgroll/\") { let name = ($lines.0 | parse \"COPY <<'RECONCILE' /pgroll/{name}\" | get 0.name); ($lines | skip 1 | drop 1 | str join \"\\n\") | save --raw -f ($d | path join $name) } } | ignore; $d }); let script = (if (($env.PRONTO_MIGRATE_SH? | default '') != '') { $env.PRONTO_MIGRATE_SH } else if ('services/migrate/migrate.nu' | path exists) { 'services/migrate/migrate.nu' } else if ('/migrate.sh' | path exists) and ($os != 'windows') { '/migrate.sh' } else { ((^mise where github:bonisoft3/mecha | str trim) | path join 'services/migrate/migrate.nu') }); if ($script | str ends-with '.nu') { ^nu $script $dir 00_initdb } else { ^bash $script $dir 00_initdb }",
+    "shell": "nu",
+    "env": {
+      "DATABASE_URL": [
+        "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@",
+        {
+          "peer": "database",
+          "port": "pg",
+          "part": "addr",
+          "prefix": "",
+          "suffix": ""
+        },
+        "/${POSTGRES_DB:-apexrun}?sslmode=disable"
+      ]
+    },
+    "after": {
+      "database": "healthy"
+    },
+    "host": true
+  },
+  "name": "migrate",
+  "process-compose": {
+    "activate": "mise x --"
+  },
+  "project": "apexrun",
+  "dir": ".",
+  "activate": "",
+  "srcs": {
+    "globs": [
+      "services/database/pgroll/017_xstate_engines.json",
+      "services/database/pgroll/018_mecha_engines.json"
+    ],
+    "exclude": []
+  },
+  "outs": {
+    "globs": [],
+    "exclude": []
+  },
+  "state": {
+    "globs": []
+  },
+  "env": {},
+  "synthetics": {
+    "bayt": {
+      "name": "migrate_bayt",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [
+          ".bayt/compose.migrate.yaml",
+          ".bayt/Dockerfile.migrate",
+          ".bayt/bayt.migrate.json",
+          ".bayt/Taskfile.yml",
+          ".bayt/Taskfile.bayt.yml",
+          ".bayt/process-compose.yaml"
+        ],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.migrate.yaml",
+        "./.bayt/compose.database.yaml"
+      ]
+    },
+    "outs": {
+      "name": "migrate_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.migrate.yaml",
+        "./.bayt/compose.database.yaml"
+      ]
+    },
+    "srcs": {
+      "name": "migrate_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "activate": "",
+      "srcs": {
+        "globs": [],
+        "exclude": []
+      },
+      "outs": {
+        "globs": [
+          "services/database/pgroll/017_xstate_engines.json",
+          "services/database/pgroll/018_mecha_engines.json"
+        ],
+        "exclude": []
+      },
+      "env": {},
+      "visibility": "internal",
+      "deps": [],
+      "transitiveDeps": [],
+      "transitiveCrossDeps": [],
+      "chainedDeps": [],
+      "cmds": [],
+      "cache": {
+        "full": false,
+        "similar": false
+      },
+      "upClosure": [
+        "./.bayt/compose.migrate.yaml",
+        "./.bayt/compose.database.yaml"
+      ]
+    }
+  },
+  "visibility": "internal",
+  "emitsSrcs": true,
+  "deps": [
+    "database_outs"
+  ],
+  "sameProjectDeps": [
+    "database_outs"
+  ],
+  "transitiveDeps": [
+    "database_outs"
+  ],
+  "transitiveCrossDeps": [],
+  "upClosure": [
+    "./.bayt/compose.migrate.yaml",
+    "./.bayt/compose.database.yaml"
+  ],
+  "chainedDeps": [
+    {
+      "name": "database_outs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    }
+  ],
+  "cmds": [],
+  "cache": {
+    "full": false,
+    "similar": false
+  }
+}

@@ -4,6 +4,7 @@ services:
     build:
       additional_contexts:
         apexrun-database: service:apexrun-database
+        apexrun-migrate: service:apexrun-migrate
         apexrun-timer-check: service:apexrun-timer-check
       context: ..
       dockerfile: .bayt/Dockerfile.crud
@@ -19,6 +20,8 @@ services:
       apexrun-database:
         condition: service_healthy
         restart: true
+      apexrun-migrate:
+        condition: service_completed_successfully
       apexrun-timer-check:
         condition: service_completed_successfully
     environment:
@@ -27,10 +30,10 @@ services:
       PGRST_DB_SCHEMA: public
       PGRST_DB_ANON_ROLE: anon
       PGRST_DB_PRE_REQUEST: public.app_pre_request
-      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
       PGRST_SERVER_HOST: "*"
       PGRST_SERVER_PORT: "3000"
       PGRST_ADMIN_SERVER_PORT: "3001"
+      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
     healthcheck:
       test:
       - CMD
@@ -50,6 +53,7 @@ services:
     build:
       additional_contexts:
         apexrun-database_bayt: service:apexrun-database_bayt
+        apexrun-migrate_bayt: service:apexrun-migrate_bayt
         apexrun-timer-check_bayt: service:apexrun-timer-check_bayt
       context: ..
       dockerfile: .bayt/Dockerfile.crud

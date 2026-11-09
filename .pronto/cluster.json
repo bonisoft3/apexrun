@@ -1,13 +1,21 @@
 {
+  "actors": "016_mecha_actors.sql",
   "schema": {
+    "pgroll": {
+      "target": "migrate",
+      "dir": "/pgroll",
+      "baseline": "00_initdb"
+    },
     "target": "database",
     "initdb": "/docker-entrypoint-initdb.d"
   },
+  "database": "bonitao/mecha-database:0.22.0@sha256:ed58b6be6cd69658fbb4e6daff1f91b8923b333f364905c4dacdec2974a05d82",
   "server": true,
   "tokenRoles": [
     "anon",
     "app_user",
     "service"
   ],
+  "computations": [],
   "drains": []
 }

@@ -1,0 +1,10 @@
+# generated from bayt.cue — do not edit
+tasks:
+  default:
+    env:
+      CARGO_HOME: /root/.cargo
+      CARGO_TARGET_DIR: /cargo-target
+    run: once
+    cmds:
+    - "sh -c \"mise install github:bonisoft3/omnishell && omnishell=\\\"\\$(mise where github:bonisoft3/omnishell)\\\" && deno eval 'import { seed } from \\\"./services/assets/seed.ts\\\"; const dir = \\\".seed-assets\\\"; await Deno.mkdir(dir, { recursive: true }); const m = JSON.parse(await Deno.readTextFile(\\\"assets/manifest.json\\\")); await seed(m, \\\"https://storage.googleapis.com/trash-362115-supertuxkart-assets\\\", { has: (f) => Deno.stat(\\`\\${dir}/\\${f}\\`).then(() => true, () => false), put: (f, b) => Deno.writeFile(\\`\\${dir}/\\${f}\\`, b) });' && cargo test --locked --manifest-path \\\"\\$omnishell/desktop/Cargo.toml\\\" --lib --bins --tests && cargo test --locked --manifest-path desktop/Cargo.toml --lib --bins --tests\""
+version: "3"

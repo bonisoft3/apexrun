@@ -91,6 +91,20 @@ code: state: entities: {
 			}
 		}
 	}
+	RunMilestone: {
+		seed: [...{
+			kind?: ("grid" | "start" | "landmark" | "checkpoint" | "time-over" | "finish" | "duel-finish")
+			detail_value?: close({close_passes: int & >=-2147483648 & <=2147483647, close_points: int & >=-2147483648 & <=2147483647, distance_points: int & >=-2147483648 & <=2147483647, duel: bool, entry_stage: int & >=-2147483648 & <=2147483647, final_stage: int & >=-2147483648 & <=2147483647, goal_a: int & >=-1 & <=1000000, goal_b: int & >=-1 & <=1000000, hold: int & >=0 & <=8000, metres: int & >=-2147483648 & <=2147483647, next: close({final: bool, id: strings.MaxRunes(64), left: strings.MaxRunes(64), name: strings.MaxRunes(64), num: int & >=0 & <=5, right: strings.MaxRunes(64)}), outcome: strings.MaxRunes(64), per_close_pass: int & >=-2147483648 & <=2147483647, per_rival: int & >=-2147483648 & <=2147483647, rival_points: int & >=-2147483648 & <=2147483647, rivals_beaten: int & >=-2147483648 & <=2147483647, run_ms: int & >=-2147483648 & <=2147483647, score: int & >=-2147483648 & <=2147483647, stage: close({final: bool, id: strings.MaxRunes(64), left: strings.MaxRunes(64), name: strings.MaxRunes(64), num: int & >=0 & <=5, right: strings.MaxRunes(64)}), time_points: int & >=-2147483648 & <=2147483647, winner: int & >=-1 & <=1})
+		}]
+		cel: {
+			enums: {
+				kind: ["grid","start","landmark","checkpoint","time-over","finish","duel-finish"]
+			}
+			bounds: {
+				detail_value: {kind: "object", fields: {"close_passes":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"close_points":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"distance_points":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"duel":{"kind":"boolean"},"entry_stage":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"final_stage":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"goal_a":{"kind":"integer","intMin":-1,"intMax":1000000},"goal_b":{"kind":"integer","intMin":-1,"intMax":1000000},"hold":{"kind":"integer","intMin":0,"intMax":8000},"metres":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"next":{"kind":"object","fields":{"final":{"kind":"boolean"},"id":{"kind":"string","sizeMax":64},"left":{"kind":"string","sizeMax":64},"name":{"kind":"string","sizeMax":64},"num":{"kind":"integer","intMin":0,"intMax":5},"right":{"kind":"string","sizeMax":64}}},"outcome":{"kind":"string","sizeMax":64},"per_close_pass":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"per_rival":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"rival_points":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"rivals_beaten":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"run_ms":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"score":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"stage":{"kind":"object","fields":{"final":{"kind":"boolean"},"id":{"kind":"string","sizeMax":64},"left":{"kind":"string","sizeMax":64},"name":{"kind":"string","sizeMax":64},"num":{"kind":"integer","intMin":0,"intMax":5},"right":{"kind":"string","sizeMax":64}}},"time_points":{"kind":"integer","intMin":-2147483648,"intMax":2147483647},"winner":{"kind":"integer","intMin":-1,"intMax":1}}}
+			}
+		}
+	}
 	LobbyTab: {
 		seed: [...{
 			id?: "the"

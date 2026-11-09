@@ -97,5 +97,5 @@ if (import.meta.main) {
   };
   const fetched = await seed(manifest, env("ASSET_ORIGIN"), store);
   console.log(`assets: ${manifestFiles(manifest).size} files, ${fetched} fetched`);
-  Deno.serve({ port: 8787, hostname: "0.0.0.0" }, (req) => answer(req, dir));
+  Deno.serve({ port: Number(Deno.env.get("PORT") || 8787), hostname: "0.0.0.0" }, (req) => answer(req, dir));
 }

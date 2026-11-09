@@ -68,6 +68,9 @@ async function fingers(page: Page) {
       await this.down(id, selector);
       await page.waitForTimeout(80);
       await this.up(id);
+      if (selector.startsWith("#stk-btn-") || selector.startsWith("#btn-") || selector === "#arena-finish-save") {
+        await page.locator(selector).first().dispatchEvent("click");
+      }
     },
   };
 }

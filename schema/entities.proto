@@ -251,8 +251,12 @@ message RunMilestone {
   optional int32 from = 6 [json_name = "from"];
   optional int32 width = 7 [json_name = "width"];
   optional string inputs = 8 [json_name = "inputs"];
-  optional string detail = 9 [json_name = "detail"];
-  optional string snapshot = 10 [json_name = "snapshot"];
+  reserved 9;
+  reserved "detail";
+  reserved 10;
+  reserved "snapshot";
+  google.protobuf.Value detail_value = 11 [json_name = "detail_value"];
+  google.protobuf.Value snapshot_value = 12 [json_name = "snapshot_value"];
 }
 
 message RunSignal {

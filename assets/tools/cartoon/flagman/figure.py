@@ -14,7 +14,7 @@ POLE_TOP, POLE_TIP = 0.07, -0.72     # flag space, along the pole (+Y toward the
 CLOTH_Y = (-0.12, -0.70)             # hoist edge along the pole, flag space
 CLOTH_FLY = 0.90                     # cloth width away from the pole, toward flag-space -X
 CHEQUER = (6, 4)                     # squares along fly x hoist
-SUB = 3                              # quads per square side
+SUB = 4                              # quads per square side
 
 
 def ellipsoid(c, r, R=None):
@@ -167,7 +167,7 @@ def arm():
 
 # ---------------------------------------------------------------- flag (node "flag"), flag space: grip at origin
 
-def pole(segments=12):
+def pole(segments=18):
     """Lathed pole: a rounded knob at the tip, a cap at the top. -> (V, F, N)."""
     prof = [(0.0, POLE_TIP - 0.026)]
     for a in np.linspace(-np.pi / 2, np.pi / 2, 7)[1:]:

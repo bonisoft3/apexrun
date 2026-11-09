@@ -173,14 +173,60 @@ services:
         path: ../journal/2026-10-25-t42-tablet-race.jpg
         target: /srv/docs/journal/2026-10-25-t42-tablet-race.jpg
       - action: rebuild
+        path: ../journal/2026-11-05-t43-car-hero-cockpit.jpg
+        target: /srv/docs/journal/2026-11-05-t43-car-hero-cockpit.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t43-horizon-fix.jpg
+        target: /srv/docs/journal/2026-11-05-t43-horizon-fix.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t43-landmarks-gouache.jpg
+        target: /srv/docs/journal/2026-11-05-t43-landmarks-gouache.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t43-prop-mega-atlas.jpg
+        target: /srv/docs/journal/2026-11-05-t43-prop-mega-atlas.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t43-riders-flagman.jpg
+        target: /srv/docs/journal/2026-11-05-t43-riders-flagman.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t43-sky-backdrop-gouache.jpg
+        target: /srv/docs/journal/2026-11-05-t43-sky-backdrop-gouache.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t44-coconut-beach-fork.jpg
+        target: /srv/docs/journal/2026-11-05-t44-coconut-beach-fork.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t44-coconut-beach-hood.jpg
+        target: /srv/docs/journal/2026-11-05-t44-coconut-beach-hood.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t44-coconut-beach-nitro.jpg
+        target: /srv/docs/journal/2026-11-05-t44-coconut-beach-nitro.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t44-gateway-pass-hill.jpg
+        target: /srv/docs/journal/2026-11-05-t44-gateway-pass-hill.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t44-metropolis-night.jpg
+        target: /srv/docs/journal/2026-11-05-t44-metropolis-night.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t44-start-grounded-swoop.jpg
+        target: /srv/docs/journal/2026-11-05-t44-start-grounded-swoop.jpg
+      - action: rebuild
+        path: ../journal/2026-11-05-t44-tulip-gardens.jpg
+        target: /srv/docs/journal/2026-11-05-t44-tulip-gardens.jpg
+      - action: rebuild
         path: ../robots.txt
         target: /srv/robots.txt
       - action: rebuild
         path: ../sitemap.xml
         target: /srv/sitemap.xml
     environment:
-      ELECTRIC_SECRET: ${ELECTRIC_SECRET:-dev-electric-secret}
+      PORT: "8080"
       ORIGIN: ${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+      ELECTRIC_SECRET: ${ELECTRIC_SECRET:-dev-electric-secret}
+      PRONTO_UPSTREAM_CRUD: crud:3000
+      PRONTO_UPSTREAM_ELECTRIC: electric:3000
+      PRONTO_UPSTREAM_AUTH: auth:9999
+      PRONTO_UPSTREAM_TICKER: ticker:9998
+      PRONTO_UPSTREAM_ASSETS: assets:8787
+      PRONTO_UPSTREAM_RENDER: render:8090
     healthcheck:
       test:
       - CMD

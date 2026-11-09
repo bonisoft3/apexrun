@@ -6,21 +6,25 @@
     "build": {
       "additional_contexts": {
         "workspaceroot-pronto-sources_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:workspaceroot-pronto-sources_srcs}",
-        "libraries_mecha-airlock-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-airlock-image_bayt}",
+        "libraries_mecha-database-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image_bayt}",
+        "libraries_mecha-extensions-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-extensions-image_bayt}",
+        "libraries_mecha-mesh-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-mesh-image_bayt}",
+        "libraries_mecha-conduit-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-conduit-image_bayt}",
         "libraries_mecha-auth-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-auth-image_bayt}",
+        "libraries_mecha-ticker-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-ticker-image_bayt}",
         "libraries_mecha-clock-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-clock-image_bayt}",
         "libraries_mecha-compute-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-compute-image_bayt}",
-        "libraries_mecha-conduit-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-conduit-image_bayt}",
-        "libraries_mecha-database-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image_bayt}",
-        "libraries_mecha-mesh-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-mesh-image_bayt}",
-        "libraries_mecha-ticker-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-ticker-image_bayt}",
+        "libraries_mecha-airlock-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-airlock-image_bayt}",
+        "libraries_mecha-activepieces-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-activepieces-image_bayt}",
         "libraries_mecha-database-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image_srcs}",
+        "libraries_mecha-extensions-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-extensions-image_srcs}",
         "libraries_mecha-mesh-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-mesh-image_srcs}",
         "libraries_mecha-auth-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-auth-image_srcs}",
         "libraries_mecha-ticker-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-ticker-image_srcs}",
         "libraries_mecha-clock-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-clock-image_srcs}",
         "libraries_mecha-compute-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-compute-image_srcs}",
         "libraries_mecha-airlock-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-airlock-image_srcs}",
+        "libraries_mecha-activepieces-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-activepieces-image_srcs}",
         "plugins_omnishell-runtime-image_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image_srcs}",
         "plugins_omnishell-runtime-image_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image_bayt}",
         "workspaceroot-pronto-sources_bayt": "${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:workspaceroot-pronto-sources_bayt}"
@@ -49,12 +53,13 @@
       "ARG MONOREPO_COMPOSE_MODE",
       "ENV MONOREPO_COMPOSE_MODE=$MONOREPO_COMPOSE_MODE",
       "ARG BAYT_RUNTIME",
-      "ENV BAYT_RUNTIME=$BAYT_RUNTIME"
+      "ENV BAYT_RUNTIME=$BAYT_RUNTIME",
+      "ENV FELDERA_COMPILATION_PROFILE=unoptimized"
     ],
     "preambleCopyContexts": [
       {
         "name": "bayt",
-        "image": "bonitao/bayt-runtime:1.2.2@sha256:a2e08b0fd123349e30e28843665ab2a2fde9fe25fddf82919fe499f3f01f1b8f"
+        "image": "bonitao/bayt-runtime:1.3.0@sha256:c33b9187787fcbd5fa80f1f2f52c661d6e7c38a4822c269b8daff83e70dce22e"
       },
       {
         "name": "alpine/socat:1.8.0.0@sha256:a6be4c0262b339c53ddad723cdd178a1a13271e1137c65e27f90a08c16de02b8"
@@ -133,6 +138,30 @@
     "extra_hosts": [],
     "epilogue": [],
     "copy": [
+      {
+        "from": {
+          "name": "libraries_mecha-activepieces-image_bayt"
+        },
+        "srcs": [
+          "/monorep[o]"
+        ],
+        "dst": "/monorepo/",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
+      {
+        "from": {
+          "name": "libraries_mecha-activepieces-image_srcs"
+        },
+        "srcs": [
+          "/monorep[o]"
+        ],
+        "dst": "/monorepo/",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
       {
         "from": {
           "name": "libraries_mecha-airlock-image_bayt"
@@ -256,6 +285,30 @@
       {
         "from": {
           "name": "libraries_mecha-database-image_srcs"
+        },
+        "srcs": [
+          "/monorep[o]"
+        ],
+        "dst": "/monorepo/",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
+      {
+        "from": {
+          "name": "libraries_mecha-extensions-image_bayt"
+        },
+        "srcs": [
+          "/monorep[o]"
+        ],
+        "dst": "/monorepo/",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
+      {
+        "from": {
+          "name": "libraries_mecha-extensions-image_srcs"
         },
         "srcs": [
           "/monorep[o]"
@@ -434,35 +487,40 @@
       },
       "upClosure": [
         "./.bayt/compose.ci.yaml",
+        "./.bayt/compose.ci-desktop.yaml",
+        "./.bayt/compose.ci-android.yaml",
         "./.bayt/compose.ci-visual.yaml",
         "./.bayt/compose.integrate.yaml",
         "./.bayt/compose.launch.yaml",
+        "./.bayt/compose.build.yaml",
+        "./.bayt/compose.generate.yaml",
+        "./.bayt/compose.setup.yaml",
+        "./.bayt/compose.assets.yaml",
+        "./.bayt/compose.render.yaml",
         "./.bayt/compose.caddy.yaml",
         "./.bayt/compose.crud.yaml",
         "./.bayt/compose.database.yaml",
+        "./.bayt/compose.migrate.yaml",
         "./.bayt/compose.timer-check.yaml",
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
         "./.bayt/compose.auth.yaml",
         "./.bayt/compose.clock.yaml",
         "./.bayt/compose.ticker.yaml",
-        "./.bayt/compose.assets.yaml",
-        "./.bayt/compose.render.yaml",
         "./.bayt/compose.ci-replay.yaml",
-        "./.bayt/compose.setup.yaml",
-        "./.bayt/compose.ci-finish.yaml",
-        "./.bayt/compose.check-finish.yaml",
-        "./.bayt/compose.browser.yaml",
         "./.bayt/compose.ci-boot.yaml",
         "./.bayt/compose.check-boot.yaml",
-        "./.bayt/compose.ci-online.yaml",
-        "./.bayt/compose.check-online.yaml",
+        "./.bayt/compose.browser.yaml",
         "./.bayt/compose.ci-duel.yaml",
         "./.bayt/compose.check-duel.yaml",
-        "./.bayt/compose.ci-touch.yaml",
-        "./.bayt/compose.check-touch.yaml",
+        "./.bayt/compose.ci-finish.yaml",
+        "./.bayt/compose.check-finish.yaml",
         "./.bayt/compose.ci-leaderboard-access.yaml",
-        "./.bayt/compose.check-leaderboard-access.yaml"
+        "./.bayt/compose.check-leaderboard-access.yaml",
+        "./.bayt/compose.ci-online.yaml",
+        "./.bayt/compose.check-online.yaml",
+        "./.bayt/compose.ci-touch.yaml",
+        "./.bayt/compose.check-touch.yaml"
       ]
     },
     "outs": {
@@ -491,35 +549,40 @@
       },
       "upClosure": [
         "./.bayt/compose.ci.yaml",
+        "./.bayt/compose.ci-desktop.yaml",
+        "./.bayt/compose.ci-android.yaml",
         "./.bayt/compose.ci-visual.yaml",
         "./.bayt/compose.integrate.yaml",
         "./.bayt/compose.launch.yaml",
+        "./.bayt/compose.build.yaml",
+        "./.bayt/compose.generate.yaml",
+        "./.bayt/compose.setup.yaml",
+        "./.bayt/compose.assets.yaml",
+        "./.bayt/compose.render.yaml",
         "./.bayt/compose.caddy.yaml",
         "./.bayt/compose.crud.yaml",
         "./.bayt/compose.database.yaml",
+        "./.bayt/compose.migrate.yaml",
         "./.bayt/compose.timer-check.yaml",
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
         "./.bayt/compose.auth.yaml",
         "./.bayt/compose.clock.yaml",
         "./.bayt/compose.ticker.yaml",
-        "./.bayt/compose.assets.yaml",
-        "./.bayt/compose.render.yaml",
         "./.bayt/compose.ci-replay.yaml",
-        "./.bayt/compose.setup.yaml",
-        "./.bayt/compose.ci-finish.yaml",
-        "./.bayt/compose.check-finish.yaml",
-        "./.bayt/compose.browser.yaml",
         "./.bayt/compose.ci-boot.yaml",
         "./.bayt/compose.check-boot.yaml",
-        "./.bayt/compose.ci-online.yaml",
-        "./.bayt/compose.check-online.yaml",
+        "./.bayt/compose.browser.yaml",
         "./.bayt/compose.ci-duel.yaml",
         "./.bayt/compose.check-duel.yaml",
-        "./.bayt/compose.ci-touch.yaml",
-        "./.bayt/compose.check-touch.yaml",
+        "./.bayt/compose.ci-finish.yaml",
+        "./.bayt/compose.check-finish.yaml",
         "./.bayt/compose.ci-leaderboard-access.yaml",
-        "./.bayt/compose.check-leaderboard-access.yaml"
+        "./.bayt/compose.check-leaderboard-access.yaml",
+        "./.bayt/compose.ci-online.yaml",
+        "./.bayt/compose.check-online.yaml",
+        "./.bayt/compose.ci-touch.yaml",
+        "./.bayt/compose.check-touch.yaml"
       ]
     },
     "srcs": {
@@ -541,53 +604,369 @@
       "visibility": "internal",
       "deps": [],
       "transitiveDeps": [
-        "ci-visual_srcs_srcs",
-        "ci-visual_bayt_srcs",
-        "ci-replay_srcs_srcs",
-        "ci-replay_bayt_srcs",
-        "ci-finish_srcs_srcs",
-        "ci-finish_bayt_srcs",
-        "ci-boot_srcs_srcs",
-        "ci-boot_bayt_srcs",
-        "ci-online_srcs_srcs",
-        "ci-online_bayt_srcs",
-        "ci-duel_srcs_srcs",
-        "ci-duel_bayt_srcs",
-        "ci-touch_srcs_srcs",
-        "ci-touch_bayt_srcs",
-        "ci-leaderboard-access_srcs_srcs",
-        "ci-leaderboard-access_bayt_srcs",
-        "integrate_srcs_srcs_srcs",
-        "integrate_bayt_srcs_srcs",
-        "database_srcs_srcs_srcs",
-        "caddy_srcs_srcs_srcs",
-        "assets_srcs_srcs_srcs",
-        "served_srcs_srcs_srcs",
-        "render_srcs_srcs_srcs",
-        "launch_outs_srcs_srcs_srcs",
-        "crud_outs_srcs_srcs_srcs",
-        "served_outs_srcs_srcs_srcs",
-        "caddy_outs_srcs_srcs_srcs",
-        "electric_outs_srcs_srcs_srcs",
-        "auth_outs_srcs_srcs_srcs",
-        "database_srcs_srcs",
-        "setup_srcs_srcs",
-        "check-finish_srcs_srcs_srcs",
-        "check-finish_bayt_srcs_srcs",
-        "browser_srcs_srcs_srcs",
-        "check-boot_srcs_srcs_srcs",
-        "check-boot_bayt_srcs_srcs",
-        "check-online_srcs_srcs_srcs",
-        "check-online_bayt_srcs_srcs",
-        "setup_srcs_srcs_srcs",
-        "check-duel_srcs_srcs_srcs",
-        "check-duel_bayt_srcs_srcs",
-        "check-touch_srcs_srcs_srcs",
-        "check-touch_bayt_srcs_srcs",
-        "check-leaderboard-access_srcs_srcs_srcs",
-        "check-leaderboard-access_bayt_srcs_srcs"
+        "ci-desktop_srcs",
+        "ci-android_srcs",
+        "ci-visual_srcs",
+        "ci-replay_srcs",
+        "ci-boot_srcs",
+        "ci-duel_srcs",
+        "ci-finish_srcs",
+        "ci-leaderboard-access_srcs",
+        "ci-online_srcs",
+        "ci-touch_srcs",
+        "integrate_srcs",
+        "database_srcs",
+        "caddy_srcs",
+        "assets_srcs",
+        "served_srcs",
+        "render_srcs",
+        "migrate_srcs",
+        "setup_srcs",
+        "check-boot_srcs",
+        "browser_srcs",
+        "check-duel_srcs",
+        "check-finish_srcs",
+        "check-leaderboard-access_srcs",
+        "check-online_srcs",
+        "check-touch_srcs"
       ],
-      "transitiveCrossDeps": [],
+      "transitiveCrossDeps": [
+        {
+          "project": "apexrun",
+          "name": "ci-desktop_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "services/assets/seed.ts",
+              "assets/manifest.json",
+              "desktop/Cargo.toml",
+              "desktop/Cargo.lock",
+              "desktop/build.rs",
+              "desktop/src/**/*",
+              "desktop/fixtures/**/*",
+              "[.]mise.toml",
+              "[m]ise.lock",
+              "[m]ise.local.toml"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "ci-android_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "src/test/**/*.java",
+              "src/test/**/*.kt",
+              "src/test/resources/**/*",
+              "src/test/**/*.sql",
+              "[.]mise.toml",
+              "[m]ise.lock",
+              "[m]ise.local.toml"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "ci-replay_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              ".bayt/process-compose.yaml",
+              ".pronto/cluster.json",
+              "services/database/migrations/**",
+              "tests/[r]eplay.json",
+              "tests/[r]eplay/**"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "integrate_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "shell/shell.yaml",
+              "shell/screens/arena.html",
+              "shell/screens/arena.css"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "database_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "services/database/migrations/000_extensions.sql",
+              "services/database/migrations/001_roles.sql",
+              "services/database/migrations/002_grants.sql",
+              "services/database/migrations/004_types.sql",
+              "services/database/migrations/005_create_tables.sql",
+              "services/database/migrations/006_policies.sql",
+              "services/database/migrations/007_txid.sql",
+              "services/database/migrations/008_publication.sql",
+              "services/database/migrations/003_rls.sql",
+              "services/database/migrations/016_mecha_actors.sql",
+              "services/database/migrations/010_high_score_writes.sql"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "caddy_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "docker/Caddyfile"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "assets_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "services/assets/seed.ts",
+              "assets/manifest.json"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "served_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "shell/index.html",
+              "shell/shell.css",
+              "shell/boot.js",
+              "offline-first-sw.js",
+              "shell/shell.yaml",
+              "shell/shell.json",
+              "shell/design.css",
+              "shell/screens/arena.html",
+              "shell/screens/arena.css",
+              "shell/handlers/lease.js",
+              "shell/handlers/lobby.js",
+              "shell/handlers/run.js",
+              "shell/renderers/ending.js",
+              "shell/renderers/run_time.js",
+              "shell/renderers/stage.js",
+              "shell/engines/apexrun.json",
+              "shell/engines/sound.json",
+              "assets/manifest.json",
+              "shell/engine/art.js",
+              "shell/engine/effects.js",
+              "shell/engine/hud.js",
+              "shell/engine/present.js",
+              "shell/engine/prng.js",
+              "shell/engine/renderer.js",
+              "shell/engine/scatter.js",
+              "shell/engine/scenery.js",
+              "shell/engine/simulation.js",
+              "shell/engine/stage_look.js",
+              "brief.md",
+              "brief.html",
+              "journal.html",
+              "ir.html",
+              "ir/card.css",
+              "acceptance.md",
+              "DESIGN.md",
+              "ir/neighbourhood-app.svg",
+              "ir/neighbourhood-arena.svg",
+              "journal/2026-10-16-stitch-hud-telemetry.png",
+              "journal/2026-10-16-stitch-outrun-vision.png",
+              "journal/2026-10-23-t40-challenged.jpg",
+              "journal/2026-10-23-t40-lobby.jpg",
+              "journal/2026-10-23-t40-racing-a.jpg",
+              "journal/2026-10-23-t40-racing-b.jpg",
+              "journal/2026-10-23-t40-result-a.jpg",
+              "journal/2026-10-23-t40-result-b.jpg",
+              "journal/2026-10-24-t41-aerodrome-arrival.jpg",
+              "journal/2026-10-24-t41-castle-arrival.jpg",
+              "journal/2026-10-24-t41-goal.jpg",
+              "journal/2026-10-24-t41-oasis-arrival.jpg",
+              "journal/2026-10-24-t41-trip-helicopter.jpg",
+              "journal/2026-10-24-t41-trip-pull.jpg",
+              "journal/2026-10-24-t41-trip-roadside.jpg",
+              "journal/2026-10-25-t42-phone-initials.jpg",
+              "journal/2026-10-25-t42-phone-race.jpg",
+              "journal/2026-10-25-t42-phone-title.jpg",
+              "journal/2026-10-25-t42-portrait-race.jpg",
+              "journal/2026-10-25-t42-tablet-duel.jpg",
+              "journal/2026-10-25-t42-tablet-paused.jpg",
+              "journal/2026-10-25-t42-tablet-race.jpg",
+              "journal/2026-11-05-t43-car-hero-cockpit.jpg",
+              "journal/2026-11-05-t43-horizon-fix.jpg",
+              "journal/2026-11-05-t43-landmarks-gouache.jpg",
+              "journal/2026-11-05-t43-prop-mega-atlas.jpg",
+              "journal/2026-11-05-t43-riders-flagman.jpg",
+              "journal/2026-11-05-t43-sky-backdrop-gouache.jpg",
+              "journal/2026-11-05-t44-coconut-beach-fork.jpg",
+              "journal/2026-11-05-t44-coconut-beach-hood.jpg",
+              "journal/2026-11-05-t44-coconut-beach-nitro.jpg",
+              "journal/2026-11-05-t44-gateway-pass-hill.jpg",
+              "journal/2026-11-05-t44-metropolis-night.jpg",
+              "journal/2026-11-05-t44-start-grounded-swoop.jpg",
+              "journal/2026-11-05-t44-tulip-gardens.jpg",
+              "robots.txt",
+              "sitemap.xml"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "render_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "shell/index.html",
+              "shell/shell.css",
+              "shell/boot.js",
+              "shell/shell.yaml",
+              "shell/shell.json",
+              "shell/design.css",
+              "shell/screens/arena.html",
+              "shell/screens/arena.css",
+              "shell/handlers/lease.js",
+              "shell/handlers/lobby.js",
+              "shell/handlers/run.js",
+              "shell/renderers/ending.js",
+              "shell/renderers/run_time.js",
+              "shell/renderers/stage.js",
+              "shell/engines/apexrun.json",
+              "shell/engines/sound.json",
+              "shell/engine/art.js",
+              "shell/engine/effects.js",
+              "shell/engine/hud.js",
+              "shell/engine/present.js",
+              "shell/engine/prng.js",
+              "shell/engine/renderer.js",
+              "shell/engine/scatter.js",
+              "shell/engine/scenery.js",
+              "shell/engine/simulation.js",
+              "shell/engine/stage_look.js"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "migrate_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "services/database/pgroll/017_xstate_engines.json",
+              "services/database/pgroll/018_mecha_engines.json"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "setup_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "[m]ise.toml",
+              "[.]mise.toml",
+              "[m]ise.lock",
+              "[.]tool-versions"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "check-boot_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "tests/**"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "browser_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "[m]ise.toml",
+              "[.]mise.toml",
+              "[m]ise.lock",
+              "[.]tool-versions"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "check-duel_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "tests/**"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "check-finish_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "tests/**"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "check-leaderboard-access_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "tests/**"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "check-online_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "tests/**"
+            ],
+            "exclude": []
+          }
+        },
+        {
+          "project": "apexrun",
+          "name": "check-touch_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "tests/**"
+            ],
+            "exclude": []
+          }
+        }
+      ],
       "chainedDeps": [],
       "cmds": [],
       "cache": {
@@ -596,35 +975,40 @@
       },
       "upClosure": [
         "./.bayt/compose.ci.yaml",
+        "./.bayt/compose.ci-desktop.yaml",
+        "./.bayt/compose.ci-android.yaml",
         "./.bayt/compose.ci-visual.yaml",
         "./.bayt/compose.integrate.yaml",
         "./.bayt/compose.launch.yaml",
+        "./.bayt/compose.build.yaml",
+        "./.bayt/compose.generate.yaml",
+        "./.bayt/compose.setup.yaml",
+        "./.bayt/compose.assets.yaml",
+        "./.bayt/compose.render.yaml",
         "./.bayt/compose.caddy.yaml",
         "./.bayt/compose.crud.yaml",
         "./.bayt/compose.database.yaml",
+        "./.bayt/compose.migrate.yaml",
         "./.bayt/compose.timer-check.yaml",
         "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
         "./.bayt/compose.auth.yaml",
         "./.bayt/compose.clock.yaml",
         "./.bayt/compose.ticker.yaml",
-        "./.bayt/compose.assets.yaml",
-        "./.bayt/compose.render.yaml",
         "./.bayt/compose.ci-replay.yaml",
-        "./.bayt/compose.setup.yaml",
-        "./.bayt/compose.ci-finish.yaml",
-        "./.bayt/compose.check-finish.yaml",
-        "./.bayt/compose.browser.yaml",
         "./.bayt/compose.ci-boot.yaml",
         "./.bayt/compose.check-boot.yaml",
-        "./.bayt/compose.ci-online.yaml",
-        "./.bayt/compose.check-online.yaml",
+        "./.bayt/compose.browser.yaml",
         "./.bayt/compose.ci-duel.yaml",
         "./.bayt/compose.check-duel.yaml",
-        "./.bayt/compose.ci-touch.yaml",
-        "./.bayt/compose.check-touch.yaml",
+        "./.bayt/compose.ci-finish.yaml",
+        "./.bayt/compose.check-finish.yaml",
         "./.bayt/compose.ci-leaderboard-access.yaml",
-        "./.bayt/compose.check-leaderboard-access.yaml"
+        "./.bayt/compose.check-leaderboard-access.yaml",
+        "./.bayt/compose.ci-online.yaml",
+        "./.bayt/compose.check-online.yaml",
+        "./.bayt/compose.ci-touch.yaml",
+        "./.bayt/compose.check-touch.yaml"
       ]
     }
   },
@@ -636,122 +1020,196 @@
   "visibility": "internal",
   "emitsSrcs": true,
   "deps": [
+    "ci-desktop_srcs",
+    "ci-desktop_bayt",
+    "ci-android_srcs",
+    "ci-android_bayt",
     "ci-visual_srcs",
     "ci-visual_bayt",
     "ci-replay_srcs",
     "ci-replay_bayt",
-    "ci-finish_srcs",
-    "ci-finish_bayt",
     "ci-boot_srcs",
     "ci-boot_bayt",
-    "ci-online_srcs",
-    "ci-online_bayt",
     "ci-duel_srcs",
     "ci-duel_bayt",
-    "ci-touch_srcs",
-    "ci-touch_bayt",
-    "ci-leaderboard-access_srcs",
-    "ci-leaderboard-access_bayt"
-  ],
-  "sameProjectDeps": [
-    "ci-visual_srcs",
-    "ci-visual_bayt",
-    "ci-replay_srcs",
-    "ci-replay_bayt",
     "ci-finish_srcs",
     "ci-finish_bayt",
-    "ci-boot_srcs",
-    "ci-boot_bayt",
-    "ci-online_srcs",
-    "ci-online_bayt",
-    "ci-duel_srcs",
-    "ci-duel_bayt",
-    "ci-touch_srcs",
-    "ci-touch_bayt",
-    "ci-leaderboard-access_srcs",
-    "ci-leaderboard-access_bayt"
-  ],
-  "transitiveDeps": [
-    "ci-visual_srcs",
-    "ci-visual_bayt",
-    "ci-replay_srcs",
-    "ci-replay_bayt",
-    "ci-finish_srcs",
-    "ci-finish_bayt",
-    "ci-boot_srcs",
-    "ci-boot_bayt",
-    "ci-online_srcs",
-    "ci-online_bayt",
-    "ci-duel_srcs",
-    "ci-duel_bayt",
-    "ci-touch_srcs",
-    "ci-touch_bayt",
     "ci-leaderboard-access_srcs",
     "ci-leaderboard-access_bayt",
-    "integrate_srcs_srcs",
-    "integrate_bayt_srcs",
-    "database_srcs_srcs",
-    "caddy_srcs_srcs",
-    "assets_srcs_srcs",
-    "served_srcs_srcs",
-    "render_srcs_srcs",
-    "launch_outs_srcs_srcs",
-    "crud_outs_srcs_srcs",
-    "served_outs_srcs_srcs",
-    "caddy_outs_srcs_srcs",
-    "electric_outs_srcs_srcs",
-    "auth_outs_srcs_srcs",
+    "ci-online_srcs",
+    "ci-online_bayt",
+    "ci-touch_srcs",
+    "ci-touch_bayt"
+  ],
+  "sameProjectDeps": [
+    "ci-desktop_srcs",
+    "ci-desktop_bayt",
+    "ci-android_srcs",
+    "ci-android_bayt",
+    "ci-visual_srcs",
+    "ci-visual_bayt",
+    "ci-replay_srcs",
+    "ci-replay_bayt",
+    "ci-boot_srcs",
+    "ci-boot_bayt",
+    "ci-duel_srcs",
+    "ci-duel_bayt",
+    "ci-finish_srcs",
+    "ci-finish_bayt",
+    "ci-leaderboard-access_srcs",
+    "ci-leaderboard-access_bayt",
+    "ci-online_srcs",
+    "ci-online_bayt",
+    "ci-touch_srcs",
+    "ci-touch_bayt"
+  ],
+  "transitiveDeps": [
+    "ci-desktop_srcs",
+    "ci-desktop_bayt",
+    "ci-android_srcs",
+    "ci-android_bayt",
+    "ci-visual_srcs",
+    "ci-visual_bayt",
+    "ci-replay_srcs",
+    "ci-replay_bayt",
+    "ci-boot_srcs",
+    "ci-boot_bayt",
+    "ci-duel_srcs",
+    "ci-duel_bayt",
+    "ci-finish_srcs",
+    "ci-finish_bayt",
+    "ci-leaderboard-access_srcs",
+    "ci-leaderboard-access_bayt",
+    "ci-online_srcs",
+    "ci-online_bayt",
+    "ci-touch_srcs",
+    "ci-touch_bayt",
+    "integrate_srcs",
     "database_srcs",
+    "caddy_srcs",
+    "assets_srcs",
+    "served_srcs",
+    "render_srcs",
+    "migrate_srcs",
     "setup_srcs",
-    "check-finish_srcs_srcs",
-    "check-finish_bayt_srcs",
-    "browser_srcs_srcs",
-    "check-boot_srcs_srcs",
-    "check-boot_bayt_srcs",
-    "check-online_srcs_srcs",
-    "check-online_bayt_srcs",
-    "setup_srcs_srcs",
-    "check-duel_srcs_srcs",
-    "check-duel_bayt_srcs",
-    "check-touch_srcs_srcs",
-    "check-touch_bayt_srcs",
-    "check-leaderboard-access_srcs_srcs",
-    "check-leaderboard-access_bayt_srcs"
+    "check-boot_srcs",
+    "browser_srcs",
+    "check-duel_srcs",
+    "check-finish_srcs",
+    "check-leaderboard-access_srcs",
+    "check-online_srcs",
+    "check-touch_srcs"
   ],
   "transitiveCrossDeps": [],
   "upClosure": [
     "./.bayt/compose.ci.yaml",
+    "./.bayt/compose.ci-desktop.yaml",
+    "./.bayt/compose.ci-android.yaml",
     "./.bayt/compose.ci-visual.yaml",
     "./.bayt/compose.integrate.yaml",
     "./.bayt/compose.launch.yaml",
+    "./.bayt/compose.build.yaml",
+    "./.bayt/compose.generate.yaml",
+    "./.bayt/compose.setup.yaml",
+    "./.bayt/compose.assets.yaml",
+    "./.bayt/compose.render.yaml",
     "./.bayt/compose.caddy.yaml",
     "./.bayt/compose.crud.yaml",
     "./.bayt/compose.database.yaml",
+    "./.bayt/compose.migrate.yaml",
     "./.bayt/compose.timer-check.yaml",
     "./.bayt/compose.served.yaml",
     "./.bayt/compose.electric.yaml",
     "./.bayt/compose.auth.yaml",
     "./.bayt/compose.clock.yaml",
     "./.bayt/compose.ticker.yaml",
-    "./.bayt/compose.assets.yaml",
-    "./.bayt/compose.render.yaml",
     "./.bayt/compose.ci-replay.yaml",
-    "./.bayt/compose.setup.yaml",
-    "./.bayt/compose.ci-finish.yaml",
-    "./.bayt/compose.check-finish.yaml",
-    "./.bayt/compose.browser.yaml",
     "./.bayt/compose.ci-boot.yaml",
     "./.bayt/compose.check-boot.yaml",
-    "./.bayt/compose.ci-online.yaml",
-    "./.bayt/compose.check-online.yaml",
+    "./.bayt/compose.browser.yaml",
     "./.bayt/compose.ci-duel.yaml",
     "./.bayt/compose.check-duel.yaml",
-    "./.bayt/compose.ci-touch.yaml",
-    "./.bayt/compose.check-touch.yaml",
+    "./.bayt/compose.ci-finish.yaml",
+    "./.bayt/compose.check-finish.yaml",
     "./.bayt/compose.ci-leaderboard-access.yaml",
-    "./.bayt/compose.check-leaderboard-access.yaml"
+    "./.bayt/compose.check-leaderboard-access.yaml",
+    "./.bayt/compose.ci-online.yaml",
+    "./.bayt/compose.check-online.yaml",
+    "./.bayt/compose.ci-touch.yaml",
+    "./.bayt/compose.check-touch.yaml"
   ],
   "chainedDeps": [
+    {
+      "name": "ci-desktop_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "services/assets/seed.ts",
+          "assets/manifest.json",
+          "desktop/Cargo.toml",
+          "desktop/Cargo.lock",
+          "desktop/build.rs",
+          "desktop/src/**/*",
+          "desktop/fixtures/**/*",
+          "[.]mise.toml",
+          "[m]ise.lock",
+          "[m]ise.local.toml"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "ci-desktop_bayt",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          ".bayt/compose.ci-desktop.yaml",
+          ".bayt/Dockerfile.ci-desktop",
+          ".bayt/bayt.ci-desktop.json",
+          ".bayt/Taskfile.yml",
+          ".bayt/Taskfile.bayt.yml",
+          ".bayt/Taskfile.ci-desktop.yaml",
+          ".bayt/process-compose.yaml"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "ci-android_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "src/test/**/*.java",
+          "src/test/**/*.kt",
+          "src/test/resources/**/*",
+          "src/test/**/*.sql",
+          "[.]mise.toml",
+          "[m]ise.lock",
+          "[m]ise.local.toml"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "ci-android_bayt",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          ".bayt/compose.ci-android.yaml",
+          ".bayt/Dockerfile.ci-android",
+          ".bayt/bayt.ci-android.json",
+          ".bayt/Taskfile.yml",
+          ".bayt/Taskfile.bayt.yml",
+          ".bayt/Taskfile.ci-android.yaml",
+          ".bayt/process-compose.yaml"
+        ],
+        "exclude": []
+      }
+    },
     {
       "name": "ci-visual_srcs",
       "project": "apexrun",
@@ -811,32 +1269,6 @@
       }
     },
     {
-      "name": "ci-finish_srcs",
-      "project": "apexrun",
-      "dir": ".",
-      "outs": {
-        "globs": [],
-        "exclude": []
-      }
-    },
-    {
-      "name": "ci-finish_bayt",
-      "project": "apexrun",
-      "dir": ".",
-      "outs": {
-        "globs": [
-          ".bayt/compose.ci-finish.yaml",
-          ".bayt/Dockerfile.ci-finish",
-          ".bayt/bayt.ci-finish.json",
-          ".bayt/Taskfile.yml",
-          ".bayt/Taskfile.bayt.yml",
-          ".bayt/Taskfile.ci-finish.yaml",
-          ".bayt/process-compose.yaml"
-        ],
-        "exclude": []
-      }
-    },
-    {
       "name": "ci-boot_srcs",
       "project": "apexrun",
       "dir": ".",
@@ -857,32 +1289,6 @@
           ".bayt/Taskfile.yml",
           ".bayt/Taskfile.bayt.yml",
           ".bayt/Taskfile.ci-boot.yaml",
-          ".bayt/process-compose.yaml"
-        ],
-        "exclude": []
-      }
-    },
-    {
-      "name": "ci-online_srcs",
-      "project": "apexrun",
-      "dir": ".",
-      "outs": {
-        "globs": [],
-        "exclude": []
-      }
-    },
-    {
-      "name": "ci-online_bayt",
-      "project": "apexrun",
-      "dir": ".",
-      "outs": {
-        "globs": [
-          ".bayt/compose.ci-online.yaml",
-          ".bayt/Dockerfile.ci-online",
-          ".bayt/bayt.ci-online.json",
-          ".bayt/Taskfile.yml",
-          ".bayt/Taskfile.bayt.yml",
-          ".bayt/Taskfile.ci-online.yaml",
           ".bayt/process-compose.yaml"
         ],
         "exclude": []
@@ -915,7 +1321,7 @@
       }
     },
     {
-      "name": "ci-touch_srcs",
+      "name": "ci-finish_srcs",
       "project": "apexrun",
       "dir": ".",
       "outs": {
@@ -924,17 +1330,17 @@
       }
     },
     {
-      "name": "ci-touch_bayt",
+      "name": "ci-finish_bayt",
       "project": "apexrun",
       "dir": ".",
       "outs": {
         "globs": [
-          ".bayt/compose.ci-touch.yaml",
-          ".bayt/Dockerfile.ci-touch",
-          ".bayt/bayt.ci-touch.json",
+          ".bayt/compose.ci-finish.yaml",
+          ".bayt/Dockerfile.ci-finish",
+          ".bayt/bayt.ci-finish.json",
           ".bayt/Taskfile.yml",
           ".bayt/Taskfile.bayt.yml",
-          ".bayt/Taskfile.ci-touch.yaml",
+          ".bayt/Taskfile.ci-finish.yaml",
           ".bayt/process-compose.yaml"
         ],
         "exclude": []
@@ -967,6 +1373,71 @@
       }
     },
     {
+      "name": "ci-online_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    },
+    {
+      "name": "ci-online_bayt",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          ".bayt/compose.ci-online.yaml",
+          ".bayt/Dockerfile.ci-online",
+          ".bayt/bayt.ci-online.json",
+          ".bayt/Taskfile.yml",
+          ".bayt/Taskfile.bayt.yml",
+          ".bayt/Taskfile.ci-online.yaml",
+          ".bayt/process-compose.yaml"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "ci-touch_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    },
+    {
+      "name": "ci-touch_bayt",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          ".bayt/compose.ci-touch.yaml",
+          ".bayt/Dockerfile.ci-touch",
+          ".bayt/bayt.ci-touch.json",
+          ".bayt/Taskfile.yml",
+          ".bayt/Taskfile.bayt.yml",
+          ".bayt/Taskfile.ci-touch.yaml",
+          ".bayt/process-compose.yaml"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "integrate_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "shell/shell.yaml",
+          "shell/screens/arena.html",
+          "shell/screens/arena.css"
+        ],
+        "exclude": []
+      }
+    },
+    {
       "name": "database_srcs",
       "project": "apexrun",
       "dir": ".",
@@ -980,8 +1451,164 @@
           "services/database/migrations/006_policies.sql",
           "services/database/migrations/007_txid.sql",
           "services/database/migrations/008_publication.sql",
+          "services/database/migrations/003_rls.sql",
           "services/database/migrations/016_mecha_actors.sql",
           "services/database/migrations/010_high_score_writes.sql"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "caddy_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "docker/Caddyfile"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "assets_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "services/assets/seed.ts",
+          "assets/manifest.json"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "served_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "shell/index.html",
+          "shell/shell.css",
+          "shell/boot.js",
+          "offline-first-sw.js",
+          "shell/shell.yaml",
+          "shell/shell.json",
+          "shell/design.css",
+          "shell/screens/arena.html",
+          "shell/screens/arena.css",
+          "shell/handlers/lease.js",
+          "shell/handlers/lobby.js",
+          "shell/handlers/run.js",
+          "shell/renderers/ending.js",
+          "shell/renderers/run_time.js",
+          "shell/renderers/stage.js",
+          "shell/engines/apexrun.json",
+          "shell/engines/sound.json",
+          "assets/manifest.json",
+          "shell/engine/art.js",
+          "shell/engine/effects.js",
+          "shell/engine/hud.js",
+          "shell/engine/present.js",
+          "shell/engine/prng.js",
+          "shell/engine/renderer.js",
+          "shell/engine/scatter.js",
+          "shell/engine/scenery.js",
+          "shell/engine/simulation.js",
+          "shell/engine/stage_look.js",
+          "brief.md",
+          "brief.html",
+          "journal.html",
+          "ir.html",
+          "ir/card.css",
+          "acceptance.md",
+          "DESIGN.md",
+          "ir/neighbourhood-app.svg",
+          "ir/neighbourhood-arena.svg",
+          "journal/2026-10-16-stitch-hud-telemetry.png",
+          "journal/2026-10-16-stitch-outrun-vision.png",
+          "journal/2026-10-23-t40-challenged.jpg",
+          "journal/2026-10-23-t40-lobby.jpg",
+          "journal/2026-10-23-t40-racing-a.jpg",
+          "journal/2026-10-23-t40-racing-b.jpg",
+          "journal/2026-10-23-t40-result-a.jpg",
+          "journal/2026-10-23-t40-result-b.jpg",
+          "journal/2026-10-24-t41-aerodrome-arrival.jpg",
+          "journal/2026-10-24-t41-castle-arrival.jpg",
+          "journal/2026-10-24-t41-goal.jpg",
+          "journal/2026-10-24-t41-oasis-arrival.jpg",
+          "journal/2026-10-24-t41-trip-helicopter.jpg",
+          "journal/2026-10-24-t41-trip-pull.jpg",
+          "journal/2026-10-24-t41-trip-roadside.jpg",
+          "journal/2026-10-25-t42-phone-initials.jpg",
+          "journal/2026-10-25-t42-phone-race.jpg",
+          "journal/2026-10-25-t42-phone-title.jpg",
+          "journal/2026-10-25-t42-portrait-race.jpg",
+          "journal/2026-10-25-t42-tablet-duel.jpg",
+          "journal/2026-10-25-t42-tablet-paused.jpg",
+          "journal/2026-10-25-t42-tablet-race.jpg",
+          "journal/2026-11-05-t43-car-hero-cockpit.jpg",
+          "journal/2026-11-05-t43-horizon-fix.jpg",
+          "journal/2026-11-05-t43-landmarks-gouache.jpg",
+          "journal/2026-11-05-t43-prop-mega-atlas.jpg",
+          "journal/2026-11-05-t43-riders-flagman.jpg",
+          "journal/2026-11-05-t43-sky-backdrop-gouache.jpg",
+          "journal/2026-11-05-t44-coconut-beach-fork.jpg",
+          "journal/2026-11-05-t44-coconut-beach-hood.jpg",
+          "journal/2026-11-05-t44-coconut-beach-nitro.jpg",
+          "journal/2026-11-05-t44-gateway-pass-hill.jpg",
+          "journal/2026-11-05-t44-metropolis-night.jpg",
+          "journal/2026-11-05-t44-start-grounded-swoop.jpg",
+          "journal/2026-11-05-t44-tulip-gardens.jpg",
+          "robots.txt",
+          "sitemap.xml"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "render_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "shell/index.html",
+          "shell/shell.css",
+          "shell/boot.js",
+          "shell/shell.yaml",
+          "shell/shell.json",
+          "shell/design.css",
+          "shell/screens/arena.html",
+          "shell/screens/arena.css",
+          "shell/handlers/lease.js",
+          "shell/handlers/lobby.js",
+          "shell/handlers/run.js",
+          "shell/renderers/ending.js",
+          "shell/renderers/run_time.js",
+          "shell/renderers/stage.js",
+          "shell/engines/apexrun.json",
+          "shell/engines/sound.json",
+          "shell/engine/art.js",
+          "shell/engine/effects.js",
+          "shell/engine/hud.js",
+          "shell/engine/present.js",
+          "shell/engine/prng.js",
+          "shell/engine/renderer.js",
+          "shell/engine/scatter.js",
+          "shell/engine/scenery.js",
+          "shell/engine/simulation.js",
+          "shell/engine/stage_look.js"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "migrate_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "services/database/pgroll/017_xstate_engines.json",
+          "services/database/pgroll/018_mecha_engines.json"
         ],
         "exclude": []
       }
@@ -999,6 +1626,86 @@
         ],
         "exclude": []
       }
+    },
+    {
+      "name": "check-boot_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "tests/**"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "browser_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "[m]ise.toml",
+          "[.]mise.toml",
+          "[m]ise.lock",
+          "[.]tool-versions"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "check-duel_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "tests/**"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "check-finish_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "tests/**"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "check-leaderboard-access_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "tests/**"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "check-online_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "tests/**"
+        ],
+        "exclude": []
+      }
+    },
+    {
+      "name": "check-touch_srcs",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [
+          "tests/**"
+        ],
+        "exclude": []
+      }
     }
   ],
   "cmds": [
@@ -1011,7 +1718,7 @@
         "defaultGlobs": null,
         "defaultExclude": null
       },
-      "do": "set -eu\nexport DOCKER_HOST_TCP=\"$DOCKER_HOST\"\nexport DEPOT_DISABLE_OTEL=1\ndocker compose --profile '*' config -o /tmp/ci-compose.yaml\ndocker buildx bake --allow=fs.read=/ -f /tmp/ci-compose.yaml --print ci-visual ci-replay ci-finish ci-boot ci-online ci-duel ci-touch ci-leaderboard-access > /tmp/ci-bake.json\nfor target in ci-visual ci-replay ci-finish ci-boot ci-online ci-duel ci-touch ci-leaderboard-access; do\n docker buildx bake -f /tmp/ci-bake.json --progress plain --set '*.output=type=cacheonly' ${SAYT_NO_CACHE:+--no-cache --set \"*.cache-from=\" --set \"*.cache-to=\"} ${SAYT_NO_CACHE_FROM:+--set \"*.cache-from=\"} ${SAYT_NO_CACHE_TO:+--set \"*.cache-to=\"} \"$target\"\ndone",
+      "do": "set -eu\nexport DOCKER_HOST_TCP=\"$DOCKER_HOST\"\nexport DEPOT_DISABLE_OTEL=1\ndocker compose --profile '*' config -o /tmp/ci-compose.yaml\ndocker buildx bake --allow=fs.read=/ -f /tmp/ci-compose.yaml --print ci-desktop ci-android ci-visual ci-replay ci-boot ci-duel ci-finish ci-leaderboard-access ci-online ci-touch > /tmp/ci-bake.json\nfor target in ci-desktop ci-android ci-visual ci-replay ci-boot ci-duel ci-finish ci-leaderboard-access ci-online ci-touch; do\n docker buildx bake -f /tmp/ci-bake.json --progress plain --set '*.output=type=cacheonly' ${SAYT_NO_CACHE:+--no-cache --set \"*.cache-from=\" --set \"*.cache-to=\"} ${SAYT_NO_CACHE_FROM:+--set \"*.cache-from=\"} ${SAYT_NO_CACHE_TO:+--set \"*.cache-to=\"} \"$target\"\ndone",
       "shell": "sh",
       "dockerfile": {
         "inject": {

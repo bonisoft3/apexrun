@@ -78,13 +78,14 @@ async function main(): Promise<number> {
 
     // The renderer is a view of the host's frames, which run backwards on a
     // seek: its worker keeps drawing across the jump. It sends nothing back,
-    // so its draws are read from inside it, off Babylon's own frame counter —
-    // read rather than hooked, since Firefox evaluates in a realm of its own,
-    // where a hook on the worker's setTimeout counts nothing.
+    // so its draws are read from inside it, off Babylon's own frame counter on
+    // the worker's timer queue behind any queued draw — read rather than
+    // hooked, since Firefox evaluates in a realm of its own, where a hook on
+    // the worker's setTimeout counts nothing.
     const worker = page.workers().find((w) => w.url().includes("presenter.js"));
     if (!worker) throw new Error("the game runs no presenter worker");
     // deno-lint-ignore no-explicit-any
-    const drawn = () => worker.evaluate(() => (globalThis as any).BABYLON.EngineStore.LastCreatedEngine.frameId as number);
+    const drawn = () => worker.evaluate(() => new Promise<number>((r) => setTimeout(() => r((globalThis as any).BABYLON.EngineStore.LastCreatedEngine.frameId))));
     await start(page);
     await page.evaluate(() => {
       // deno-lint-ignore no-explicit-any

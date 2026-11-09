@@ -71,7 +71,40 @@
       "seed.ts"
     ]
   },
+  "entrypoint": {
+    "do": "with-env { ASSET_DIR: '.data/assets', ASSET_MANIFEST: 'assets/manifest.json' } { ^deno run --allow-read --allow-write --allow-env --allow-net services/assets/seed.ts }",
+    "shell": "nu",
+    "env": {
+      "ASSET_ORIGIN": "https://storage.googleapis.com/trash-362115-supertuxkart-assets"
+    },
+    "after": {},
+    "host": true
+  },
+  "expose": {
+    "http": {
+      "port": 8787,
+      "env": "PORT"
+    }
+  },
+  "healthcheck": {
+    "template": "http",
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "port": 8787,
+    "path": "/health",
+    "url": "http://127.0.0.1:8787/health",
+    "authorization": null,
+    "headers": [],
+    "start_interval": "200ms",
+    "interval": "2s",
+    "timeout": "5s",
+    "retries": 150,
+    "start_period": "0s"
+  },
   "name": "assets",
+  "process-compose": {
+    "activate": "mise x --"
+  },
   "project": "apexrun",
   "dir": ".",
   "activate": "",

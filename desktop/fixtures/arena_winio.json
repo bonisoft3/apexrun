@@ -1,0 +1,4185 @@
+{
+  "screen": "arena",
+  "route": "/",
+  "stateRules": [
+    {
+      "selector": "body:has(.screen[data-screen=\"arena\"])",
+      "attr": "screen",
+      "op": "eq",
+      "value": "arena",
+      "targetClass": "screen",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": "#app:has(.screen[data-screen=\"arena\"])",
+      "attr": "screen",
+      "op": "eq",
+      "value": "arena",
+      "targetClass": "screen",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".shell-screen:has(> .screen[data-screen=\"arena\"])",
+      "attr": "screen",
+      "op": "eq",
+      "value": "arena",
+      "targetClass": "screen",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-race[data-kinetic-ready] ~ .arena-loading",
+      "attr": "kinetic-ready",
+      "op": "present",
+      "value": "",
+      "targetClass": "arena-loading",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run:not([data-phase=\"initials\"], [data-phase=\"saved\"]) .arena-score",
+      "attr": "phase",
+      "op": "eq",
+      "value": "initials|saved",
+      "targetClass": "arena-score",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run[data-phase=\"initials\"] :is(.arena-finish-saved, .store-error)",
+      "attr": "phase",
+      "op": "eq",
+      "value": "initials",
+      "targetClass": "arena-finish-saved",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"initials\"] :is(.arena-finish-saved, .store-error)",
+      "attr": "phase",
+      "op": "eq",
+      "value": "initials",
+      "targetClass": "store-error",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"saved\"] :is(.arena-finish-label, .arena-initials, .arena-finish-hint, .invalid, .arena-finish-save)",
+      "attr": "phase",
+      "op": "eq",
+      "value": "saved",
+      "targetClass": "arena-finish-label",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"saved\"] :is(.arena-finish-label, .arena-initials, .arena-finish-hint, .invalid, .arena-finish-save)",
+      "attr": "phase",
+      "op": "eq",
+      "value": "saved",
+      "targetClass": "arena-initials",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"saved\"] :is(.arena-finish-label, .arena-initials, .arena-finish-hint, .invalid, .arena-finish-save)",
+      "attr": "phase",
+      "op": "eq",
+      "value": "saved",
+      "targetClass": "arena-finish-hint",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"saved\"] :is(.arena-finish-label, .arena-initials, .arena-finish-hint, .invalid, .arena-finish-save)",
+      "attr": "phase",
+      "op": "eq",
+      "value": "saved",
+      "targetClass": "invalid",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"saved\"] :is(.arena-finish-label, .arena-initials, .arena-finish-hint, .invalid, .arena-finish-save)",
+      "attr": "phase",
+      "op": "eq",
+      "value": "saved",
+      "targetClass": "arena-finish-save",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"saved\"]:not([data-saved=\"yes\"]) .arena-finish-saved",
+      "attr": "phase",
+      "op": "eq",
+      "value": "saved",
+      "targetClass": "arena-finish-saved",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"saved\"]:not([data-saved=\"refused\"]) .store-error",
+      "attr": "phase",
+      "op": "eq",
+      "value": "saved",
+      "targetClass": "store-error",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run:not([data-denied=\"yes\"]) .invalid",
+      "attr": "denied",
+      "op": "eq",
+      "value": "yes",
+      "targetClass": "invalid",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run:not([data-phase=\"title\"], [data-phase=\"paused\"], [data-phase=\"result\"], [data-phase=\"initials\"], [data-phase=\"saved\"]) .stk-modal-scrim",
+      "attr": "phase",
+      "op": "eq",
+      "value": "title|paused|result|initials|saved",
+      "targetClass": "stk-modal-scrim",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run:not([data-phase=\"title\"]) .stk-title-card",
+      "attr": "phase",
+      "op": "eq",
+      "value": "title",
+      "targetClass": "stk-title-card",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run:not([data-phase=\"paused\"]) .stk-pause-card",
+      "attr": "phase",
+      "op": "eq",
+      "value": "paused",
+      "targetClass": "stk-pause-card",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run:not([data-phase=\"result\"], [data-phase=\"initials\"], [data-phase=\"saved\"]) :is(.stk-results-card, .arena-finish)",
+      "attr": "phase",
+      "op": "eq",
+      "value": "result|initials|saved",
+      "targetClass": "stk-results-card",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run:not([data-phase=\"result\"], [data-phase=\"initials\"], [data-phase=\"saved\"]) :is(.stk-results-card, .arena-finish)",
+      "attr": "phase",
+      "op": "eq",
+      "value": "result|initials|saved",
+      "targetClass": "arena-finish",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run:not([data-racing=\"yes\"]) .hud-rival-card",
+      "attr": "racing",
+      "op": "eq",
+      "value": "yes",
+      "targetClass": "hud-rival-card",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run[data-mode=\"hotseat\"] .hud-rival-bonus",
+      "attr": "mode",
+      "op": "eq",
+      "value": "hotseat",
+      "targetClass": "hud-rival-bonus",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-race:not([data-kinetic-loading]) ~ .arena-art-loading",
+      "attr": "kinetic-loading",
+      "op": "present",
+      "value": "",
+      "targetClass": "arena-art-loading",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-race:not([data-kinetic-connecting]) ~ .arena-connecting",
+      "attr": "kinetic-connecting",
+      "op": "present",
+      "value": "",
+      "targetClass": "arena-connecting",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run[data-final=\"yes\"] .hud-fork-on",
+      "attr": "final",
+      "op": "eq",
+      "value": "yes",
+      "targetClass": "hud-fork-on",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run:not([data-final=\"yes\"]) .hud-fork-off",
+      "attr": "final",
+      "op": "eq",
+      "value": "yes",
+      "targetClass": "hud-fork-off",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run[data-station=\"0\"] .radio-0",
+      "attr": "station",
+      "op": "eq",
+      "value": "0",
+      "targetClass": "radio-0",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-station=\"1\"] .radio-1",
+      "attr": "station",
+      "op": "eq",
+      "value": "1",
+      "targetClass": "radio-1",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-station=\"2\"] .radio-2",
+      "attr": "station",
+      "op": "eq",
+      "value": "2",
+      "targetClass": "radio-2",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-station=\"-1\"] .radio-off",
+      "attr": "station",
+      "op": "eq",
+      "value": "-1",
+      "targetClass": "radio-off",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run:not([data-phase=\"title\"]) .stk-lobby-card",
+      "attr": "phase",
+      "op": "eq",
+      "value": "title",
+      "targetClass": "stk-lobby-card",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".stk-lobby-card:not([data-open=\"yes\"])",
+      "attr": "open",
+      "op": "eq",
+      "value": "yes",
+      "targetClass": "stk-lobby-card",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run:has(.stk-lobby-card[data-open=\"yes\"]) .stk-title-card",
+      "attr": "open",
+      "op": "eq",
+      "value": "yes",
+      "targetClass": "stk-title-card",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".stk-lobby-card:not([data-shown=\"show\"]) .stk-lobby-when-on",
+      "attr": "shown",
+      "op": "eq",
+      "value": "show",
+      "targetClass": "stk-lobby-when-on",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".stk-lobby-card[data-shown=\"show\"] .stk-lobby-when-off",
+      "attr": "shown",
+      "op": "eq",
+      "value": "show",
+      "targetClass": "stk-lobby-when-off",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run:not([data-mode=\"online\"]) .stk-res-verdict",
+      "attr": "mode",
+      "op": "eq",
+      "value": "online",
+      "targetClass": "stk-res-verdict",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".arena-run[data-verdict=\"pending\"] .verdict-pending",
+      "attr": "verdict",
+      "op": "eq",
+      "value": "pending",
+      "targetClass": "verdict-pending",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-verdict=\"won\"] .verdict-won",
+      "attr": "verdict",
+      "op": "eq",
+      "value": "won",
+      "targetClass": "verdict-won",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-verdict=\"lost\"] .verdict-lost",
+      "attr": "verdict",
+      "op": "eq",
+      "value": "lost",
+      "targetClass": "verdict-lost",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-verdict=\"draw\"] .verdict-draw",
+      "attr": "verdict",
+      "op": "eq",
+      "value": "draw",
+      "targetClass": "verdict-draw",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-verdict=\"disputed\"] .verdict-disputed",
+      "attr": "verdict",
+      "op": "eq",
+      "value": "disputed",
+      "targetClass": "verdict-disputed",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-verdict=\"abandoned\"] .verdict-abandoned",
+      "attr": "verdict",
+      "op": "eq",
+      "value": "abandoned",
+      "targetClass": "verdict-abandoned",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-mode=\"online\"] #stk-res-restart",
+      "attr": "mode",
+      "op": "eq",
+      "value": "online",
+      "targetClass": "stk-res-restart",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run:not([data-mode=\"online\"]) #stk-res-lobby",
+      "attr": "mode",
+      "op": "eq",
+      "value": "online",
+      "targetClass": "stk-res-lobby",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".screen:not([data-kinetic-touch]) .touch-only",
+      "attr": "kinetic-touch",
+      "op": "present",
+      "value": "",
+      "targetClass": "touch-only",
+      "visible": false,
+      "negated": true
+    },
+    {
+      "selector": ".screen[data-kinetic-touch] .keys-only",
+      "attr": "kinetic-touch",
+      "op": "present",
+      "value": "",
+      "targetClass": "keys-only",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"race\"] .touch-seat[data-seat=\"1\"]",
+      "attr": "phase",
+      "op": "eq",
+      "value": "race",
+      "targetClass": "arena-run",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"race\"][data-mode=\"hotseat\"] .touch-seat[data-seat=\"2\"]",
+      "attr": "phase",
+      "op": "eq",
+      "value": "race",
+      "targetClass": "arena-run",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"replay\"] .touch-skip",
+      "attr": "phase",
+      "op": "eq",
+      "value": "replay",
+      "targetClass": "touch-skip",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".arena-run[data-phase=\"race\"]:not([data-mode=\"online\"]) .touch-pause",
+      "attr": "phase",
+      "op": "eq",
+      "value": "race",
+      "targetClass": "touch-pause",
+      "visible": true,
+      "negated": false
+    },
+    {
+      "selector": ".screen[data-kinetic-touch] :is(.pitlane-badge, .hud-telemetry-card, .hud-surface-pill)",
+      "attr": "kinetic-touch",
+      "op": "present",
+      "value": "",
+      "targetClass": "pitlane-badge",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".screen[data-kinetic-touch] :is(.pitlane-badge, .hud-telemetry-card, .hud-surface-pill)",
+      "attr": "kinetic-touch",
+      "op": "present",
+      "value": "",
+      "targetClass": "hud-telemetry-card",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".screen[data-kinetic-touch] :is(.pitlane-badge, .hud-telemetry-card, .hud-surface-pill)",
+      "attr": "kinetic-touch",
+      "op": "present",
+      "value": "",
+      "targetClass": "hud-surface-pill",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".screen[data-kinetic-touch] :is(.hud-trans-header, .hud-tacho-box)",
+      "attr": "kinetic-touch",
+      "op": "present",
+      "value": "",
+      "targetClass": "hud-trans-header",
+      "visible": false,
+      "negated": false
+    },
+    {
+      "selector": ".screen[data-kinetic-touch] :is(.hud-trans-header, .hud-tacho-box)",
+      "attr": "kinetic-touch",
+      "op": "present",
+      "value": "",
+      "targetClass": "hud-tacho-box",
+      "visible": false,
+      "negated": false
+    }
+  ],
+  "root": {
+    "id": "arena_div_1",
+    "widget": "Window",
+    "orientation": "Vertical",
+    "classes": [
+      "screen"
+    ],
+    "stateAttrs": {},
+    "children": [
+      {
+        "id": "arena_div_2",
+        "widget": "LiveRegion",
+        "orientation": "Vertical",
+        "classes": [
+          "viewport-box",
+          "arena-run"
+        ],
+        "stateAttrs": {
+          "phase": "{phase}",
+          "mode": "{mode}",
+          "racing": "{racing}",
+          "final": "{final}",
+          "station": "{station}",
+          "pitlane": "{pitlane}",
+          "verdict": "{verdict}",
+          "saved": "{saved}",
+          "denied": "{denied}",
+          "cursor": "{cursor}",
+          "visited": "{route}",
+          "stage": "{stage_id}"
+        },
+        "liveTable": "run",
+        "liveFilter": "id=eq.run",
+        "children": [
+          {
+            "id": "kinetic_race",
+            "widget": "KineticSurface",
+            "classes": [
+              "arena-race"
+            ],
+            "role": "img",
+            "accessibilityLabel": "Apex Run",
+            "stateAttrs": {},
+            "kineticActor": "race",
+            "kineticProps": {
+              "seed": "{seed}",
+              "phase": "{phase}",
+              "mode": "{mode}",
+              "input": "{input}",
+              "clock": "{clock}",
+              "seat": "{seat}",
+              "stage": "{duel_stage}",
+              "peer": "{peer}",
+              "replay": "{replay}",
+              "station": "{station}",
+              "muted": "{muted}",
+              "volume": "{volume}"
+            },
+            "children": []
+          },
+          {
+            "id": "arena_p_4",
+            "widget": "Label",
+            "classes": [
+              "arena-loading"
+            ],
+            "role": "status",
+            "accessibilityLabel": "APEX RUN · LOADING",
+            "text": "APEX RUN · LOADING",
+            "stateAttrs": {},
+            "children": []
+          },
+          {
+            "id": "layer_haze",
+            "widget": "HudLayer",
+            "classes": [
+              "stk-layer"
+            ],
+            "stateAttrs": {},
+            "hudLayer": "haze",
+            "children": []
+          },
+          {
+            "id": "arena_div_6",
+            "widget": "StackPanel",
+            "orientation": "Vertical",
+            "classes": [
+              "stk-plane2"
+            ],
+            "stateAttrs": {},
+            "children": [
+              {
+                "id": "arena_header_7",
+                "widget": "StackPanel",
+                "orientation": "Horizontal",
+                "classes": [
+                  "hud-top-bar"
+                ],
+                "stateAttrs": {},
+                "children": [
+                  {
+                    "id": "arena_div_8",
+                    "widget": "StackPanel",
+                    "orientation": "Vertical",
+                    "classes": [
+                      "hud-top-left"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_div_9",
+                        "widget": "StackPanel",
+                        "orientation": "Horizontal",
+                        "classes": [
+                          "hud-badges-row"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_div_10",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "hud-slant",
+                              "hud-badge-stage"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_11",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-slant-content"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_span_12",
+                                    "widget": "Label",
+                                    "classes": [],
+                                    "accessibilityLabel": "1",
+                                    "text": "1",
+                                    "textBinding": "{stage_num}",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_13",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "hud-slant",
+                              "hud-badge-multiplier"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_14",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-slant-content"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "layer_drift",
+                                    "widget": "HudLayer",
+                                    "classes": [
+                                      "hud-layer"
+                                    ],
+                                    "stateAttrs": {},
+                                    "hudLayer": "drift",
+                                    "hudWidthEm": 9.6,
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_span_16",
+                            "widget": "Label",
+                            "classes": [
+                              "hud-mono-sub"
+                            ],
+                            "accessibilityLabel": "CHECKPOINT A-1",
+                            "text": "CHECKPOINT A-1",
+                            "stateAttrs": {},
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "id": "arena_div_17",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "hud-panel",
+                          "hud-stage-card"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_div_18",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-card-row"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_h1_19",
+                                "widget": "Label",
+                                "classes": [
+                                  "hud-stage-title"
+                                ],
+                                "accessibilityLabel": "COCONUT BEACH",
+                                "text": "COCONUT BEACH",
+                                "textBinding": "{stage_name}",
+                                "stateAttrs": {},
+                                "children": []
+                              },
+                              {
+                                "id": "arena_span_20",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-fork-dist"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "layer_fork-dist",
+                                    "widget": "HudLayer",
+                                    "classes": [
+                                      "hud-layer"
+                                    ],
+                                    "stateAttrs": {},
+                                    "hudLayer": "fork-dist",
+                                    "hudWidthEm": 10.2,
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_22",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "hud-progress-track"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "layer_route-progress",
+                                "widget": "HudLayer",
+                                "classes": [
+                                  "hud-layer-fill"
+                                ],
+                                "stateAttrs": {},
+                                "hudLayer": "route-progress",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_24",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-score-row"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_25",
+                                "widget": "Label",
+                                "classes": [
+                                  "hud-label-dim"
+                                ],
+                                "accessibilityLabel": "SCORE",
+                                "text": "SCORE",
+                                "stateAttrs": {},
+                                "children": []
+                              },
+                              {
+                                "id": "arena_div_26",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-score-val"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "layer_score",
+                                    "widget": "HudLayer",
+                                    "classes": [
+                                      "hud-layer"
+                                    ],
+                                    "stateAttrs": {},
+                                    "hudLayer": "score",
+                                    "hudWidthEm": 5,
+                                    "children": []
+                                  },
+                                  {
+                                    "id": "arena_span_28",
+                                    "widget": "Label",
+                                    "classes": [
+                                      "hud-unit-gold"
+                                    ],
+                                    "accessibilityLabel": "PTS",
+                                    "text": "PTS",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_div_29",
+                    "widget": "StackPanel",
+                    "orientation": "Vertical",
+                    "classes": [
+                      "hud-top-center"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_div_30",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "hud-panel",
+                          "hud-panel-orange",
+                          "hud-timer-card"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_span_31",
+                            "widget": "Label",
+                            "classes": [
+                              "hud-timer-label"
+                            ],
+                            "accessibilityLabel": "REMAINING TIME",
+                            "text": "REMAINING TIME",
+                            "stateAttrs": {},
+                            "children": []
+                          },
+                          {
+                            "id": "arena_div_32",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "hud-timer-digits"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_33",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-timer-main",
+                                  "glow-text-gold"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "layer_timer",
+                                    "widget": "HudLayer",
+                                    "classes": [
+                                      "hud-layer"
+                                    ],
+                                    "stateAttrs": {},
+                                    "hudLayer": "timer",
+                                    "hudWidthEm": 1.6,
+                                    "children": []
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_span_35",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-timer-dec"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "layer_timer-dec",
+                                    "widget": "HudLayer",
+                                    "classes": [
+                                      "hud-layer"
+                                    ],
+                                    "stateAttrs": {},
+                                    "hudLayer": "timer-dec",
+                                    "hudWidthEm": 1.1,
+                                    "children": []
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_span_37",
+                                "widget": "Label",
+                                "classes": [
+                                  "hud-timer-unit"
+                                ],
+                                "accessibilityLabel": "SEC",
+                                "text": "SEC",
+                                "stateAttrs": {},
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_38",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "hud-timer-status"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_40",
+                                "widget": "Label",
+                                "classes": [
+                                  "hud-status-text"
+                                ],
+                                "accessibilityLabel": "TIMER ACTIVE",
+                                "text": "TIMER ACTIVE",
+                                "stateAttrs": {},
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "arena_div_41",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "hud-panel",
+                          "hud-rival-card"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_div_42",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-rival-head"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_43",
+                                "widget": "Label",
+                                "classes": [],
+                                "accessibilityLabel": "RIVAL · STAGE 1",
+                                "text": "RIVAL · STAGE 1",
+                                "textBinding": "{rival_label}",
+                                "stateAttrs": {},
+                                "children": []
+                              },
+                              {
+                                "id": "arena_span_44",
+                                "widget": "Label",
+                                "classes": [
+                                  "hud-rival-bonus"
+                                ],
+                                "accessibilityLabel": "+1,000 IF PASSED",
+                                "text": "+1,000 IF PASSED",
+                                "stateAttrs": {},
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_45",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "hud-rival-gap"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "layer_rival-gap",
+                                "widget": "HudLayer",
+                                "classes": [
+                                  "hud-layer",
+                                  "hud-layer-wide"
+                                ],
+                                "stateAttrs": {},
+                                "hudLayer": "rival-gap",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_47",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-rival-bar"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "layer_rival-fill",
+                                "widget": "HudLayer",
+                                "classes": [
+                                  "hud-layer-fill"
+                                ],
+                                "stateAttrs": {},
+                                "hudLayer": "rival-fill",
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_div_49",
+                    "widget": "StackPanel",
+                    "orientation": "Vertical",
+                    "classes": [
+                      "hud-top-right"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_div_50",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "hud-panel",
+                          "hud-matrix-card"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_div_51",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-matrix-header"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_div_52",
+                                "widget": "StackPanel",
+                                "orientation": "Horizontal",
+                                "classes": [
+                                  "hud-matrix-title-row"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_span_54",
+                                    "widget": "Label",
+                                    "classes": [
+                                      "hud-matrix-title"
+                                    ],
+                                    "accessibilityLabel": "SEGA ROUTE MATRIX",
+                                    "text": "SEGA ROUTE MATRIX",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_span_55",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-fork-alert"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "layer_matrix-fork",
+                                    "widget": "HudLayer",
+                                    "classes": [
+                                      "hud-layer"
+                                    ],
+                                    "stateAttrs": {},
+                                    "hudLayer": "matrix-fork",
+                                    "hudWidthEm": 13.2,
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_57",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "hud-matrix-body"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_div_58",
+                                "widget": "StackPanel",
+                                "orientation": "Horizontal",
+                                "classes": [
+                                  "hud-branches-row"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_div_59",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-branch-choice",
+                                      "branch-left"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "arena_span_60",
+                                        "widget": "StackPanel",
+                                        "orientation": "Vertical",
+                                        "classes": [
+                                          "hud-fork-on"
+                                        ],
+                                        "stateAttrs": {},
+                                        "children": [
+                                          {
+                                            "id": "arena_span_61",
+                                            "widget": "Label",
+                                            "classes": [],
+                                            "accessibilityLabel": "DESERT CANYONS",
+                                            "text": "DESERT CANYONS",
+                                            "textBinding": "{fork_left}",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "arena_span_62",
+                                            "widget": "StackPanel",
+                                            "orientation": "Vertical",
+                                            "classes": [
+                                              "hud-tag-easy"
+                                            ],
+                                            "stateAttrs": {},
+                                            "children": [
+                                              {
+                                                "id": "arena_span_63",
+                                                "widget": "Label",
+                                                "classes": [],
+                                                "accessibilityLabel": "2",
+                                                "text": "2",
+                                                "textBinding": "{next_num}",
+                                                "stateAttrs": {},
+                                                "children": []
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "id": "arena_span_64",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "hud-fork-off"
+                                        ],
+                                        "accessibilityLabel": "🏁 [FINAL DESTINATION]",
+                                        "text": "🏁 [FINAL DESTINATION]",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "arena_div_65",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-branch-choice",
+                                      "branch-right"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "arena_span_66",
+                                        "widget": "StackPanel",
+                                        "orientation": "Vertical",
+                                        "classes": [
+                                          "hud-fork-on"
+                                        ],
+                                        "stateAttrs": {},
+                                        "children": [
+                                          {
+                                            "id": "arena_span_67",
+                                            "widget": "Label",
+                                            "classes": [],
+                                            "accessibilityLabel": "GATEWAY PASS",
+                                            "text": "GATEWAY PASS",
+                                            "textBinding": "{fork_right}",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "arena_span_68",
+                                            "widget": "StackPanel",
+                                            "orientation": "Vertical",
+                                            "classes": [
+                                              "hud-tag-pro"
+                                            ],
+                                            "stateAttrs": {},
+                                            "children": [
+                                              {
+                                                "id": "arena_span_69",
+                                                "widget": "Label",
+                                                "classes": [],
+                                                "accessibilityLabel": "2",
+                                                "text": "2",
+                                                "textBinding": "{next_num}",
+                                                "stateAttrs": {},
+                                                "children": []
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "id": "arena_span_70",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "hud-fork-off"
+                                        ],
+                                        "accessibilityLabel": "GOAL AHEAD 🏁",
+                                        "text": "GOAL AHEAD 🏁",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "arena_div_71",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "hud-panel",
+                          "hud-radio-card"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_div_72",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "hud-radio-left"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_div_73",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-equalizer"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "layer_eq",
+                                    "widget": "HudLayer",
+                                    "classes": [
+                                      "hud-layer-eq"
+                                    ],
+                                    "stateAttrs": {},
+                                    "hudLayer": "eq",
+                                    "children": []
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_div_75",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-radio-info"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_div_76",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-radio-sub"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "arena_span_77",
+                                        "widget": "StackPanel",
+                                        "orientation": "Vertical",
+                                        "classes": [
+                                          "hud-fm-pill"
+                                        ],
+                                        "stateAttrs": {},
+                                        "children": [
+                                          {
+                                            "id": "arena_span_78",
+                                            "widget": "Label",
+                                            "classes": [
+                                              "radio-0"
+                                            ],
+                                            "accessibilityLabel": "FM 88.5",
+                                            "text": "FM 88.5",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "arena_span_79",
+                                            "widget": "Label",
+                                            "classes": [
+                                              "radio-1"
+                                            ],
+                                            "accessibilityLabel": "FM 92.1",
+                                            "text": "FM 92.1",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "arena_span_80",
+                                            "widget": "Label",
+                                            "classes": [
+                                              "radio-2"
+                                            ],
+                                            "accessibilityLabel": "FM 97.3",
+                                            "text": "FM 97.3",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "arena_span_81",
+                                            "widget": "Label",
+                                            "classes": [
+                                              "radio-off"
+                                            ],
+                                            "accessibilityLabel": "FM --.-",
+                                            "text": "FM --.-",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "arena_div_82",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-radio-station"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "arena_span_83",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "radio-0"
+                                        ],
+                                        "accessibilityLabel": "Palm Drive",
+                                        "text": "Palm Drive",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_span_84",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "radio-1"
+                                        ],
+                                        "accessibilityLabel": "Tidal Breeze",
+                                        "text": "Tidal Breeze",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_span_85",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "radio-2"
+                                        ],
+                                        "accessibilityLabel": "Neon Surf",
+                                        "text": "Neon Surf",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_span_86",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "radio-off"
+                                        ],
+                                        "accessibilityLabel": "RADIO OFF",
+                                        "text": "RADIO OFF",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "arena_div_87",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-radio-genre"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "arena_span_88",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "radio-0"
+                                        ],
+                                        "accessibilityLabel": "synth samba",
+                                        "text": "synth samba",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_span_89",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "radio-1"
+                                        ],
+                                        "accessibilityLabel": "jazz fusion",
+                                        "text": "jazz fusion",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_span_90",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "radio-2"
+                                        ],
+                                        "accessibilityLabel": "synthwave",
+                                        "text": "synthwave",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_span_91",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "radio-off"
+                                        ],
+                                        "accessibilityLabel": "ENGINE ONLY",
+                                        "text": "ENGINE ONLY",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_92",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-radio-actions"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "stk-radio-skip",
+                                "widget": "Button",
+                                "classes": [
+                                  "hud-radio-skip"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "NEXT ›",
+                                "text": "NEXT ›",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=run&id=stk-radio-skip",
+                                "children": []
+                              },
+                              {
+                                "id": "stk-radio-mute",
+                                "widget": "Button",
+                                "classes": [
+                                  "hud-radio-skip"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "MUTE",
+                                "text": "MUTE",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=run&id=stk-radio-mute",
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "arena_footer_98",
+                "widget": "StackPanel",
+                "orientation": "Horizontal",
+                "classes": [
+                  "hud-bottom-bar"
+                ],
+                "stateAttrs": {},
+                "children": [
+                  {
+                    "id": "arena_div_99",
+                    "widget": "StackPanel",
+                    "orientation": "Vertical",
+                    "classes": [
+                      "hud-bottom-left"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_div_100",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "hud-panel",
+                          "hud-telemetry-card"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_div_101",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-tel-header"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_102",
+                                "widget": "Label",
+                                "classes": [
+                                  "hud-tel-title"
+                                ],
+                                "accessibilityLabel": "HIGHWAY TELEMETRY",
+                                "text": "HIGHWAY TELEMETRY",
+                                "stateAttrs": {},
+                                "children": []
+                              },
+                              {
+                                "id": "arena_span_103",
+                                "widget": "Label",
+                                "classes": [
+                                  "hud-livelink"
+                                ],
+                                "accessibilityLabel": "LIVELINK 60 FPS",
+                                "text": "LIVELINK 60 FPS",
+                                "stateAttrs": {},
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_104",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-tel-rows"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_div_105",
+                                "widget": "StackPanel",
+                                "orientation": "Horizontal",
+                                "classes": [
+                                  "hud-tel-row"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_span_108",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-tel-highlight"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "layer_radar",
+                                        "widget": "HudLayer",
+                                        "classes": [
+                                          "hud-layer"
+                                        ],
+                                        "stateAttrs": {},
+                                        "hudLayer": "radar",
+                                        "hudWidthEm": 12,
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_div_110",
+                                "widget": "StackPanel",
+                                "orientation": "Horizontal",
+                                "classes": [
+                                  "hud-tel-row"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_span_111",
+                                    "widget": "Label",
+                                    "classes": [
+                                      "hud-tel-dim"
+                                    ],
+                                    "accessibilityLabel": "RIVAL SPLIT",
+                                    "text": "RIVAL SPLIT",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  },
+                                  {
+                                    "id": "arena_span_112",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-tel-cyan"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "layer_rival-split",
+                                        "widget": "HudLayer",
+                                        "classes": [
+                                          "hud-layer"
+                                        ],
+                                        "stateAttrs": {},
+                                        "hudLayer": "rival-split",
+                                        "hudWidthEm": 7.8,
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_div_114",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-tel-grid2"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_div_115",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-grid-cell"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "arena_span_116",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "cell-label"
+                                        ],
+                                        "accessibilityLabel": "LATERAL G-FORCE",
+                                        "text": "LATERAL G-FORCE",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_span_117",
+                                        "widget": "StackPanel",
+                                        "orientation": "Vertical",
+                                        "classes": [
+                                          "cell-val"
+                                        ],
+                                        "stateAttrs": {},
+                                        "children": [
+                                          {
+                                            "id": "layer_gforce",
+                                            "widget": "HudLayer",
+                                            "classes": [
+                                              "hud-layer"
+                                            ],
+                                            "stateAttrs": {},
+                                            "hudLayer": "gforce",
+                                            "hudWidthEm": 3.6,
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "arena_span_119",
+                                            "widget": "Label",
+                                            "classes": [
+                                              "unit-orange"
+                                            ],
+                                            "accessibilityLabel": "G",
+                                            "text": "G",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "arena_div_120",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-grid-cell"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "arena_span_121",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "cell-label"
+                                        ],
+                                        "accessibilityLabel": "SLIPSTREAM GAIN",
+                                        "text": "SLIPSTREAM GAIN",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_span_122",
+                                        "widget": "StackPanel",
+                                        "orientation": "Vertical",
+                                        "classes": [
+                                          "cell-val"
+                                        ],
+                                        "stateAttrs": {},
+                                        "children": [
+                                          {
+                                            "id": "layer_slipstream",
+                                            "widget": "HudLayer",
+                                            "classes": [
+                                              "hud-layer"
+                                            ],
+                                            "stateAttrs": {},
+                                            "hudLayer": "slipstream",
+                                            "hudWidthEm": 3,
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "arena_span_124",
+                                            "widget": "Label",
+                                            "classes": [
+                                              "unit-white"
+                                            ],
+                                            "accessibilityLabel": "KM/H",
+                                            "text": "KM/H",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_div_125",
+                                "widget": "StackPanel",
+                                "orientation": "Horizontal",
+                                "classes": [
+                                  "hud-draft-status-row"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_span_126",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-draft-alert"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "layer_draft-status",
+                                        "widget": "HudLayer",
+                                        "classes": [
+                                          "hud-layer"
+                                        ],
+                                        "stateAttrs": {},
+                                        "hudLayer": "draft-status",
+                                        "hudWidthEm": 14.4,
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "arena_div_133",
+                        "widget": "StackPanel",
+                        "orientation": "Horizontal",
+                        "classes": [
+                          "hud-util-strip"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "stk-pause-btn",
+                            "widget": "Button",
+                            "classes": [
+                              "hud-slant",
+                              "hud-util-btn",
+                              "keys-only"
+                            ],
+                            "role": "button",
+                            "accessibilityLabel": "PAUSE [ESC]",
+                            "text": "PAUSE [ESC]",
+                            "stateAttrs": {},
+                            "actionUri": "pronto://event/CLICK?handler=run&id=stk-pause-btn",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_div_135",
+                    "widget": "StackPanel",
+                    "orientation": "Vertical",
+                    "classes": [
+                      "hud-bottom-center"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_div_136",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "hud-panel",
+                          "hud-surface-pill"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_span_137",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_strong_138",
+                                "widget": "Label",
+                                "classes": [
+                                  "text-white"
+                                ],
+                                "accessibilityLabel": "DRY ASPHALT",
+                                "text": "DRY ASPHALT",
+                                "stateAttrs": {},
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_span_140",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_strong_141",
+                                "widget": "Label",
+                                "classes": [
+                                  "text-emerald"
+                                ],
+                                "accessibilityLabel": "100%",
+                                "text": "100%",
+                                "stateAttrs": {},
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_span_143",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_strong_144",
+                                "widget": "Label",
+                                "classes": [
+                                  "text-amber"
+                                ],
+                                "accessibilityLabel": "SUNSET",
+                                "text": "SUNSET",
+                                "stateAttrs": {},
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_div_145",
+                    "widget": "StackPanel",
+                    "orientation": "Vertical",
+                    "classes": [
+                      "hud-bottom-right"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_div_146",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "hud-panel",
+                          "hud-panel-orange",
+                          "hud-cluster-card"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_div_147",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-trans-header"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_148",
+                                "widget": "Label",
+                                "classes": [
+                                  "hud-trans-label"
+                                ],
+                                "accessibilityLabel": "TRANSMISSION",
+                                "text": "TRANSMISSION",
+                                "stateAttrs": {},
+                                "children": []
+                              },
+                              {
+                                "id": "arena_div_149",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-gearbox-toggle"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "layer_gear",
+                                    "widget": "HudLayer",
+                                    "classes": [
+                                      "gear-tag",
+                                      "hud-layer-gear"
+                                    ],
+                                    "stateAttrs": {},
+                                    "hudLayer": "gear",
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_151",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "hud-tacho-box"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_div_152",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-tacho-top"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_span_153",
+                                    "widget": "Label",
+                                    "classes": [],
+                                    "accessibilityLabel": "TACHOMETER",
+                                    "text": "TACHOMETER",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  },
+                                  {
+                                    "id": "arena_span_154",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-rpm-val"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "layer_rpm",
+                                        "widget": "HudLayer",
+                                        "classes": [
+                                          "hud-layer"
+                                        ],
+                                        "stateAttrs": {},
+                                        "hudLayer": "rpm",
+                                        "hudWidthEm": 6.7,
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_div_156",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-tacho-leds"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "layer_tacho",
+                                    "widget": "HudLayer",
+                                    "classes": [
+                                      "hud-layer-fill",
+                                      "hud-layer-span"
+                                    ],
+                                    "stateAttrs": {},
+                                    "hudLayer": "tacho",
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_158",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-velocity-row"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_div_159",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-velo-meta"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_span_160",
+                                    "widget": "Label",
+                                    "classes": [
+                                      "hud-velo-label"
+                                    ],
+                                    "accessibilityLabel": "VELOCITY",
+                                    "text": "VELOCITY",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  },
+                                  {
+                                    "id": "arena_span_161",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-velo-mode"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "layer_velo-mode",
+                                        "widget": "HudLayer",
+                                        "classes": [
+                                          "hud-layer"
+                                        ],
+                                        "stateAttrs": {},
+                                        "hudLayer": "velo-mode",
+                                        "hudWidthEm": 9.6,
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_div_163",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-velo-digits"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_span_164",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "hud-speed-num",
+                                      "glow-text-orange"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "layer_speed",
+                                        "widget": "HudLayer",
+                                        "classes": [
+                                          "hud-layer"
+                                        ],
+                                        "stateAttrs": {},
+                                        "hudLayer": "speed",
+                                        "hudWidthEm": 1.9,
+                                        "children": []
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "arena_span_166",
+                                    "widget": "Label",
+                                    "classes": [
+                                      "hud-speed-unit"
+                                    ],
+                                    "accessibilityLabel": "KM/H",
+                                    "text": "KM/H",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_167",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "hud-cluster-footer"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_168",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_strong_169",
+                                    "widget": "Label",
+                                    "classes": [
+                                      "text-white"
+                                    ],
+                                    "accessibilityLabel": "315 KM/H",
+                                    "text": "315 KM/H",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_span_170",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "hud-nitro"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "layer_nitro-text",
+                                    "widget": "HudLayer",
+                                    "classes": [
+                                      "hud-layer"
+                                    ],
+                                    "stateAttrs": {},
+                                    "hudLayer": "nitro-text",
+                                    "hudWidthEm": 5.5,
+                                    "children": []
+                                  },
+                                  {
+                                    "id": "arena_span_172",
+                                    "widget": "StackPanel",
+                                    "orientation": "Horizontal",
+                                    "classes": [
+                                      "hud-nitro-bar"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "layer_nitro-bar",
+                                        "widget": "HudLayer",
+                                        "classes": [
+                                          "hud-layer-fill"
+                                        ],
+                                        "stateAttrs": {},
+                                        "hudLayer": "nitro-bar",
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "layer_effects",
+            "widget": "HudLayer",
+            "classes": [
+              "stk-layer",
+              "stk-layer-over"
+            ],
+            "stateAttrs": {},
+            "hudLayer": "effects",
+            "children": []
+          },
+          {
+            "id": "arena_p_175",
+            "widget": "Label",
+            "classes": [
+              "stk-prompt",
+              "arena-art-loading"
+            ],
+            "role": "status",
+            "accessibilityLabel": "LOADING THE ROAD AHEAD",
+            "text": "LOADING THE ROAD AHEAD",
+            "stateAttrs": {},
+            "children": []
+          },
+          {
+            "id": "arena_p_176",
+            "widget": "Label",
+            "classes": [
+              "stk-prompt",
+              "arena-connecting"
+            ],
+            "role": "status",
+            "accessibilityLabel": "CONNECTING TO RACER…",
+            "text": "CONNECTING TO RACER…",
+            "stateAttrs": {},
+            "children": []
+          },
+          {
+            "id": "arena_div_196",
+            "widget": "StackPanel",
+            "orientation": "Vertical",
+            "classes": [
+              "stk-modal-scrim"
+            ],
+            "stateAttrs": {},
+            "children": [
+              {
+                "id": "arena_div_197",
+                "widget": "StackPanel",
+                "orientation": "Vertical",
+                "classes": [
+                  "stk-modal-card",
+                  "stk-title-card"
+                ],
+                "stateAttrs": {},
+                "children": [
+                  {
+                    "id": "arena_h1_198",
+                    "widget": "Label",
+                    "classes": [
+                      "stk-modal-title"
+                    ],
+                    "accessibilityLabel": "APEX RUN",
+                    "text": "APEX RUN",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "arena_p_199",
+                    "widget": "Label",
+                    "classes": [
+                      "stk-title-sub"
+                    ],
+                    "accessibilityLabel": "Branching Highway Simcade",
+                    "text": "Branching Highway Simcade",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "arena_div_207",
+                    "widget": "StackPanel",
+                    "orientation": "Vertical",
+                    "classes": [
+                      "stk-title-keys",
+                      "keys-only"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_div_208",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_b_209",
+                            "widget": "Label",
+                            "classes": [],
+                            "accessibilityLabel": "W / ⬆️",
+                            "text": "W / ⬆️",
+                            "stateAttrs": {},
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "id": "arena_div_210",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_b_211",
+                            "widget": "Label",
+                            "classes": [],
+                            "accessibilityLabel": "A / D / ⬅️ ➡️",
+                            "text": "A / D / ⬅️ ➡️",
+                            "stateAttrs": {},
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "id": "arena_div_212",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_b_213",
+                            "widget": "Label",
+                            "classes": [],
+                            "accessibilityLabel": "G",
+                            "text": "G",
+                            "stateAttrs": {},
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "id": "arena_div_214",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_b_215",
+                            "widget": "Label",
+                            "classes": [],
+                            "accessibilityLabel": "Space",
+                            "text": "Space",
+                            "stateAttrs": {},
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "id": "arena_div_216",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_b_217",
+                            "widget": "Label",
+                            "classes": [],
+                            "accessibilityLabel": "Shift / Z",
+                            "text": "Shift / Z",
+                            "stateAttrs": {},
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_div_218",
+                    "widget": "Label",
+                    "classes": [
+                      "stk-title-pick"
+                    ],
+                    "accessibilityLabel": "PICK A STATION",
+                    "text": "PICK A STATION",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "arena_div_219",
+                    "widget": "StackPanel",
+                    "orientation": "Horizontal",
+                    "classes": [
+                      "stk-radio-group"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "stk-station-0",
+                        "widget": "Button",
+                        "classes": [
+                          "stk-radio-btn",
+                          "radio-pick-0"
+                        ],
+                        "role": "button",
+                        "accessibilityLabel": "FM 88.5 Palm Drive synth samba",
+                        "text": "FM 88.5 Palm Drive synth samba",
+                        "stateAttrs": {},
+                        "actionUri": "pronto://event/CLICK?handler=run&id=stk-station-0",
+                        "children": []
+                      },
+                      {
+                        "id": "stk-station-1",
+                        "widget": "Button",
+                        "classes": [
+                          "stk-radio-btn",
+                          "radio-pick-1"
+                        ],
+                        "role": "button",
+                        "accessibilityLabel": "FM 92.1 Tidal Breeze jazz fusion",
+                        "text": "FM 92.1 Tidal Breeze jazz fusion",
+                        "stateAttrs": {},
+                        "actionUri": "pronto://event/CLICK?handler=run&id=stk-station-1",
+                        "children": []
+                      },
+                      {
+                        "id": "stk-station-2",
+                        "widget": "Button",
+                        "classes": [
+                          "stk-radio-btn",
+                          "radio-pick-2"
+                        ],
+                        "role": "button",
+                        "accessibilityLabel": "FM 97.3 Neon Surf synthwave",
+                        "text": "FM 97.3 Neon Surf synthwave",
+                        "stateAttrs": {},
+                        "actionUri": "pronto://event/CLICK?handler=run&id=stk-station-2",
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_form_229",
+                    "widget": "StackPanel",
+                    "orientation": "Vertical",
+                    "classes": [
+                      "stk-volume"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_label_230",
+                        "widget": "Label",
+                        "classes": [],
+                        "accessibilityLabel": "VOLUME",
+                        "text": "VOLUME",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "stk-volume",
+                        "widget": "Slider",
+                        "classes": [],
+                        "role": "slider",
+                        "accessibilityLabel": "volume",
+                        "stateAttrs": {},
+                        "inputField": "volume",
+                        "inputKind": "range",
+                        "inputMin": 0,
+                        "inputMax": 100,
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_231",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_span_232",
+                            "widget": "Label",
+                            "classes": [],
+                            "accessibilityLabel": "70",
+                            "text": "70",
+                            "textBinding": "{volume}",
+                            "stateAttrs": {},
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_div_233",
+                    "widget": "StackPanel",
+                    "orientation": "Horizontal",
+                    "classes": [
+                      "stk-title-actions"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "stk-btn-start",
+                        "widget": "Button",
+                        "classes": [
+                          "stk-btn",
+                          "stk-btn-go"
+                        ],
+                        "role": "button",
+                        "accessibilityLabel": "(ENTER)",
+                        "text": "(ENTER)",
+                        "stateAttrs": {},
+                        "actionUri": "pronto://event/CLICK?handler=run&id=stk-btn-start",
+                        "children": []
+                      },
+                      {
+                        "id": "stk-btn-duel",
+                        "widget": "Button",
+                        "classes": [
+                          "stk-btn"
+                        ],
+                        "role": "button",
+                        "accessibilityLabel": "(2)",
+                        "text": "(2)",
+                        "stateAttrs": {},
+                        "actionUri": "pronto://event/CLICK?handler=run&id=stk-btn-duel",
+                        "children": []
+                      },
+                      {
+                        "id": "stk-btn-pit",
+                        "widget": "Button",
+                        "classes": [
+                          "stk-btn"
+                        ],
+                        "role": "button",
+                        "accessibilityLabel": "TELEMETRY",
+                        "text": "TELEMETRY",
+                        "stateAttrs": {},
+                        "actionUri": "pronto://event/CLICK?handler=run&id=stk-btn-pit",
+                        "children": []
+                      },
+                      {
+                        "id": "arena_div_236",
+                        "widget": "LiveRegion",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "stk-lobby-door"
+                        ],
+                        "stateAttrs": {},
+                        "liveTable": "lobby_tab",
+                        "liveFilter": "id=eq.the",
+                        "children": [
+                          {
+                            "id": "stk-btn-lobby",
+                            "widget": "Button",
+                            "classes": [
+                              "stk-btn",
+                              "stk-btn-online"
+                            ],
+                            "role": "button",
+                            "accessibilityLabel": "ONLINE DUEL",
+                            "text": "ONLINE DUEL",
+                            "stateAttrs": {},
+                            "actionUri": "pronto://event/CLICK?handler=lobby&id=stk-btn-lobby",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "arena_div_237",
+                "widget": "LiveRegion",
+                "orientation": "Vertical",
+                "classes": [
+                  "stk-modal-card",
+                  "stk-lobby-card"
+                ],
+                "stateAttrs": {
+                  "open": "{open}",
+                  "shown": "{shown}",
+                  "pick": "{stage}"
+                },
+                "liveTable": "lobby_tab",
+                "liveFilter": "id=eq.the",
+                "children": [
+                  {
+                    "id": "arena_div_239",
+                    "widget": "StackPanel",
+                    "orientation": "Horizontal",
+                    "classes": [
+                      "stk-lobby-header"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_div_240",
+                        "widget": "StackPanel",
+                        "orientation": "Horizontal",
+                        "classes": [
+                          "stk-lobby-header-info"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_h2_241",
+                            "widget": "Label",
+                            "classes": [
+                              "stk-modal-title"
+                            ],
+                            "accessibilityLabel": "ONLINE DUEL",
+                            "text": "ONLINE DUEL",
+                            "stateAttrs": {},
+                            "children": []
+                          },
+                          {
+                            "id": "arena_div_242",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "stk-lobby-status-strip"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_243",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "stk-lobby-you"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_b_244",
+                                    "widget": "Label",
+                                    "classes": [],
+                                    "accessibilityLabel": "{name}",
+                                    "text": "{name}",
+                                    "textBinding": "{name}",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "btn-toggle-online",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-btn",
+                                  "stk-lobby-toggle"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "GO ONLINE",
+                                "text": "GO ONLINE",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/COMMAND?handler=lobby&command=toggle-online&id=btn-toggle-online",
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "btn-lobby-close-top",
+                        "widget": "Button",
+                        "classes": [
+                          "stk-btn",
+                          "stk-lobby-close-x"
+                        ],
+                        "role": "button",
+                        "accessibilityLabel": "✕",
+                        "text": "✕",
+                        "stateAttrs": {},
+                        "actionUri": "pronto://event/COMMAND?handler=lobby&command=close&id=btn-lobby-close-top",
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_div_248",
+                    "widget": "StackPanel",
+                    "orientation": "Vertical",
+                    "classes": [
+                      "stk-lobby-body"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_div_249",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "stk-lobby-section",
+                          "stk-lobby-sec-link"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_div_250",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "stk-lobby-sec-header"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_251",
+                                "widget": "Label",
+                                "classes": [
+                                  "stk-title-pick"
+                                ],
+                                "accessibilityLabel": "DIRECT CHALLENGE LINK",
+                                "text": "DIRECT CHALLENGE LINK",
+                                "stateAttrs": {},
+                                "children": []
+                              },
+                              {
+                                "id": "arena_span_252",
+                                "widget": "Label",
+                                "classes": [
+                                  "stk-lobby-sec-tag"
+                                ],
+                                "accessibilityLabel": "PLAY WITH A FRIEND",
+                                "text": "PLAY WITH A FRIEND",
+                                "stateAttrs": {},
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_253",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "stk-lobby-link-bar"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "btn-challenge-link",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-btn",
+                                  "stk-btn-online",
+                                  "stk-btn-create-link"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "CHALLENGE LINK",
+                                "text": "CHALLENGE LINK",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/COMMAND?handler=lobby&command=challenge-link&id=btn-challenge-link",
+                                "children": []
+                              },
+                              {
+                                "id": "arena_form_254",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "stk-lobby-join"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_div_255",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "stk-lobby-input-capsule"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "input-challenge-link",
+                                        "widget": "Edit",
+                                        "classes": [
+                                          "stk-lobby-join-input"
+                                        ],
+                                        "role": "textbox",
+                                        "accessibilityLabel": "PASTE CHALLENGE LINK…",
+                                        "stateAttrs": {},
+                                        "inputField": "join",
+                                        "inputKind": "text",
+                                        "inputPlaceholder": "PASTE CHALLENGE LINK…",
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "btn-paste-link",
+                                        "widget": "Button",
+                                        "classes": [
+                                          "stk-btn",
+                                          "stk-btn-paste"
+                                        ],
+                                        "role": "button",
+                                        "accessibilityLabel": "PASTE",
+                                        "text": "PASTE",
+                                        "stateAttrs": {},
+                                        "actionUri": "pronto://event/UPDATE",
+                                        "children": []
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "btn-join-link",
+                                    "widget": "Button",
+                                    "classes": [
+                                      "stk-btn",
+                                      "stk-btn-go"
+                                    ],
+                                    "role": "button",
+                                    "accessibilityLabel": "JOIN LINK",
+                                    "text": "JOIN LINK",
+                                    "stateAttrs": {},
+                                    "actionUri": "pronto://event/UPDATE",
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_256",
+                            "widget": "LiveRegion",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "stk-lobby-links"
+                            ],
+                            "stateAttrs": {},
+                            "liveTable": "apexrun_duel_seat",
+                            "liveFilter": "phase=eq.waiting",
+                            "children": [
+                              {
+                                "id": "arena_div_257",
+                                "widget": "StackPanel",
+                                "orientation": "Horizontal",
+                                "classes": [
+                                  "stk-lobby-offer",
+                                  "stk-lobby-link-row"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_div_258",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "stk-lobby-waiting-info"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "arena_span_259",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "stk-live-dot",
+                                          "stk-pulse"
+                                        ],
+                                        "accessibilityLabel": "●",
+                                        "text": "●",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_span_260",
+                                        "widget": "StackPanel",
+                                        "orientation": "Vertical",
+                                        "classes": [],
+                                        "stateAttrs": {},
+                                        "children": [
+                                          {
+                                            "id": "arena_b_261",
+                                            "widget": "Label",
+                                            "classes": [],
+                                            "accessibilityLabel": "{stage}",
+                                            "text": "{stage}",
+                                            "textBinding": "{stage}",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "arena_div_262",
+                                    "widget": "StackPanel",
+                                    "orientation": "Horizontal",
+                                    "classes": [
+                                      "stk-lobby-link-actions"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "challenge-link-{id}",
+                                        "widget": "StackPanel",
+                                        "orientation": "Vertical",
+                                        "classes": [
+                                          "stk-lobby-code"
+                                        ],
+                                        "stateAttrs": {},
+                                        "children": [
+                                          {
+                                            "id": "arena_span_263",
+                                            "widget": "Label",
+                                            "classes": [],
+                                            "accessibilityLabel": "{instance_id}",
+                                            "text": "{instance_id}",
+                                            "textBinding": "{instance_id}",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "id": "copy-duel-{id}",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "stk-btn",
+                                          "stk-btn-copy"
+                                        ],
+                                        "accessibilityLabel": "COPY LINK",
+                                        "text": "COPY LINK",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "cancel-duel-{id}",
+                                        "widget": "Button",
+                                        "classes": [
+                                          "stk-btn",
+                                          "stk-btn-cancel"
+                                        ],
+                                        "role": "button",
+                                        "accessibilityLabel": "CANCEL",
+                                        "text": "CANCEL",
+                                        "stateAttrs": {},
+                                        "actionUri": "pronto://event/COMMAND?handler=lobby&command=cancel&id=cancel-duel-%7Bid%7D",
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "arena_div_264",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "stk-lobby-section",
+                          "stk-lobby-sec-stage"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_div_265",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "stk-lobby-sec-header"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_266",
+                                "widget": "Label",
+                                "classes": [
+                                  "stk-title-pick"
+                                ],
+                                "accessibilityLabel": "THE STAGE YOU CHALLENGE ON",
+                                "text": "THE STAGE YOU CHALLENGE ON",
+                                "stateAttrs": {},
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_267",
+                            "widget": "StackPanel",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "stk-lobby-stages"
+                            ],
+                            "role": "group",
+                            "accessibilityLabel": "Stage",
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "stage-coconut-beach",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-lobby-stage"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "COCONUT BEACH",
+                                "text": "COCONUT BEACH",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=lobby&id=stage-coconut-beach",
+                                "children": []
+                              },
+                              {
+                                "id": "stage-desert-canyons",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-lobby-stage"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "DESERT CANYONS",
+                                "text": "DESERT CANYONS",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=lobby&id=stage-desert-canyons",
+                                "children": []
+                              },
+                              {
+                                "id": "stage-gateway-pass",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-lobby-stage"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "GATEWAY PASS",
+                                "text": "GATEWAY PASS",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=lobby&id=stage-gateway-pass",
+                                "children": []
+                              },
+                              {
+                                "id": "stage-alpine-peaks",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-lobby-stage"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "ALPINE PEAKS",
+                                "text": "ALPINE PEAKS",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=lobby&id=stage-alpine-peaks",
+                                "children": []
+                              },
+                              {
+                                "id": "stage-wilderness-run",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-lobby-stage"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "WILDERNESS RUN",
+                                "text": "WILDERNESS RUN",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=lobby&id=stage-wilderness-run",
+                                "children": []
+                              },
+                              {
+                                "id": "stage-tulip-gardens",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-lobby-stage"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "TULIP GARDENS",
+                                "text": "TULIP GARDENS",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=lobby&id=stage-tulip-gardens",
+                                "children": []
+                              },
+                              {
+                                "id": "stage-sunset-highway",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-lobby-stage"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "SUNSET HIGHWAY",
+                                "text": "SUNSET HIGHWAY",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=lobby&id=stage-sunset-highway",
+                                "children": []
+                              },
+                              {
+                                "id": "stage-ancient-ruins",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-lobby-stage"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "ANCIENT RUINS",
+                                "text": "ANCIENT RUINS",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=lobby&id=stage-ancient-ruins",
+                                "children": []
+                              },
+                              {
+                                "id": "stage-metropolis-night",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-lobby-stage"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "METROPOLIS NIGHT",
+                                "text": "METROPOLIS NIGHT",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=lobby&id=stage-metropolis-night",
+                                "children": []
+                              },
+                              {
+                                "id": "stage-coastal-cliffs",
+                                "widget": "Button",
+                                "classes": [
+                                  "stk-lobby-stage"
+                                ],
+                                "role": "button",
+                                "accessibilityLabel": "COASTAL CLIFFS",
+                                "text": "COASTAL CLIFFS",
+                                "stateAttrs": {},
+                                "actionUri": "pronto://event/CLICK?handler=lobby&id=stage-coastal-cliffs",
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "arena_div_268",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "stk-lobby-section",
+                          "stk-lobby-sec-racers"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_div_269",
+                            "widget": "StackPanel",
+                            "orientation": "Horizontal",
+                            "classes": [
+                              "stk-lobby-sec-header"
+                            ],
+                            "stateAttrs": {},
+                            "children": [
+                              {
+                                "id": "arena_span_270",
+                                "widget": "Label",
+                                "classes": [
+                                  "stk-title-pick",
+                                  "stk-lobby-racers-label"
+                                ],
+                                "accessibilityLabel": "RACERS ONLINE",
+                                "text": "RACERS ONLINE",
+                                "stateAttrs": {},
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_271",
+                            "widget": "LiveRegion",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "stk-lobby-offers"
+                            ],
+                            "stateAttrs": {},
+                            "liveTable": "apexrun_challenge_seat",
+                            "liveFilter": "phase=eq.offered",
+                            "children": [
+                              {
+                                "id": "arena_div_272",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "stk-lobby-offer",
+                                  "stk-lobby-incoming-offer"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_div_273",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [
+                                      "stk-lobby-offer-msg"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "arena_span_274",
+                                        "widget": "Label",
+                                        "classes": [
+                                          "stk-lobby-offer-icon"
+                                        ],
+                                        "accessibilityLabel": "⚡",
+                                        "text": "⚡",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_span_275",
+                                        "widget": "StackPanel",
+                                        "orientation": "Vertical",
+                                        "classes": [],
+                                        "stateAttrs": {},
+                                        "children": [
+                                          {
+                                            "id": "arena_b_276",
+                                            "widget": "Label",
+                                            "classes": [],
+                                            "accessibilityLabel": "{inviter_name}",
+                                            "text": "{inviter_name}",
+                                            "textBinding": "{inviter_name}",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "arena_b_277",
+                                            "widget": "Label",
+                                            "classes": [],
+                                            "accessibilityLabel": "{stage}",
+                                            "text": "{stage}",
+                                            "textBinding": "{stage}",
+                                            "stateAttrs": {},
+                                            "children": []
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "arena_div_278",
+                                    "widget": "StackPanel",
+                                    "orientation": "Horizontal",
+                                    "classes": [
+                                      "stk-lobby-offer-btns"
+                                    ],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "accept-{id}",
+                                        "widget": "Button",
+                                        "classes": [
+                                          "stk-btn",
+                                          "stk-btn-go"
+                                        ],
+                                        "role": "button",
+                                        "accessibilityLabel": "ACCEPT",
+                                        "text": "ACCEPT",
+                                        "stateAttrs": {},
+                                        "actionUri": "pronto://event/COMMAND?handler=lobby&command=accept&id=accept-%7Bid%7D",
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "decline-{id}",
+                                        "widget": "Button",
+                                        "classes": [
+                                          "stk-btn"
+                                        ],
+                                        "role": "button",
+                                        "accessibilityLabel": "DECLINE",
+                                        "text": "DECLINE",
+                                        "stateAttrs": {},
+                                        "actionUri": "pronto://event/COMMAND?handler=lobby&command=decline&id=decline-%7Bid%7D",
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "arena_div_279",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "stk-lobby-offer",
+                                  "stk-lobby-outgoing-offer"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_span_280",
+                                    "widget": "StackPanel",
+                                    "orientation": "Vertical",
+                                    "classes": [],
+                                    "stateAttrs": {},
+                                    "children": [
+                                      {
+                                        "id": "arena_b_281",
+                                        "widget": "Label",
+                                        "classes": [],
+                                        "accessibilityLabel": "{target_name}",
+                                        "text": "{target_name}",
+                                        "textBinding": "{target_name}",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "arena_b_282",
+                                        "widget": "Label",
+                                        "classes": [],
+                                        "accessibilityLabel": "{stage}",
+                                        "text": "{stage}",
+                                        "textBinding": "{stage}",
+                                        "stateAttrs": {},
+                                        "children": []
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "cancel-{id}",
+                                    "widget": "Button",
+                                    "classes": [
+                                      "stk-btn"
+                                    ],
+                                    "role": "button",
+                                    "accessibilityLabel": "CANCEL",
+                                    "text": "CANCEL",
+                                    "stateAttrs": {},
+                                    "actionUri": "pronto://event/COMMAND?handler=lobby&command=cancel&id=cancel-%7Bid%7D",
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "arena_div_283",
+                            "widget": "LiveRegion",
+                            "orientation": "Vertical",
+                            "classes": [
+                              "stk-lobby-racers"
+                            ],
+                            "stateAttrs": {},
+                            "liveTable": "apexrun_presence_public",
+                            "children": [
+                              {
+                                "id": "arena_div_284",
+                                "widget": "StackPanel",
+                                "orientation": "Vertical",
+                                "classes": [
+                                  "stk-lobby-racer"
+                                ],
+                                "stateAttrs": {},
+                                "children": [
+                                  {
+                                    "id": "arena_span_285",
+                                    "widget": "Label",
+                                    "classes": [
+                                      "stk-racer-avatar"
+                                    ],
+                                    "accessibilityLabel": "🏎️",
+                                    "text": "🏎️",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  },
+                                  {
+                                    "id": "arena_b_286",
+                                    "widget": "Label",
+                                    "classes": [],
+                                    "accessibilityLabel": "{name}",
+                                    "text": "{name}",
+                                    "textBinding": "{name}",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  },
+                                  {
+                                    "id": "arena_span_287",
+                                    "widget": "Label",
+                                    "classes": [
+                                      "stk-racer-status"
+                                    ],
+                                    "accessibilityLabel": "READY",
+                                    "text": "READY",
+                                    "stateAttrs": {},
+                                    "children": []
+                                  },
+                                  {
+                                    "id": "challenge-{id}",
+                                    "widget": "Button",
+                                    "classes": [
+                                      "stk-btn",
+                                      "stk-btn-challenge"
+                                    ],
+                                    "role": "button",
+                                    "accessibilityLabel": "CHALLENGE",
+                                    "text": "CHALLENGE",
+                                    "stateAttrs": {},
+                                    "actionUri": "pronto://event/COMMAND?handler=lobby&command=challenge&id=challenge-%7Bid%7D",
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_p_289",
+                    "widget": "Label",
+                    "classes": [
+                      "stk-lobby-note"
+                    ],
+                    "role": "status",
+                    "accessibilityLabel": "{note}",
+                    "text": "{note}",
+                    "textBinding": "{note}",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "arena_div_290",
+                    "widget": "StackPanel",
+                    "orientation": "Horizontal",
+                    "classes": [
+                      "stk-lobby-footer"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "btn-lobby-close",
+                        "widget": "Button",
+                        "classes": [
+                          "stk-btn",
+                          "stk-btn-back"
+                        ],
+                        "role": "button",
+                        "accessibilityLabel": "← BACK",
+                        "text": "← BACK",
+                        "stateAttrs": {},
+                        "actionUri": "pronto://event/CLICK?handler=lobby&id=btn-lobby-close",
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_291",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "stk-lobby-esc-hint"
+                        ],
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_kbd_292",
+                            "widget": "Label",
+                            "classes": [],
+                            "accessibilityLabel": "ESC",
+                            "text": "ESC",
+                            "stateAttrs": {},
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "arena_div_293",
+                "widget": "StackPanel",
+                "orientation": "Vertical",
+                "classes": [
+                  "stk-modal-card",
+                  "stk-pause-card"
+                ],
+                "stateAttrs": {},
+                "children": [
+                  {
+                    "id": "arena_h2_294",
+                    "widget": "Label",
+                    "classes": [
+                      "stk-modal-title"
+                    ],
+                    "accessibilityLabel": "PAUSED",
+                    "text": "PAUSED",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "arena_div_295",
+                    "widget": "StackPanel",
+                    "orientation": "Horizontal",
+                    "classes": [
+                      "stk-title-actions"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "stk-pause-resume",
+                        "widget": "Button",
+                        "classes": [
+                          "stk-btn"
+                        ],
+                        "role": "button",
+                        "accessibilityLabel": "(ESC)",
+                        "text": "(ESC)",
+                        "stateAttrs": {},
+                        "actionUri": "pronto://event/CLICK?handler=run&id=stk-pause-resume",
+                        "children": []
+                      },
+                      {
+                        "id": "stk-pause-restart",
+                        "widget": "Button",
+                        "classes": [
+                          "stk-btn"
+                        ],
+                        "role": "button",
+                        "accessibilityLabel": "RESTART",
+                        "text": "RESTART",
+                        "stateAttrs": {},
+                        "actionUri": "pronto://event/CLICK?handler=run&id=stk-pause-restart",
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "arena_div_297",
+                "widget": "StackPanel",
+                "orientation": "Vertical",
+                "classes": [
+                  "stk-modal-card",
+                  "stk-results-card"
+                ],
+                "stateAttrs": {},
+                "children": [
+                  {
+                    "id": "arena_div_298",
+                    "widget": "Label",
+                    "classes": [
+                      "stk-res-kicker"
+                    ],
+                    "accessibilityLabel": "{res_kicker}",
+                    "text": "{res_kicker}",
+                    "textBinding": "{res_kicker}",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "arena_h2_299",
+                    "widget": "Label",
+                    "classes": [
+                      "stk-modal-title",
+                      "stk-res-title"
+                    ],
+                    "accessibilityLabel": "{res_title}",
+                    "text": "{res_title}",
+                    "textBinding": "{res_title}",
+                    "stateAttrs": {
+                      "over": "{res_over}"
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "arena_dl_300",
+                    "widget": "StackPanel",
+                    "orientation": "Horizontal",
+                    "classes": [
+                      "stk-res-lines"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_span_301",
+                        "widget": "Label",
+                        "classes": [
+                          "stk-res-label"
+                        ],
+                        "accessibilityLabel": "{line1_label}",
+                        "text": "{line1_label}",
+                        "textBinding": "{line1_label}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_302",
+                        "widget": "Label",
+                        "classes": [
+                          "stk-res-value"
+                        ],
+                        "accessibilityLabel": "{line1_value}",
+                        "text": "{line1_value}",
+                        "textBinding": "{line1_value}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_303",
+                        "widget": "Label",
+                        "classes": [
+                          "stk-res-label"
+                        ],
+                        "accessibilityLabel": "{line2_label}",
+                        "text": "{line2_label}",
+                        "textBinding": "{line2_label}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_304",
+                        "widget": "Label",
+                        "classes": [
+                          "stk-res-value"
+                        ],
+                        "accessibilityLabel": "{line2_value}",
+                        "text": "{line2_value}",
+                        "textBinding": "{line2_value}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_305",
+                        "widget": "Label",
+                        "classes": [
+                          "stk-res-label"
+                        ],
+                        "accessibilityLabel": "{line3_label}",
+                        "text": "{line3_label}",
+                        "textBinding": "{line3_label}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_306",
+                        "widget": "Label",
+                        "classes": [
+                          "stk-res-value"
+                        ],
+                        "accessibilityLabel": "{line3_value}",
+                        "text": "{line3_value}",
+                        "textBinding": "{line3_value}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_307",
+                        "widget": "Label",
+                        "classes": [
+                          "stk-res-label"
+                        ],
+                        "accessibilityLabel": "{line4_label}",
+                        "text": "{line4_label}",
+                        "textBinding": "{line4_label}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_308",
+                        "widget": "Label",
+                        "classes": [
+                          "stk-res-value"
+                        ],
+                        "accessibilityLabel": "{line4_value}",
+                        "text": "{line4_value}",
+                        "textBinding": "{line4_value}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_309",
+                        "widget": "Label",
+                        "classes": [
+                          "stk-res-label",
+                          "stk-res-total"
+                        ],
+                        "accessibilityLabel": "TOTAL",
+                        "text": "TOTAL",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_310",
+                        "widget": "Label",
+                        "classes": [
+                          "stk-res-value",
+                          "stk-res-total"
+                        ],
+                        "accessibilityLabel": "{total}",
+                        "text": "{total}",
+                        "textBinding": "{total}",
+                        "stateAttrs": {},
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_p_311",
+                    "widget": "StackPanel",
+                    "orientation": "Vertical",
+                    "classes": [
+                      "stk-res-verdict"
+                    ],
+                    "role": "status",
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_span_312",
+                        "widget": "Label",
+                        "classes": [
+                          "verdict-pending"
+                        ],
+                        "accessibilityLabel": "CONFIRMING WITH YOUR OPPONENT…",
+                        "text": "CONFIRMING WITH YOUR OPPONENT…",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_313",
+                        "widget": "Label",
+                        "classes": [
+                          "verdict-won"
+                        ],
+                        "accessibilityLabel": "RESULT RECORDED · YOU WON",
+                        "text": "RESULT RECORDED · YOU WON",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_314",
+                        "widget": "Label",
+                        "classes": [
+                          "verdict-lost"
+                        ],
+                        "accessibilityLabel": "RESULT RECORDED · YOU LOST",
+                        "text": "RESULT RECORDED · YOU LOST",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_315",
+                        "widget": "Label",
+                        "classes": [
+                          "verdict-draw"
+                        ],
+                        "accessibilityLabel": "RESULT RECORDED · DRAW",
+                        "text": "RESULT RECORDED · DRAW",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_316",
+                        "widget": "Label",
+                        "classes": [
+                          "verdict-disputed"
+                        ],
+                        "accessibilityLabel": "DISPUTED · THE TWO RACES DISAGREE",
+                        "text": "DISPUTED · THE TWO RACES DISAGREE",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_317",
+                        "widget": "Label",
+                        "classes": [
+                          "verdict-abandoned"
+                        ],
+                        "accessibilityLabel": "ABANDONED · NO RESULT",
+                        "text": "ABANDONED · NO RESULT",
+                        "stateAttrs": {},
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "id": "stk-res-restart",
+                    "widget": "Button",
+                    "classes": [
+                      "stk-btn"
+                    ],
+                    "role": "button",
+                    "accessibilityLabel": "TRY AGAIN",
+                    "text": "TRY AGAIN",
+                    "stateAttrs": {},
+                    "actionUri": "pronto://event/CLICK?handler=run&id=stk-res-restart",
+                    "children": []
+                  },
+                  {
+                    "id": "stk-res-lobby",
+                    "widget": "Button",
+                    "classes": [
+                      "stk-btn",
+                      "stk-btn-online"
+                    ],
+                    "role": "button",
+                    "accessibilityLabel": "BACK TO THE LOBBY",
+                    "text": "BACK TO THE LOBBY",
+                    "stateAttrs": {},
+                    "actionUri": "pronto://event/CLICK?handler=run&id=stk-res-lobby",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "arena_section_318",
+            "widget": "StackPanel",
+            "orientation": "Vertical",
+            "classes": [
+              "arena-finish"
+            ],
+            "stateAttrs": {},
+            "children": [
+              {
+                "id": "arena_div_319",
+                "widget": "StackPanel",
+                "orientation": "Vertical",
+                "classes": [
+                  "arena-score"
+                ],
+                "stateAttrs": {},
+                "children": [
+                  {
+                    "id": "arena_p_320",
+                    "widget": "Label",
+                    "classes": [
+                      "arena-finish-label"
+                    ],
+                    "accessibilityLabel": "NEW HIGH SCORE · ENTER YOUR INITIALS",
+                    "text": "NEW HIGH SCORE · ENTER YOUR INITIALS",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "arena_div_321",
+                    "widget": "StackPanel",
+                    "orientation": "Horizontal",
+                    "classes": [
+                      "arena-keypad"
+                    ],
+                    "stateAttrs": {},
+                    "children": [
+                      {
+                        "id": "arena_p_324",
+                        "widget": "StackPanel",
+                        "orientation": "Vertical",
+                        "classes": [
+                          "arena-initials"
+                        ],
+                        "role": "group",
+                        "accessibilityLabel": "Initials",
+                        "stateAttrs": {},
+                        "children": [
+                          {
+                            "id": "arena_span_325",
+                            "widget": "Label",
+                            "classes": [
+                              "arena-initial"
+                            ],
+                            "accessibilityLabel": "A",
+                            "text": "A",
+                            "textBinding": "{initial_0}",
+                            "stateAttrs": {},
+                            "children": []
+                          },
+                          {
+                            "id": "arena_span_326",
+                            "widget": "Label",
+                            "classes": [
+                              "arena-initial"
+                            ],
+                            "accessibilityLabel": "A",
+                            "text": "A",
+                            "textBinding": "{initial_1}",
+                            "stateAttrs": {},
+                            "children": []
+                          },
+                          {
+                            "id": "arena_span_327",
+                            "widget": "Label",
+                            "classes": [
+                              "arena-initial"
+                            ],
+                            "accessibilityLabel": "A",
+                            "text": "A",
+                            "textBinding": "{initial_2}",
+                            "stateAttrs": {},
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "arena_p_330",
+                    "widget": "Label",
+                    "classes": [
+                      "arena-finish-hint",
+                      "keys-only"
+                    ],
+                    "accessibilityLabel": "Type three letters, or ▲▼ to change one and ◀▶ to move. Enter saves.",
+                    "text": "Type three letters, or ▲▼ to change one and ◀▶ to move. Enter saves.",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "arena_p_332",
+                    "widget": "Label",
+                    "classes": [
+                      "invalid"
+                    ],
+                    "accessibilityLabel": "Three letters, A to Z, and not a word the board refuses.",
+                    "text": "Three letters, A to Z, and not a word the board refuses.",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "arena-finish-save",
+                    "widget": "Button",
+                    "classes": [
+                      "arena-finish-save"
+                    ],
+                    "role": "button",
+                    "accessibilityLabel": "SAVE",
+                    "text": "SAVE",
+                    "stateAttrs": {},
+                    "actionUri": "pronto://event/CLICK?handler=run&id=arena-finish-save",
+                    "children": []
+                  },
+                  {
+                    "id": "arena_p_333",
+                    "widget": "Label",
+                    "classes": [
+                      "arena-finish-saved"
+                    ],
+                    "accessibilityLabel": "SAVED · your run is on the board.",
+                    "text": "SAVED · your run is on the board.",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "arena_p_334",
+                    "widget": "Label",
+                    "classes": [
+                      "store-error"
+                    ],
+                    "accessibilityLabel": "Not saved: one score per run, and a run takes at least 75 seconds. Race again to post another.",
+                    "text": "Not saved: one score per run, and a run takes at least 75 seconds. Race again to post another.",
+                    "stateAttrs": {},
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "arena_h3_335",
+                "widget": "Label",
+                "classes": [
+                  "arena-finish-title"
+                ],
+                "accessibilityLabel": "HIGH SCORES",
+                "text": "HIGH SCORES",
+                "stateAttrs": {},
+                "children": []
+              },
+              {
+                "id": "arena_ol_336",
+                "widget": "LiveRegion",
+                "orientation": "Vertical",
+                "classes": [
+                  "arena-board"
+                ],
+                "stateAttrs": {},
+                "liveTable": "high_score",
+                "liveFilter": "limit=10",
+                "children": [
+                  {
+                    "id": "arena_li_337",
+                    "widget": "StackPanel",
+                    "orientation": "Horizontal",
+                    "classes": [
+                      "arena-board-row"
+                    ],
+                    "stateAttrs": {
+                      "mine-score": "{mine_score}",
+                      "mine-initials": "{mine_initials}"
+                    },
+                    "children": [
+                      {
+                        "id": "arena_span_338",
+                        "widget": "Label",
+                        "classes": [
+                          "arena-board-initials"
+                        ],
+                        "accessibilityLabel": "{initials}",
+                        "text": "{initials}",
+                        "textBinding": "{initials}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_339",
+                        "widget": "Label",
+                        "classes": [
+                          "arena-board-outcome"
+                        ],
+                        "accessibilityLabel": "{outcome}",
+                        "text": "{outcome}",
+                        "textBinding": "{outcome}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_340",
+                        "widget": "Label",
+                        "classes": [
+                          "arena-board-time"
+                        ],
+                        "accessibilityLabel": "{run_ms}",
+                        "text": "{run_ms}",
+                        "textBinding": "{run_ms}",
+                        "stateAttrs": {},
+                        "children": []
+                      },
+                      {
+                        "id": "arena_span_341",
+                        "widget": "Label",
+                        "classes": [
+                          "arena-board-score"
+                        ],
+                        "accessibilityLabel": "{score}",
+                        "text": "{score}",
+                        "textBinding": "{score}",
+                        "stateAttrs": {},
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "pitlane-toggle",
+            "widget": "Button",
+            "classes": [
+              "pitlane-badge"
+            ],
+            "role": "button",
+            "accessibilityLabel": "🏁 PIT-LANE TELEMETRY",
+            "text": "🏁 PIT-LANE TELEMETRY",
+            "stateAttrs": {},
+            "actionUri": "pronto://event/CLICK?handler=run&id=pitlane-toggle",
+            "children": []
+          },
+          {
+            "id": "arena_div_342",
+            "widget": "StackPanel",
+            "orientation": "Vertical",
+            "classes": [
+              "pitlane-overlay"
+            ],
+            "stateAttrs": {},
+            "children": [
+              {
+                "id": "arena_div_343",
+                "widget": "StackPanel",
+                "orientation": "Horizontal",
+                "classes": [
+                  "pitlane-header"
+                ],
+                "stateAttrs": {},
+                "children": [
+                  {
+                    "id": "arena_span_344",
+                    "widget": "Label",
+                    "classes": [
+                      "pitlane-title"
+                    ],
+                    "accessibilityLabel": "STK PIT-LANE TELEMETRY",
+                    "text": "STK PIT-LANE TELEMETRY",
+                    "stateAttrs": {},
+                    "children": []
+                  },
+                  {
+                    "id": "pitlane-close",
+                    "widget": "Button",
+                    "classes": [
+                      "pitlane-close"
+                    ],
+                    "role": "button",
+                    "accessibilityLabel": "Close",
+                    "text": "✕",
+                    "stateAttrs": {},
+                    "actionUri": "pronto://event/CLICK?handler=run&id=pitlane-close",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

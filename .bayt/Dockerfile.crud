@@ -14,6 +14,7 @@ ARG BAYT_DIR
 WORKDIR /monorepo/${BAYT_DIR}
 COPY --parents .bayt/compose.crud.yaml .bayt/Dockerfile.crud .bayt/bayt.crud.json .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/process-compose.yaml ./
 COPY --from=apexrun-database_bayt /monorepo /monorepo
+COPY --from=apexrun-migrate_bayt /monorepo /monorepo
 COPY --from=apexrun-timer-check_bayt /monorepo /monorepo
 ARG SOURCE_DATE_EPOCH
 ARG BAYT_CLAMP=1

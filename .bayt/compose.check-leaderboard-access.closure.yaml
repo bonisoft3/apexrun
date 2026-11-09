@@ -8,6 +8,8 @@ include:
   required: false
 - path: .././.bayt/compose.setup.yaml
   required: false
+- path: .././.bayt/compose.migrate.yaml
+  required: false
 - path: .././.bayt/compose.lint.yaml
   required: false
 - path: .././.bayt/compose.generate.yaml
@@ -17,6 +19,10 @@ include:
 - path: .././.bayt/compose.test.yaml
   required: false
 - path: .././.bayt/compose.launch.yaml
+  required: false
+- path: .././.bayt/compose.assets.yaml
+  required: false
+- path: .././.bayt/compose.render.yaml
   required: false
 - path: .././.bayt/compose.caddy.yaml
   required: false
@@ -34,23 +40,23 @@ include:
   required: false
 - path: .././.bayt/compose.ticker.yaml
   required: false
-- path: .././.bayt/compose.assets.yaml
-  required: false
-- path: .././.bayt/compose.render.yaml
-  required: false
 - path: .././.bayt/compose.integrate.yaml
-  required: false
-- path: .././.bayt/compose.check-finish.yaml
   required: false
 - path: .././.bayt/compose.check-boot.yaml
   required: false
-- path: .././.bayt/compose.check-online.yaml
-  required: false
 - path: .././.bayt/compose.check-duel.yaml
+  required: false
+- path: .././.bayt/compose.check-finish.yaml
+  required: false
+- path: .././.bayt/compose.check-leaderboard-access.yaml
+  required: false
+- path: .././.bayt/compose.check-online.yaml
   required: false
 - path: .././.bayt/compose.check-touch.yaml
   required: false
-- path: .././.bayt/compose.check-leaderboard-access.yaml
+- path: .././.bayt/compose.ci-desktop.yaml
+  required: false
+- path: .././.bayt/compose.ci-android.yaml
   required: false
 - path: ../monorepo/${MONOREPO_COMPOSE_MODE:-docker-image}.yaml
   required: false

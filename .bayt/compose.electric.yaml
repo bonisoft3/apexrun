@@ -4,6 +4,7 @@ services:
     build:
       additional_contexts:
         apexrun-database: service:apexrun-database
+        apexrun-migrate: service:apexrun-migrate
         apexrun-timer-check: service:apexrun-timer-check
       context: ..
       dockerfile: .bayt/Dockerfile.electric
@@ -19,9 +20,12 @@ services:
       apexrun-database:
         condition: service_healthy
         restart: true
+      apexrun-migrate:
+        condition: service_completed_successfully
       apexrun-timer-check:
         condition: service_completed_successfully
     environment:
+      PORT: "3000"
       DATABASE_URL: >-
         postgresql://electric:${ELECTRIC_PASSWORD:-dev-electric-password}@database:5432/${POSTGRES_DB:-apexrun}?sslmode=disable
       ELECTRIC_SECRET: ${ELECTRIC_SECRET:-dev-electric-secret}
@@ -47,6 +51,7 @@ services:
     build:
       additional_contexts:
         apexrun-database_bayt: service:apexrun-database_bayt
+        apexrun-migrate_bayt: service:apexrun-migrate_bayt
         apexrun-timer-check_bayt: service:apexrun-timer-check_bayt
       context: ..
       dockerfile: .bayt/Dockerfile.electric

@@ -1,11 +1,13 @@
-// Apex Run's Mecha machines compiled from what the app declares and stepped
-// in the executor PLV8 runs, as Truco's online tests step its own.
-import { fileURLToPath } from "node:url";
-import { compileHybrid, type HybridMachine, executeHybrid, readCheckInputs, instrument, ses } from "./platform.ts";
+// Apex Run's Mecha machines as pronto emitted them, stepped in the executor
+// PLV8 runs, as Truco's online tests step its own.
+import { executeMecha, type Machine } from "./platform.ts";
 
-const terminal = { instrument, ses };
-const APP_DIR = fileURLToPath(new URL("../", import.meta.url)).replace(/[/\\]$/, "");
-const hybrids = readCheckInputs<unknown, unknown, unknown, HybridMachine>(APP_DIR).then((inputs) => inputs.hybrids);
+const APP = new URL("../", import.meta.url);
+const emitted = async <T>(path: string) => JSON.parse(await Deno.readTextFile(new URL(path, APP))) as T;
+// Each machine's chart as the compilers read it, and its step compiled as
+// PostgreSQL runs it.
+const reducers = emitted<Record<string, Machine>>(".pronto/check-inputs.json").then((inputs) => (inputs as unknown as { reducers: Record<string, Machine> }).reducers);
+const compiled = emitted<Record<string, { source: string; engine: { sha256: string } }>>(".pronto/mecha-reducers.json");
 
 export const uuid = (n: number) => `00000000-0000-0000-0000-${String(n).padStart(12, "0")}`;
 
@@ -13,20 +15,33 @@ export type Answer<T> = { kind: string; reason?: string; state: T; views: { view
 
 /** `apexrun_<name>`'s step: `state` taking `kind` from `actor` at `now`, or its first state from `input`. */
 export async function machine<T>(name: string, viewers: string[]) {
-  const spec = (await hybrids)[`apexrun_${name}`];
-  if (!spec) throw new Error(`unknown hybrid machine apexrun_${name}`);
-  const compiled = await compileHybrid(spec, await Deno.readTextFile(`${APP_DIR}/machines/${name}.js`), terminal);
+  const spec = (await reducers)[`apexrun_${name}`];
+  const source = (await compiled)[`apexrun_${name}`]?.source;
+  if (!spec || !source) throw new Error(`unknown mecha machine apexrun_${name}`);
   const tier = (kind: string) => spec.events[kind].tier;
   return {
     spec,
-    compiled,
+    source,
     step: async (state: T, kind: string, payload: unknown = {}, now = 1000, actor = viewers[0]) =>
-      await executeHybrid(compiled.source, spec.fuel, {
+      await executeMecha(source, spec.fuel, {
         state, event: { kind, payload }, viewers, context: { actor: tier(kind) === "mecha" ? "" : actor, tier: tier(kind), now },
       }) as Answer<T>,
     init: async (input: unknown, now = 1000) =>
-      await executeHybrid(compiled.source, spec.fuel, {
+      await executeMecha(source, spec.fuel, {
         initialize: true, payload: input, viewers, context: { tier: "mecha", now },
       }) as Answer<T>,
   };
 }
+
+/** The sha256 of `apexrun_<name>`'s engine statement as pronto compiles it today. */
+export async function engine(name: string): Promise<string> {
+  const found = (await compiled)[`apexrun_${name}`]?.engine.sha256;
+  if (!found) throw new Error(`no compiled engine for apexrun_${name}`);
+  return found;
+}
+
+/** The sha256 of `text` as lowercase hex, as .pronto/mecha-reducers.json spells an engine's. */
+export async function sha256(text: string): Promise<string> {
+  return [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)))].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+

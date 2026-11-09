@@ -82,7 +82,7 @@ const FADE = 0.4;
 const shown = (t, [from, to]) => clamp(0, Math.min((t - from) / FADE, (to - t) / FADE), 1);
 
 /** A replay window's frame, as data: its letterbox and titles. */
-function replayMoments(state, cut) {
+export function replayMoments(state, cut) {
   const t = (state.tick - cut.from) / 60;
   return {
     haze: 0,
@@ -93,7 +93,7 @@ function replayMoments(state, cut) {
 }
 
 /** What the frame shows, as data: equal moments draw once. */
-function moments(state) {
+export function moments(state) {
   const player = state.karts.find((k) => k.isPlayer) ?? state.karts[0];
   const handover = state.stageState === 'checkpoint';
   const departing = handover && state.departTimer > 0;

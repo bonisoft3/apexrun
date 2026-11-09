@@ -1,0 +1,54 @@
+# generated from bayt.cue — do not edit
+services:
+  apexrun-migrate:
+    build:
+      additional_contexts:
+        apexrun-database: service:apexrun-database
+        libraries_mecha-database-image: >-
+          ${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/mecha-database:0.22.0@sha256:ed58b6be6cd69658fbb4e6daff1f91b8923b333f364905c4dacdec2974a05d82}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image}
+      context: ..
+      dockerfile: .bayt/Dockerfile.migrate
+      target: migrate
+      tags:
+      - bayt-apexrun-migrate:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+      - bayt-apexrun-migrate:latest
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    depends_on:
+      apexrun-database:
+        condition: service_healthy
+        restart: true
+    environment:
+      DATABASE_URL: >-
+        postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-apexrun}?sslmode=disable
+    image: bayt-apexrun-migrate:${BAYT_IMAGE_TAG:-${COMPOSE_PROJECT_NAME}}
+    networks:
+      default:
+        aliases:
+        - migrate
+  apexrun-migrate_bayt:
+    build:
+      additional_contexts:
+        apexrun-database_bayt: service:apexrun-database_bayt
+      context: ..
+      dockerfile: .bayt/Dockerfile.migrate
+      target: migrate_bayt
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-migrate_bayt:latest
+    scale: 0
+  apexrun-migrate_srcs:
+    build:
+      context: ..
+      dockerfile: .bayt/Dockerfile.migrate
+      target: migrate_srcs
+      args:
+        BAYT_DIR: ${MONOREPO_COMPOSE_MODE:+apps/apexrun}
+        BUILDKIT_SYNTAX: >-
+          docker/dockerfile:1.27@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+    image: bayt-apexrun-migrate_srcs:latest
+    scale: 0

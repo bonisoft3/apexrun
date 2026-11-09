@@ -4,6 +4,12 @@ ordered_shutdown: true
 environment:
 - MISE_LOCKED=0
 processes:
+  "launch:build":
+    entrypoint:
+    - task
+    - -t
+    - .bayt/Taskfile.yml
+    - bayt:launch
   "bayt:httpcheck":
     entrypoint:
     - bayt
@@ -18,44 +24,168 @@ processes:
     - mise
     - x
     - --
-    - sh
+    - nu
     - -c
-    - >-
-      deno run --config "$$(mise where github:bonisoft3/pronto)/deno.json"
-      --allow-read --allow-write --allow-run --allow-env "$$(mise where
-      github:bonisoft3/pronto)/check-replay.ts" .
+    - "let pronto = (if (($$env.PRONTO_DIR? | default '') != '') { $$env.PRONTO_DIR } else { (^mise where github:bonisoft3/pronto | str trim) }); if (($$env.BAYT_LOCAL_WORK_DIR? | default '') != '') { let work = $$env.BAYT_LOCAL_WORK_DIR; let pgroll = ($$work | path join 'pgroll'); if ('.bayt/bayt.migrate.json' | path exists) and (not ($$pgroll | path exists)) { mkdir $$pgroll; let m = (open .bayt/bayt.migrate.json | get dockerfile); ($$m | get -o copy | default []) | each {|c| cp ($$c.srcs.0) ($$pgroll | path join ($$c.dst | path basename)) } | ignore; ($$m | get -o epilogue | default []) | each {|e| let lines = ($$e | lines); if ($$lines.0 | str starts-with \"COPY <<'PGROLL' /tmp/\") { let name = ($$lines.0 | parse \"COPY <<'PGROLL' /tmp/{name}.parts\" | get 0.name); ($$lines | skip 1 | take while {|l| $$l != \"PGROLL\" } | str join \"\" | decode base64) | save --raw -f ($$pgroll | path join $$name) } else if ($$lines.0 | str starts-with \"COPY <<'PGROLL' /pgroll/\") { let name = ($$lines.0 | parse \"COPY <<'PGROLL' /pgroll/{name}\" | get 0.name); $$lines.1 | save --raw -f ($$pgroll | path join $$name) } else if ($$lines.0 | str starts-with \"COPY <<'RECONCILE' /pgroll/\") { let name = ($$lines.0 | parse \"COPY <<'RECONCILE' /pgroll/{name}\" | get 0.name); ($$lines | skip 1 | drop 1 | str join \"\\\\n\") | save --raw -f ($$pgroll | path join $$name) } } | ignore }; let os = (match $$nu.os-info.name { 'macos' => 'macos', 'windows' => 'windows', _ => 'linux' }); let sh = (if ('services/migrate/migrate.nu' | path exists) { 'services/migrate/migrate.nu' } else if ('services/migrate/migrate.sh' | path exists) and ($$os != 'windows') { 'services/migrate/migrate.sh' } else { ((^mise where github:bonisoft3/mecha | str trim) | path join 'services/migrate/migrate.nu') }); with-env { PRONTO_REPLAY_INITDB: ($$work | path join 'initdb.d'), PRONTO_REPLAY_PGROLL_DIR: $$pgroll, PRONTO_MIGRATE_SH: $$sh } { ^deno run --config ($$pronto | path join 'deno.json') --allow-read --allow-write --allow-run --allow-env ($$pronto | path join 'check-replay.ts') . } } else { ^deno run --config ($$pronto | path join 'deno.json') --allow-read --allow-write --allow-run --allow-env ($$pronto | path join 'check-replay.ts') . }"
     availability:
       exit_on_skipped: true
     environment:
     - AUTHENTICATOR_PASSWORD=${AUTHENTICATOR_PASSWORD:-dev-authenticator-password}
     - ELECTRIC_PASSWORD=${ELECTRIC_PASSWORD:-dev-electric-password}
+    - PGHOST=127.0.0.1
+    - PGPORT=${DATABASE_PG_PORT:-20585}
     - POSTGRES_DB=${POSTGRES_DB:-apexrun}
     - >-
       POSTGRES_INITDB_ARGS=--no-sync --encoding=UTF8 --auth=trust
       --locale-provider=icu --icu-locale=und --locale=C
     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
     - POSTGRES_USER=${POSTGRES_USER:-postgres}
+  launch:
+    depends_on:
+      assets:
+        condition: process_healthy
+      render:
+        condition: process_healthy
+      caddy:
+        condition: process_healthy
+      database:
+        condition: process_healthy
+      crud:
+        condition: process_healthy
+      electric:
+        condition: process_healthy
+      auth:
+        condition: process_started
+      clock:
+        condition: process_started
+      "launch:build":
+        condition: process_completed_successfully
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - loop { sleep 1hr }
+    availability:
+      exit_on_skipped: true
+    readiness_probe:
+      exec:
+        command: mise x -- nu -c exit
+      period_seconds: 1
+      timeout_seconds: 5
+      failure_threshold: 10
+  visual:
+    depends_on:
+      launch:
+        condition: process_healthy
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      if ('tests/visual-fixture.ts' | path exists) { ^deno run --no-lock --allow-env
+      --allow-net --unsafely-ignore-certificate-errors=caddy,localhost,127.0.0.1
+      tests/visual-fixture.ts }; let omni = (if (($$env.OMNISHELL_DIR? | default '') != '') {
+      $$env.OMNISHELL_DIR } else { (^mise where github:bonisoft3/omnishell | str trim)
+      }); ^deno run --node-modules-dir=auto --allow-read --allow-write --allow-net
+      --allow-env --allow-run --allow-sys --allow-ffi
+      --unsafely-ignore-certificate-errors=caddy,localhost,127.0.0.1 ($$omni | path join 'check-visual.ts') .
+    availability:
+      exit_on_skipped: true
+    environment:
+    - APP_URL=https://localhost:${CADDY_TLS_HOST_PORT:-23221}
+    - SETTLE_TIMEOUT_MS=50000
+  render:
+    depends_on:
+      caddy:
+        condition: process_healthy
+      crud:
+        condition: process_healthy
+      electric:
+        condition: process_healthy
+      auth:
+        condition: process_started
+      "bayt:httpcheck":
+        condition: process_completed_successfully
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - "let omni = (if (($$env.OMNISHELL_DIR? | default '') != '') { $$env.OMNISHELL_DIR } else { (^mise where github:bonisoft3/omnishell | str trim) }); let served = ($$env.BAYT_LOCAL_SERVED_DIR? | default ''); let cfg = ($$env.BAYT_LOCAL_RENDER_ENTRY? | default (if $$served != '' { ($$served | path join 'srv/shell/index.html') } else { 'shell/index.html' })); let entry = (if ($$cfg | path exists) { $$cfg } else { 'shell/index.html' }); with-env { ENTRY: $$entry } { ^deno run --frozen --config ($$omni | path join 'server/deno.json') --allow-net --allow-env --allow-read ($$omni | path join 'server/render.ts') }"
+    availability:
+      exit_on_skipped: true
+      restart: on_failure
+      backoff_seconds: 1
+      max_restarts: 15
+    environment:
+    - DOOR=http://127.0.0.1:${CADDY_HTTP_PORT:-15355}
+    - DOOR_TIMEOUT_MS=41000
+    - ORIGIN=${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+    - PORT=${RENDER_HTTP_PORT:-13388}
+    readiness_probe:
+      exec:
+        command: bayt microcheck httpcheck http://127.0.0.1:${RENDER_HTTP_PORT:-13388}/health
+      period_seconds: 1
+      timeout_seconds: 5
+      failure_threshold: 150
+  caddy:
+    depends_on:
+      crud:
+        condition: process_healthy
+      "bayt:httpcheck":
+        condition: process_completed_successfully
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - "let origin = ($$env.ORIGIN? | default \"\"); let h = ($$origin | str replace -r '^https?://' ''); if ($$h == $$origin) or ($$h | is-empty) or ($$h !~ '^[A-Za-z0-9.:-]+$$') { print -e $$\"ORIGIN '($$origin)' is no origin: set it to the scheme and host readers reach the door at, as https://app.example\"; exit 1 }; let p = (if ($$h | str contains \":\") { $$h | split row \":\" | last } else { \"8443\" }); let tls_port = (if (($$env.CADDY_TLS_HOST_PORT? | default \"\") != \"\") { $$env.CADDY_TLS_HOST_PORT } else { $$p }); let work = ($$env.BAYT_LOCAL_WORK_DIR? | default $$nu.temp-dir); let cdir = ($$work | path join $$\"caddy-($$nu.pid)-(random int 1000..9999)\"); mkdir ($$cdir | path join \"data\") ($$cdir | path join \"config\"); let env_file = ($$cdir | path join \"env\"); let certs = (($$env.CADDY_CERT_DIR? | default \".certs\") | path expand | str replace -a (char -u 5c) '/'); let served_dir = ($$env.BAYT_LOCAL_SERVED_DIR? | default \"\"); let is_local = (($$served_dir != \"\") and (($$served_dir | path join \"srv\") | path exists)); let cfg_src = (if $$is_local { 'docker/Caddyfile' } else { ($$env.CADDY_CONFIG_FILE? | default (if ('docker/Caddyfile' | path exists) { 'docker/Caddyfile' } else { \"/etc/caddy/Caddyfile\" })) }); mut env_lines = [$$\"CADDY_TLS_HOST_PORT=($$tls_port)\"]; mut extra_env = { XDG_DATA_HOME: ($$cdir | path join \"data\"), XDG_CONFIG_HOME: ($$cdir | path join \"config\"), CADDY_TLS_HOST_PORT: $$tls_port }; if $$is_local { let served_fwd = ($$served_dir | path expand | str replace -a (char -u 5c) '/'); let srv_root = $$\"($$served_fwd)/srv\"; let omni_root = $$\"($$served_fwd)/omnishell\"; $$env_lines = ($$env_lines | append [$$\"CADDY_DOOR_PORT=($$tls_port)\" $$\"PRONTO_SRV_ROOT=($$srv_root)\" $$\"PRONTO_OMNISHELL_ROOT=($$omni_root)\"]); $$extra_env = ($$extra_env | merge { CADDY_DOOR_PORT: $$tls_port, PRONTO_SRV_ROOT: $$srv_root, PRONTO_OMNISHELL_ROOT: $$omni_root }) }; if (($$certs | path join \"localhost.pem\") | path exists) { let tv = $$\"($$certs)/localhost.pem ($$certs)/localhost-key.pem\"; $$env_lines = ($$env_lines | append $$\"CADDY_TLS=($$tv)\"); $$extra_env = ($$extra_env | merge { CADDY_TLS: $$tv }) }; let sfile = ($$env.CADDY_SCRIPTS_FILE? | default (if (($$env.BAYT_LOCAL_SERVED_DIR? | default \"\") != \"\") { ($$env.BAYT_LOCAL_SERVED_DIR | path join \"caddy/release-scripts\") } else { \"/etc/caddy/release-scripts\" })); let rel = (if ($$sfile | path exists) { open --raw $$sfile | str trim } else { \"\" }); $$env_lines = ($$env_lines | append $$\"PRONTO_RELEASE_SCRIPTS=($$rel)\"); $$extra_env = ($$extra_env | merge { PRONTO_RELEASE_SCRIPTS: $$rel }); ($$env_lines | str join (char nl)) + (char nl) | save -f $$env_file; with-env $$extra_env { let adapted = (^caddy adapt --envfile $$env_file --config $$cfg_src --adapter caddyfile); let roots = ($$adapted | split row \",\" | parse -r '\"root\":\"(?<r>[^\"]+)\"' | get -o r | default [] | uniq); for r in $$roots { if ($$r | path exists) { glob ($$r | path join \"**/*\" | str replace -a (char -u 5c) '/') | where ($$it | path type) == \"file\" and (not ($$it | str ends-with \".etag\")) | each {|f| let etag = $$\"($$f).etag\"; if (not ($$etag | path exists)) { let d = (open --raw $$f | hash sha256); ((char dquote) + $$d + (char dquote)) | save --raw -f $$etag } } | ignore } }; exec caddy run --envfile $$env_file --config $$cfg_src --adapter caddyfile }"
+    availability:
+      exit_on_skipped: true
+    environment:
+    - ELECTRIC_SECRET=${ELECTRIC_SECRET:-dev-electric-secret}
+    - ORIGIN=${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+    - PORT=${CADDY_HTTP_PORT:-15355}
+    - PRONTO_UPSTREAM_ASSETS=127.0.0.1:${ASSETS_HTTP_PORT:-25348}
+    - PRONTO_UPSTREAM_AUTH=127.0.0.1:${AUTH_HTTP_PORT:-16348}
+    - PRONTO_UPSTREAM_CRUD=127.0.0.1:${CRUD_HTTP_PORT:-25478}
+    - PRONTO_UPSTREAM_ELECTRIC=127.0.0.1:${ELECTRIC_HTTP_PORT:-27457}
+    - PRONTO_UPSTREAM_RENDER=127.0.0.1:${RENDER_HTTP_PORT:-13388}
+    - PRONTO_UPSTREAM_TICKER=127.0.0.1:${TICKER_HTTP_PORT:-28014}
+    readiness_probe:
+      exec:
+        command: bayt microcheck httpcheck http://127.0.0.1:${CADDY_HTTP_PORT:-15355}/health
+      period_seconds: 5
+      timeout_seconds: 5
+      failure_threshold: 32
   database:
     entrypoint:
-    - docker-entrypoint.sh
-    - postgres
+    - mise
+    - x
+    - --
+    - nu
     - -c
-    - wal_level=logical
-    - -c
-    - fsync=off
-    - -c
-    - synchronous_commit=off
-    - -c
-    - full_page_writes=off
-    - -c
-    - shared_buffers=32MB
-    - -c
-    - max_connections=200
+    - |-
+      if ('/docker-entrypoint-initdb.d' | path exists) { exec docker-entrypoint.sh postgres -c session_preload_libraries=pg_ivm -c wal_level=logical -c max_replication_slots=128 -c max_wal_senders=128 -c fsync=off -c synchronous_commit=off -c full_page_writes=off -c shared_buffers=32MB -c max_connections=200 }
+      let mecha = (if (($$env.PRONTO_INITDB_SRC_DIR? | default '') != '') { $$env.PRONTO_INITDB_SRC_DIR } else if ('services/database/rls/rls.sql' | path exists) { $$env.PWD } else { (^mise where github:bonisoft3/mecha | str trim) })
+      let initdb = (($$env.BAYT_LOCAL_WORK_DIR? | default $$nu.temp-dir) | path join 'initdb.d')
+      rm -rf $$initdb; mkdir $$initdb
+      cp -f ($$mecha | path join 'services/database/rls/rls.sql') ($$initdb | path join '003_rls.sql')
+      cp -f ($$mecha | path join 'services/database/role_passwords.sh') ($$initdb | path join '899_role_passwords.sh')
+      open .bayt/bayt.database.json | get dockerfile.copy.0.srcs | each {|s| cp -f $$s ($$initdb | path join ($$s | path basename)) } | ignore
+      exec nu ($$mecha | path join 'services/database/entrypoint.nu') $$initdb postgres -c session_preload_libraries=pg_ivm -c wal_level=logical -c max_replication_slots=128 -c max_wal_senders=128 -c fsync=off -c synchronous_commit=off -c full_page_writes=off -c shared_buffers=32MB -c max_connections=200
     availability:
       exit_on_skipped: true
     environment:
     - AUTHENTICATOR_PASSWORD=${AUTHENTICATOR_PASSWORD:-dev-authenticator-password}
     - ELECTRIC_PASSWORD=${ELECTRIC_PASSWORD:-dev-electric-password}
+    - PGPORT=${DATABASE_PG_PORT:-20585}
     - POSTGRES_DB=${POSTGRES_DB:-apexrun}
     - >-
       POSTGRES_INITDB_ARGS=--no-sync --encoding=UTF8 --auth=trust
@@ -65,77 +195,407 @@ processes:
     readiness_probe:
       exec:
         command: >-
-          pg_isready -h localhost -p 5432 -d ${POSTGRES_DB:-apexrun} -U
-          ${POSTGRES_USER:-postgres}
+          mise x -- pg_isready -h localhost -p ${DATABASE_PG_PORT:-20585} -d
+          ${POSTGRES_DB:-apexrun} -U ${POSTGRES_USER:-postgres}
       period_seconds: 1
       timeout_seconds: 5
       failure_threshold: 330
+    shutdown:
+      signal: 2
+      timeout_seconds: 5
+  crud:
+    depends_on:
+      database:
+        condition: process_healthy
+      migrate:
+        condition: process_completed_successfully
+      timer-check:
+        condition: process_completed_successfully
+      "bayt:httpcheck":
+        condition: process_completed_successfully
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - "with-env { PGRST_SERVER_HOST: '127.0.0.1' } { exec postgrest }"
+    availability:
+      exit_on_skipped: true
+    environment:
+    - PGRST_ADMIN_SERVER_PORT=${CRUD_ADMIN_PORT:-11994}
+    - PGRST_DB_ANON_ROLE=anon
+    - PGRST_DB_PRE_REQUEST=public.app_pre_request
+    - PGRST_DB_SCHEMA=public
+    - >-
+      PGRST_DB_URI=postgres://authenticator:${AUTHENTICATOR_PASSWORD:-dev-authenticator-password}@127.0.0.1:${DATABASE_PG_PORT:-20585}/${POSTGRES_DB:-apexrun}
+    - PGRST_JWT_SECRET=${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
+    - PGRST_SERVER_HOST=*
+    - PGRST_SERVER_PORT=${CRUD_HTTP_PORT:-25478}
+    readiness_probe:
+      exec:
+        command: bayt microcheck httpcheck http://127.0.0.1:${CRUD_ADMIN_PORT:-11994}/ready
+      period_seconds: 5
+      timeout_seconds: 5
+      failure_threshold: 36
   auth:
     depends_on:
       database:
         condition: process_healthy
+      migrate:
+        condition: process_completed_successfully
+      timer-check:
+        condition: process_completed_successfully
     entrypoint:
-    - deno
-    - run
-    - --allow-net
-    - --allow-env
-    - --config
-    - /app/deno.json
-    - /app/main.ts
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      let app = (if (($$env.AUTH_APP_DIR? | default '') != '') { $$env.AUTH_APP_DIR }
+      else if ('/app/main.ts' | path exists) { '/app' } else if
+      ('services/auth/main.ts' | path exists) { 'services/auth' } else { ((^mise where github:bonisoft3/mecha
+      | str trim) | path join 'services/auth') }); exec deno run --allow-net
+      --allow-env --config ($$app | path join 'deno.json') ($$app | path join 'main.ts')
     availability:
       exit_on_skipped: true
     environment:
     - AUTH_STATEMENT_TIMEOUT_MS=5000
     - >-
-      DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@127.0.0.1:5432/${POSTGRES_DB:-apexrun}
+      DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@127.0.0.1:${DATABASE_PG_PORT:-20585}/${POSTGRES_DB:-apexrun}
     - OIDC_PROVIDERS=
     - PGRST_JWT_SECRET=${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
+    - PORT=${AUTH_HTTP_PORT:-16348}
     - WEBAUTHN_ORIGIN=${WEBAUTHN_ORIGIN:-https://localhost:*}
     - WEBAUTHN_RP_ID=${WEBAUTHN_RP_ID:-localhost}
-  caddy:
-    depends_on:
-      crud:
-        condition: process_healthy
-      "bayt:httpcheck":
-        condition: process_completed_successfully
-    entrypoint:
-    - sh
-    - -c
-    - "case \"$${ORIGIN#http://}\" in \"$$ORIGIN\") h=$${ORIGIN#https://};; *) h=$${ORIGIN#http://};; esac; case \"$$h\" in \"$$ORIGIN\"|\"\"|*[!A-Za-z0-9.:-]*) echo \"ORIGIN '$$ORIGIN' is no origin: set it to the scheme and host readers reach the door at, as https://app.example\" >&2; exit 1;; esac; : > /etc/caddy/env; case \"$$h\" in *:*) _p=$${h##*:};; *) _p=8443;; esac; export CADDY_TLS_HOST_PORT=\"$${CADDY_TLS_HOST_PORT:-$$_p}\"; printf 'CADDY_TLS_HOST_PORT=%s\\n' \"$$CADDY_TLS_HOST_PORT\" >> /etc/caddy/env; if [ -f /certs/localhost.pem ]; then export CADDY_TLS='/certs/localhost.pem /certs/localhost-key.pem'; printf 'CADDY_TLS=%s\\n' \"$$CADDY_TLS\" >> /etc/caddy/env; fi; PRONTO_RELEASE_SCRIPTS=$$(cat /etc/caddy/release-scripts 2>/dev/null || true); export PRONTO_RELEASE_SCRIPTS; printf 'PRONTO_RELEASE_SCRIPTS=%s\\n' \"$$PRONTO_RELEASE_SCRIPTS\" >> /etc/caddy/env; set -e -o pipefail; roots=$$(caddy adapt --envfile /etc/caddy/env --config /etc/caddy/Caddyfile --adapter caddyfile | tr , '\\n' | grep -o '\"root\":\"[^\"]*\"' | cut -d'\"' -f4 | sort -u); if [ -n \"$$roots\" ]; then find $$roots -type f ! -name '*.etag' -exec sh -c 'set -e; q=$$1; shift; for f do h=$$(sha256sum < \"$$f\"); printf \"$$q%s$$q\" \"$${h%% *}\" > \"$$f.etag\"; done' sh '\"' {} +; fi; exec caddy run --envfile /etc/caddy/env --config /etc/caddy/Caddyfile --adapter caddyfile"
-    availability:
-      exit_on_skipped: true
-    environment:
-    - ELECTRIC_SECRET=${ELECTRIC_SECRET:-dev-electric-secret}
-    - ORIGIN=${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT}}
-    readiness_probe:
-      exec:
-        command: bayt microcheck httpcheck http://127.0.0.1:8080/health
-      period_seconds: 5
-      timeout_seconds: 5
-      failure_threshold: 32
-  crud:
+  electric:
     depends_on:
       database:
         condition: process_healthy
+      migrate:
+        condition: process_completed_successfully
+      timer-check:
+        condition: process_completed_successfully
       "bayt:httpcheck":
         condition: process_completed_successfully
     entrypoint:
-    - postgrest
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      let mecha = (if ('services/electric/main.ts' | path exists) { $$env.PWD } else
+      { (^mise where github:bonisoft3/mecha | str trim) }); let auth_dir = (if
+      (($$env.AUTH_APP_DIR? | default '') != '') { $$env.AUTH_APP_DIR } else { ($$mecha | path
+      join 'services/auth') }); let elec_dir = (if (($$env.ELECTRIC_APP_DIR? | default
+      '') != '') { $$env.ELECTRIC_APP_DIR } else { ($$mecha | path join
+      'services/electric') }); exec deno run --allow-net --allow-env --allow-read --config ($$auth_dir
+      | path join 'deno.json') ($$elec_dir | path join 'main.ts')
+    availability:
+      exit_on_skipped: true
+      restart: on_failure
+      backoff_seconds: 1
+      max_restarts: 15
+    environment:
+    - >-
+      ADMIN_DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@127.0.0.1:${DATABASE_PG_PORT:-20585}/${POSTGRES_DB:-apexrun}
+    - >-
+      DATABASE_URL=postgresql://electric:${ELECTRIC_PASSWORD:-dev-electric-password}@127.0.0.1:${DATABASE_PG_PORT:-20585}/${POSTGRES_DB:-apexrun}?sslmode=disable
+    - ELECTRIC_MANUAL_TABLE_PUBLISHING=true
+    - ELECTRIC_SECRET=${ELECTRIC_SECRET:-dev-electric-secret}
+    - PGRST_JWT_SECRET=${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
+    - PORT=${ELECTRIC_HTTP_PORT:-27457}
+    readiness_probe:
+      exec:
+        command: >-
+          bayt microcheck httpcheck
+          http://127.0.0.1:${ELECTRIC_HTTP_PORT:-27457}/v1/health
+      period_seconds: 1
+      timeout_seconds: 5
+      failure_threshold: 60
+  ticker:
+    depends_on:
+      crud:
+        condition: process_healthy
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      let app = (if (($$env.TICKER_APP_DIR? | default '') != '') {
+      $$env.TICKER_APP_DIR } else if ('services/ticker/main.ts' | path exists) { 'services/ticker' } else
+      { ((^mise where github:bonisoft3/mecha | str trim) | path join
+      'services/ticker') }); exec deno run --allow-net --allow-env --config ($$app | path join
+      'deno.json') ($$app | path join 'main.ts')
+    availability:
+      exit_on_skipped: true
+      restart: on_failure
+      backoff_seconds: 1
+      max_restarts: 15
+    environment:
+    - CALL_TIMEOUT_MS=35000
+    - CRUD_URL=http://127.0.0.1:${CRUD_HTTP_PORT:-25478}
+    - PORT=${TICKER_HTTP_PORT:-28014}
+    - >-
+      SERVICE_JWT=${SERVICE_JWT:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZSIsInN1YiI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImV4cCI6MTk4ODE1MDQwMH0.dGYz_sMSnOvZy0eANh7spJbgyr2fEzeynOERIqW7gd4}
+    - WAKE_URLS=
+  clock:
+    depends_on:
+      ticker:
+        condition: process_started
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      let yml = (if (($$env.CLOCK_YAML? | default '') != '') { $$env.CLOCK_YAML }
+      else if ('services/clock/clock.yaml' | path exists) { 'services/clock/clock.yaml' }
+      else { ((^mise where github:bonisoft3/mecha | str trim) | path join
+      'services/clock/clock.yaml') }); exec redpanda-connect run --set 'http.enabled=false' $$yml
+    availability:
+      exit_on_skipped: true
+      restart: on_failure
+      backoff_seconds: 1
+      max_restarts: 15
+    environment:
+    - POKE_CALLER=compose
+    - POKE_INTERVAL=${POKE_INTERVAL:-60s}
+    - POKE_URL=http://127.0.0.1:${TICKER_HTTP_PORT:-28014}
+    - >-
+      SERVICE_JWT=${SERVICE_JWT:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZSIsInN1YiI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImV4cCI6MTk4ODE1MDQwMH0.dGYz_sMSnOvZy0eANh7spJbgyr2fEzeynOERIqW7gd4}
+  assets:
+    depends_on:
+      "bayt:httpcheck":
+        condition: process_completed_successfully
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - "with-env { ASSET_DIR: '.data/assets', ASSET_MANIFEST: 'assets/manifest.json' } { ^deno run --allow-read --allow-write --allow-env --allow-net services/assets/seed.ts }"
     availability:
       exit_on_skipped: true
     environment:
-    - PGRST_ADMIN_SERVER_PORT=3001
-    - PGRST_DB_ANON_ROLE=anon
-    - PGRST_DB_PRE_REQUEST=public.app_pre_request
-    - PGRST_DB_SCHEMA=public
-    - >-
-      PGRST_DB_URI=postgres://authenticator:${AUTHENTICATOR_PASSWORD:-dev-authenticator-password}@127.0.0.1:5432/${POSTGRES_DB:-apexrun}
-    - PGRST_JWT_SECRET=${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
-    - PGRST_SERVER_HOST=*
-    - PGRST_SERVER_PORT=3000
+    - ASSET_ORIGIN=https://storage.googleapis.com/trash-362115-supertuxkart-assets
+    - PORT=${ASSETS_HTTP_PORT:-25348}
     readiness_probe:
       exec:
-        command: bayt microcheck httpcheck http://127.0.0.1:3001/ready
-      period_seconds: 5
+        command: bayt microcheck httpcheck http://127.0.0.1:${ASSETS_HTTP_PORT:-25348}/health
+      period_seconds: 2
       timeout_seconds: 5
-      failure_threshold: 36
+      failure_threshold: 150
+  migrate:
+    depends_on:
+      database:
+        condition: process_healthy
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      let os = (match $$nu.os-info.name { 'macos' => 'macos', 'windows' => 'windows',
+      _ => 'linux' }); let dir = (if (($$env.PRONTO_REPLAY_PGROLL_DIR? | default '')
+      != '') { $$env.PRONTO_REPLAY_PGROLL_DIR } else if ('/pgroll' | path exists) {
+      '/pgroll' } else { let d = (($$env.BAYT_LOCAL_WORK_DIR? | default $$nu.temp-dir) |
+      path join 'pgroll'); rm -rf $$d; mkdir $$d; let m = (open .bayt/bayt.migrate.json |
+      get dockerfile); ($$m | get -o copy | default []) | each {|c| cp ($$c.srcs.0)
+      ($$d | path join ($$c.dst | path basename)) } | ignore; ($$m | get -o epilogue |
+      default []) | each {|e| let lines = ($$e | lines); if ($$lines.0 | str starts-with
+      "COPY <<'PGROLL' /tmp/") { let name = ($$lines.0 | parse "COPY <<'PGROLL'
+      /tmp/{name}.parts" | get 0.name); ($$lines | skip 1 | take while {|l| $$l != "PGROLL" }
+      | str join "" | decode base64) | save --raw -f ($$d | path join $$name) } else if
+      ($$lines.0 | str starts-with "COPY <<'PGROLL' /pgroll/") { let name = ($$lines.0
+      | parse "COPY <<'PGROLL' /pgroll/{name}" | get 0.name); $$lines.1 | save --raw
+      -f ($$d | path join $$name) } else if ($$lines.0 | str starts-with "COPY
+      <<'RECONCILE' /pgroll/") { let name = ($$lines.0 | parse "COPY <<'RECONCILE'
+      /pgroll/{name}" | get 0.name); ($$lines | skip 1 | drop 1 | str join "\\n") | save --raw -f
+      ($$d | path join $$name) } } | ignore; $$d }); let script = (if
+      (($$env.PRONTO_MIGRATE_SH? | default '') != '') { $$env.PRONTO_MIGRATE_SH } else if
+      ('services/migrate/migrate.nu' | path exists) { 'services/migrate/migrate.nu' } else if
+      ('/migrate.sh' | path exists) and ($$os != 'windows') { '/migrate.sh' } else { ((^mise
+      where github:bonisoft3/mecha | str trim) | path join 'services/migrate/migrate.nu')
+      }); if ($$script | str ends-with '.nu') { ^nu $$script $$dir 00_initdb } else {
+      ^bash $$script $$dir 00_initdb }
+    availability:
+      exit_on_skipped: true
+    environment:
+    - >-
+      DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@127.0.0.1:${DATABASE_PG_PORT:-20585}/${POSTGRES_DB:-apexrun}?sslmode=disable
+  timer-check:
+    depends_on:
+      database:
+        condition: process_healthy
+      migrate:
+        condition: process_completed_successfully
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      open .bayt/bayt.timer-check.json | get dockerfile.epilogue.0 | lines | skip 1 |
+      drop 1 | str join (char nl) | ^psql -X --set=ON_ERROR_STOP=1 --single-transaction
+    availability:
+      exit_on_skipped: true
+    environment:
+    - PGDATABASE=${POSTGRES_DB:-apexrun}
+    - PGHOST=127.0.0.1
+    - PGPASSWORD=${POSTGRES_PASSWORD:-postgres}
+    - PGPORT=${DATABASE_PG_PORT:-20585}
+    - PGUSER=${POSTGRES_USER:-postgres}
+  check-boot:
+    depends_on:
+      launch:
+        condition: process_healthy
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      let omnishell = (^mise where github:bonisoft3/omnishell | str trim); deno run
+      --config ($$omnishell | path join test deno.json) --lock ($$omnishell | path join
+      test deno.lock) --frozen --unstable-raw-imports --allow-read --allow-write
+      --allow-net --allow-env --allow-run --allow-sys
+      --unsafely-ignore-certificate-errors=caddy,localhost,127.0.0.1 tests/boot.ts .
+    availability:
+      exit_on_skipped: true
+    environment:
+    - APP_URL=https://localhost:${CADDY_TLS_HOST_PORT:-23221}
+    - DOOR=http://127.0.0.1:${CADDY_HTTP_PORT:-15355}
+    - ORIGIN=${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+    - SETTLE_TIMEOUT_MS=50000
+  check-duel:
+    depends_on:
+      launch:
+        condition: process_healthy
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      let omnishell = (^mise where github:bonisoft3/omnishell | str trim); deno run
+      --config ($$omnishell | path join test deno.json) --lock ($$omnishell | path join
+      test deno.lock) --frozen --unstable-raw-imports --allow-read --allow-write
+      --allow-net --allow-env --allow-run --allow-sys
+      --unsafely-ignore-certificate-errors=caddy,localhost,127.0.0.1 tests/duel.ts .
+    availability:
+      exit_on_skipped: true
+    environment:
+    - APP_URL=https://localhost:${CADDY_TLS_HOST_PORT:-23221}
+    - >-
+      DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@127.0.0.1:${DATABASE_PG_PORT:-20585}/${POSTGRES_DB:-apexrun}
+    - DOOR=http://127.0.0.1:${CADDY_HTTP_PORT:-15355}
+    - ORIGIN=${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+    - PGRST_JWT_SECRET=${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
+    - SETTLE_TIMEOUT_MS=50000
+  check-finish:
+    depends_on:
+      launch:
+        condition: process_healthy
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      let omnishell = (^mise where github:bonisoft3/omnishell | str trim); deno run
+      --config ($$omnishell | path join test deno.json) --lock ($$omnishell | path join
+      test deno.lock) --frozen --unstable-raw-imports --allow-read --allow-write
+      --allow-net --allow-env --allow-run --allow-sys
+      --unsafely-ignore-certificate-errors=caddy,localhost,127.0.0.1 tests/finish.ts .
+    availability:
+      exit_on_skipped: true
+    environment:
+    - APP_URL=https://localhost:${CADDY_TLS_HOST_PORT:-23221}
+    - >-
+      DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@127.0.0.1:${DATABASE_PG_PORT:-20585}/${POSTGRES_DB:-apexrun}
+    - DOOR=http://127.0.0.1:${CADDY_HTTP_PORT:-15355}
+    - ORIGIN=${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+    - PGRST_JWT_SECRET=${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
+    - SETTLE_TIMEOUT_MS=50000
+  check-leaderboard-access:
+    depends_on:
+      launch:
+        condition: process_healthy
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      deno test --config tests/deno.json --lock tests/deno.lock --frozen
+      --unstable-raw-imports --allow-env --allow-net --allow-read
+      --unsafely-ignore-certificate-errors=caddy,localhost,127.0.0.1 tests/leaderboard-access.ts
+    availability:
+      exit_on_skipped: true
+    environment:
+    - APP_URL=https://localhost:${CADDY_TLS_HOST_PORT:-23221}
+    - >-
+      DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@127.0.0.1:${DATABASE_PG_PORT:-20585}/${POSTGRES_DB:-apexrun}
+    - DOOR=http://127.0.0.1:${CADDY_HTTP_PORT:-15355}
+    - ORIGIN=${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+    - PGRST_JWT_SECRET=${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
+  check-online:
+    depends_on:
+      launch:
+        condition: process_healthy
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      deno test --config tests/deno.json --lock tests/deno.lock --frozen
+      --unstable-raw-imports --allow-env --allow-net --allow-read tests/online-access.ts
+    availability:
+      exit_on_skipped: true
+    environment:
+    - APP_URL=https://localhost:${CADDY_TLS_HOST_PORT:-23221}
+    - >-
+      DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@127.0.0.1:${DATABASE_PG_PORT:-20585}/${POSTGRES_DB:-apexrun}
+    - DOOR=http://127.0.0.1:${CADDY_HTTP_PORT:-15355}
+    - ORIGIN=${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+    - PGRST_JWT_SECRET=${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
+  check-touch:
+    depends_on:
+      launch:
+        condition: process_healthy
+    entrypoint:
+    - mise
+    - x
+    - --
+    - nu
+    - -c
+    - >-
+      let omnishell = (^mise where github:bonisoft3/omnishell | str trim); deno run
+      --config ($$omnishell | path join test deno.json) --lock ($$omnishell | path join
+      test deno.lock) --frozen --unstable-raw-imports --allow-read --allow-write
+      --allow-net --allow-env --allow-run --allow-sys
+      --unsafely-ignore-certificate-errors=caddy,localhost,127.0.0.1 tests/touch.ts .
+    availability:
+      exit_on_skipped: true
+    environment:
+    - APP_URL=https://localhost:${CADDY_TLS_HOST_PORT:-23221}
+    - >-
+      DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@127.0.0.1:${DATABASE_PG_PORT:-20585}/${POSTGRES_DB:-apexrun}
+    - DOOR=http://127.0.0.1:${CADDY_HTTP_PORT:-15355}
+    - ORIGIN=${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+    - PGRST_JWT_SECRET=${PGRST_JWT_SECRET:-mecha-dev-secret-please-override-32ch}
+    - SETTLE_TIMEOUT_MS=50000

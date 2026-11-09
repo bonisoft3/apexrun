@@ -32,6 +32,10 @@ includes:
     taskfile: ./Taskfile.test.yaml
     dir: ../
     optional: true
+  launch:
+    taskfile: ./Taskfile.launch.yaml
+    dir: ../
+    optional: true
   integrate:
     taskfile: ./Taskfile.integrate.yaml
     dir: ../
@@ -52,52 +56,36 @@ includes:
     taskfile: ./Taskfile.integrate-action.yaml
     dir: ../
     optional: true
-  check-finish:
-    taskfile: ./Taskfile.check-finish.yaml
-    dir: ../
-    optional: true
-  ci-finish:
-    taskfile: ./Taskfile.ci-finish.yaml
-    dir: ../
-    optional: true
-  check-boot:
-    taskfile: ./Taskfile.check-boot.yaml
-    dir: ../
-    optional: true
   ci-boot:
     taskfile: ./Taskfile.ci-boot.yaml
-    dir: ../
-    optional: true
-  check-online:
-    taskfile: ./Taskfile.check-online.yaml
-    dir: ../
-    optional: true
-  ci-online:
-    taskfile: ./Taskfile.ci-online.yaml
-    dir: ../
-    optional: true
-  check-duel:
-    taskfile: ./Taskfile.check-duel.yaml
     dir: ../
     optional: true
   ci-duel:
     taskfile: ./Taskfile.ci-duel.yaml
     dir: ../
     optional: true
-  check-touch:
-    taskfile: ./Taskfile.check-touch.yaml
+  ci-finish:
+    taskfile: ./Taskfile.ci-finish.yaml
+    dir: ../
+    optional: true
+  ci-leaderboard-access:
+    taskfile: ./Taskfile.ci-leaderboard-access.yaml
+    dir: ../
+    optional: true
+  ci-online:
+    taskfile: ./Taskfile.ci-online.yaml
     dir: ../
     optional: true
   ci-touch:
     taskfile: ./Taskfile.ci-touch.yaml
     dir: ../
     optional: true
-  check-leaderboard-access:
-    taskfile: ./Taskfile.check-leaderboard-access.yaml
+  ci-desktop:
+    taskfile: ./Taskfile.ci-desktop.yaml
     dir: ../
     optional: true
-  ci-leaderboard-access:
-    taskfile: ./Taskfile.ci-leaderboard-access.yaml
+  ci-android:
+    taskfile: ./Taskfile.ci-android.yaml
     dir: ../
     optional: true
 version: "3"

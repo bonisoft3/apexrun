@@ -1,7 +1,5 @@
 {
-  "imports": {
-    "/omnishell/": "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/"
-  },
+  "nodeModulesDir": "none",
   "compilerOptions": {
     "strict": true
   }

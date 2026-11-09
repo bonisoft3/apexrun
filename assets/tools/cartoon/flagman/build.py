@@ -14,10 +14,10 @@ from gltf_io import Prim, write_glb
 from mats import pbr, srgb
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-H = 0.006                      # marching-cubes spacing (m)
-BUDGET = {"body": 6000, "arm": 2100}
-MAX_TRIS = 12000
-AO = dict(radius=0.26, lo=0.58)
+H = 0.0052                     # marching-cubes spacing (m)
+BUDGET = {"body": 8200, "arm": 2800}
+MAX_TRIS = 16000
+AO = dict(radius=0.28, lo=0.46)
 MATERIALS = [pbr("suit", srgb("#efe6cf"), rough=0.7), pbr("stripe", srgb("#d9412a"), rough=0.6),
              pbr("skin", srgb("#eaa57a"), rough=0.65), pbr("hair", srgb("#5a3822"), rough=0.85),
              pbr("shades", srgb("#15151b"), rough=0.25), pbr("cap", srgb("#1f2c52"), rough=0.6),

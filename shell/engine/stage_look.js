@@ -8,6 +8,96 @@ export const SHORE = 30;
 // Metres of open water between the shore and the nearest boat.
 export const BOAT_CLEARANCE = 10;
 
+// 20-band lateral terrain offsets (metres past the outer rumble edge) for sculpted
+// 3D roadside embankments, rolling hills, dunes, and canyon benches.
+export const DRY_TERRAIN_OFFSETS = [
+  0, 5.5, 10, 15, 21, 28, 37, 48, 62, 80,
+  105, 140, 185, 250, 330, 440, 580, 780, 1060, 1400,
+];
+export const WET_TERRAIN_OFFSETS = [0, 5.5, 10, 15, 22, SHORE];
+// 14-band ocean offsets (metres outward from SHORE) for 3D Gerstner swell displacement
+// and shoreward surf breaker zones.
+export const WATER_OFFSETS = [
+  -2, 1, 4, 8, 14, 22, 32, 46, 68, 100, 160, 280, 560, 1400,
+];
+
+const STAGE_TERRAIN_PROFILES = {
+  // Coastal beaches & marinas: gentle wind-sculpted sand dunes & palm-fringed lagoon swales (no mountains on the coast!)
+  'coconut-beach': { nearAmp: 1.1, midAmp: 2.1, ridgeBias: 0.35, freqZ: 0.0030, freqOff: 0.0075 },
+  'destination-marina': { nearAmp: 0.9, midAmp: 1.8, ridgeBias: 0.30, freqZ: 0.0028, freqOff: 0.0070 },
+  // Dutch polder, urban boulevard & airfield: wide flat meadows & low canal dike berms
+  'tulip-gardens': { nearAmp: 0.6, midAmp: 1.3, ridgeBias: 0.25, freqZ: 0.0026, freqOff: 0.0060 },
+  'metropolis-night': { nearAmp: 0.4, midAmp: 0.9, ridgeBias: 0.15, freqZ: 0.0025, freqOff: 0.0055 },
+  'destination-aerodrome': { nearAmp: 0.7, midAmp: 1.4, ridgeBias: 0.25, freqZ: 0.0026, freqOff: 0.0060 },
+  // Desert ergs & canyon bajadas: long, sweeping wind-blown barchan dune swells around flat valley floors
+  'desert-canyons': { nearAmp: 1.8, midAmp: 4.8, ridgeBias: 1.2, freqZ: 0.0030, freqOff: 0.0072 },
+  'sunset-highway': { nearAmp: 1.5, midAmp: 4.0, ridgeBias: 1.0, freqZ: 0.0028, freqOff: 0.0068 },
+  'destination-oasis': { nearAmp: 1.9, midAmp: 4.6, ridgeBias: 1.1, freqZ: 0.0031, freqOff: 0.0074 },
+  // Tuscan, Mediterranean & forest stages: long, soft C2 rolling pastoral downs (300m+ wavelength, zero spiky facets)
+  'gateway-pass': { nearAmp: 2.2, midAmp: 6.2, ridgeBias: 1.8, freqZ: 0.0031, freqOff: 0.0070 },
+  'wilderness-run': { nearAmp: 1.9, midAmp: 5.4, ridgeBias: 1.5, freqZ: 0.0032, freqOff: 0.0072 },
+  'ancient-ruins': { nearAmp: 1.8, midAmp: 5.0, ridgeBias: 1.4, freqZ: 0.0030, freqOff: 0.0068 },
+  'destination-castle': { nearAmp: 2.1, midAmp: 5.8, ridgeBias: 1.7, freqZ: 0.0031, freqOff: 0.0070 },
+  'destination-colosseum': { nearAmp: 1.6, midAmp: 4.4, ridgeBias: 1.2, freqZ: 0.0029, freqOff: 0.0066 },
+  // High alpine valleys & coastal headlands: smooth sweeping glacial moraines & clifftop downs
+  'alpine-peaks': { nearAmp: 2.5, midAmp: 7.4, ridgeBias: 2.4, freqZ: 0.0032, freqOff: 0.0072 },
+  'coastal-cliffs': { nearAmp: 2.3, midAmp: 6.6, ridgeBias: 2.1, freqZ: 0.0031, freqOff: 0.0070 },
+};
+
+function smoothstep01(a, b, x) {
+  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+}
+
+/**
+ * Deterministic 3D roadside terrain elevation shared by `renderer.js` and `stage_gltf.js`.
+ * Keeps `offset <= 5.5` flush at `p.y - 0.05` so off-road karts and road-edge collars rest
+ * on the surface, sculpts biome-specific long-wavelength C2 rolling dunes, berms, and
+ * pastoral downs across `5.5..580m` (without high-frequency sawtooth spikes on the ribbon grid),
+ * and settles cleanly to `baseY` (or `waterY` at `SHORE` on wet sides).
+ */
+export function terrainHeightAt(stageId, p, baseY, waterY, side, offset, isWetSide, zEnd = Infinity) {
+  const roadShoulderY = p.y - 0.05;
+  if (isWetSide) {
+    if (offset >= SHORE) return waterY;
+    if (offset <= 5.5) return roadShoulderY;
+    if (offset <= 16) {
+      const dunePhase = Math.sin(p.z * 0.0085 + side * 1.3) * 0.6 + Math.cos(p.z * 0.019 - offset * 0.09) * 0.4;
+      const dune = Math.sin(((offset - 5.5) / 10.5) * Math.PI) * (0.42 + 0.28 * dunePhase);
+      return roadShoulderY + dune;
+    }
+    const t = Math.max(0, Math.min(1, (offset - 16) / Math.max(1, SHORE - 16)));
+    const smoothT = t * t * (3 - 2 * t);
+    return roadShoulderY + (waterY - roadShoulderY) * smoothT;
+  }
+
+  const macroY = offset <= 32
+    ? roadShoulderY
+    : p.y + (baseY - p.y) * Math.min(1, (offset - 32) / 380);
+  if (offset <= 5.5 || offset >= 600) return macroY;
+
+  const prof = STAGE_TERRAIN_PROFILES[stageId] ?? STAGE_TERRAIN_PROFILES['coconut-beach'];
+  const hasDest = Boolean(STAGE_LOOKS[stageId]?.destination);
+  const endFade = hasDest && Number.isFinite(zEnd)
+    ? 1 - smoothstep01(zEnd - 120, zEnd - 15, p.z)
+    : 1;
+  if (endFade <= 0) return macroY;
+
+  const nearEnv = smoothstep01(5.5, 24, offset) * (1 - smoothstep01(55, 145, offset));
+  const midEnv = smoothstep01(18, 85, offset) * (1 - smoothstep01(260, 580, offset));
+  const phaseSide = side < 0 ? 0.0 : 2.17;
+  const z = p.z;
+  // Long, C∞-smooth low-frequency harmonic swells (260m..420m wavelength) so the 12m segment ribbon
+  // renders as organic rolling dunes/hills rather than spiky triangle facets.
+  const w1 = Math.sin(z * prof.freqZ + offset * prof.freqOff + phaseSide);
+  const w2 = Math.cos(z * (prof.freqZ * 1.62) - offset * (prof.freqOff * 0.85) + phaseSide * 1.4);
+  const w3 = Math.sin(z * (prof.freqZ * 0.53) + offset * 0.0045 - phaseSide);
+  const wave = 0.52 * w1 + 0.30 * w2 + 0.18 * w3;
+  const nearRelief = prof.nearAmp * (0.35 + 0.65 * w1) * nearEnv;
+  const midRelief = (prof.ridgeBias * (0.50 + 0.50 * w3) + prof.midAmp * wave) * midEnv;
+  return macroY + (nearRelief + midRelief) * endFade;
+}
+
 // Props that face along the road rather than at a random yaw.
 const ORIENTED = new Set(['arch', 'powerPole', 'streetLamp', 'hangar', 'colosseum', 'lighthouse', 'tower', 'rockArch', 'seaArch',
   'chapelAlpine', 'chapelTuscan', 'clockTower', 'kasbah', 'aqueduct', 'spire']);
@@ -455,29 +545,69 @@ export const PROP_BUILDERS = {
     cap.material = mat('#C96A3C');
     return [body, cap];
   },
-  // A painted stone gateway, warm limestone under a rounded arch of
-  // voussoirs (a purple slab of boxes read as a cartoon block).
+  // A monumental Roman/Tuscan masonry viaduct gateway spanning the highway:
+  // deeply rooted battered stone piers, outer buttresses, interlocking wide voussoirs,
+  // solid spandrel walls, and a continuous upper cornice deck with parapet battlements.
   arch(B, scene, mat) {
     const stone = mat('#C4BEA8');
     const shade = mat('#9E9884');
+    const corniceMat = mat('#D6CEBA');
     const parts = [];
-    for (const x of [-11.5, 11.5]) {
-      const pillar = B.MeshBuilder.CreateBox('arch#pillar', { width: 3, height: 16, depth: 4 }, scene);
-      pillar.position.set(x, 8, 0);
-      pillar.material = stone;
-      const plinth = B.MeshBuilder.CreateBox('arch#plinth', { width: 4, height: 1.6, depth: 5 }, scene);
-      plinth.position.set(x, 0.8, 0);
+    for (const side of [-1, 1]) {
+      const x = side * 12.2;
+      const footing = B.MeshBuilder.CreateBox('arch#footing', { width: 5.8, height: 3.2, depth: 6.4 }, scene);
+      footing.position.set(x, -0.4, 0);
+      footing.material = shade;
+      const plinth = B.MeshBuilder.CreateBox('arch#plinth', { width: 5.0, height: 2.4, depth: 5.6 }, scene);
+      plinth.position.set(x, 2.2, 0);
       plinth.material = shade;
-      parts.push(pillar, plinth);
+      const pillar = B.MeshBuilder.CreateBox('arch#pillar', { width: 4.0, height: 15.5, depth: 4.6 }, scene);
+      pillar.position.set(x, 10.2, 0);
+      pillar.material = stone;
+      const buttress = B.MeshBuilder.CreateBox('arch#buttress', { width: 3.4, height: 12.5, depth: 3.8 }, scene);
+      buttress.position.set(side * 15.2, 5.8, 0);
+      buttress.material = shade;
+      const impost = B.MeshBuilder.CreateBox('arch#impost', { width: 4.8, height: 1.1, depth: 5.2 }, scene);
+      impost.position.set(x, 15.8, 0);
+      impost.material = corniceMat;
+      parts.push(footing, plinth, pillar, buttress, impost);
     }
-    for (let k = 0; k <= 8; k++) {
-      const a = (Math.PI * k) / 8;
-      const stoneK = B.MeshBuilder.CreateBox('arch#voussoir', { width: 3.2, height: 4.2, depth: 4.2 }, scene);
-      stoneK.position.set(Math.cos(a) * 11.5, 16 + Math.sin(a) * 6, 0);
+    const deckY = 23.4;
+    for (let k = 0; k <= 12; k++) {
+      const a = (Math.PI * k) / 12;
+      const vx = Math.cos(a) * 11.8;
+      const vy = 15.8 + Math.sin(a) * 6.4;
+      const isKey = k === 6;
+      const stoneK = B.MeshBuilder.CreateBox(
+        'arch#voussoir',
+        { width: isKey ? 3.8 : 3.6, height: isKey ? 3.2 : 2.6, depth: isKey ? 5.2 : 4.8 },
+        scene,
+      );
+      stoneK.position.set(vx, vy, 0);
       stoneK.rotation.z = a - Math.PI / 2;
-      stoneK.material = k === 4 ? shade : stone;
+      stoneK.material = (k % 2 === 0 || isKey) ? shade : stone;
       parts.push(stoneK);
+      // Spandrel wall infill tying the arch ring solidly into the upper roadway deck
+      const spandrelBottom = vy + 0.9;
+      const spandrelH = deckY - spandrelBottom;
+      if (spandrelH > 0.35) {
+        const spandrel = B.MeshBuilder.CreateBox(
+          'arch#spandrel',
+          { width: 2.9, height: spandrelH, depth: 4.1 },
+          scene,
+        );
+        spandrel.position.set(vx, spandrelBottom + spandrelH * 0.5, 0);
+        spandrel.material = stone;
+        parts.push(spandrel);
+      }
     }
+    const deck = B.MeshBuilder.CreateBox('arch#deck', { width: 32.8, height: 1.5, depth: 5.4 }, scene);
+    deck.position.set(0, deckY + 0.6, 0);
+    deck.material = corniceMat;
+    const parapet = B.MeshBuilder.CreateBox('arch#parapet', { width: 32.2, height: 1.2, depth: 4.6 }, scene);
+    parapet.position.set(0, deckY + 1.85, 0);
+    parapet.material = stone;
+    parts.push(deck, parapet);
     return parts;
   },
   // A slim modern wind turbine: a tapered white tower, a nacelle and three

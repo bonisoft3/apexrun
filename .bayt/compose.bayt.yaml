@@ -26,47 +26,53 @@ include:
   required: false
 - path: ./compose.render.yaml
   required: false
+- path: ./compose.caddy.yaml
+  required: false
 - path: ./compose.database.yaml
   required: false
+- path: ./compose.crud.yaml
+  required: false
 - path: ./compose.auth.yaml
+  required: false
+- path: ./compose.electric.yaml
   required: false
 - path: ./compose.ticker.yaml
   required: false
 - path: ./compose.clock.yaml
   required: false
+- path: ./compose.assets.yaml
+  required: false
+- path: ./compose.migrate.yaml
+  required: false
 - path: ./compose.timer-check.yaml
-  required: false
-- path: ./compose.check-finish.yaml
-  required: false
-- path: ./compose.ci-finish.yaml
   required: false
 - path: ./compose.check-boot.yaml
   required: false
 - path: ./compose.ci-boot.yaml
   required: false
-- path: ./compose.check-online.yaml
-  required: false
-- path: ./compose.ci-online.yaml
-  required: false
 - path: ./compose.check-duel.yaml
   required: false
 - path: ./compose.ci-duel.yaml
   required: false
-- path: ./compose.check-touch.yaml
+- path: ./compose.check-finish.yaml
   required: false
-- path: ./compose.ci-touch.yaml
+- path: ./compose.ci-finish.yaml
   required: false
 - path: ./compose.check-leaderboard-access.yaml
   required: false
 - path: ./compose.ci-leaderboard-access.yaml
   required: false
-- path: ./compose.caddy.yaml
+- path: ./compose.check-online.yaml
   required: false
-- path: ./compose.crud.yaml
+- path: ./compose.ci-online.yaml
   required: false
-- path: ./compose.electric.yaml
+- path: ./compose.check-touch.yaml
   required: false
-- path: ./compose.assets.yaml
+- path: ./compose.ci-touch.yaml
+  required: false
+- path: ./compose.ci-desktop.yaml
+  required: false
+- path: ./compose.ci-android.yaml
   required: false
 - path: ../monorepo/${MONOREPO_COMPOSE_MODE:-docker-image}.yaml
   required: false

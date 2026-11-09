@@ -26,6 +26,20 @@ dependencies = [
   "tqdm==4.67.1",
   "requests==2.34.2",
   "pygltflib==1.16.4",
+  "peft==0.14.0",
+  "datasets==3.2.0",
+  "pyarrow==17.0.0",
 ]
 [tool.uv]
 package = false
+
+# PyPI's torch is CPU-only off macOS: the RTX 4090 runner (Windows) and any
+# Linux GPU host take the CUDA 12.4 build of the same versions.
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu124", marker = "sys_platform != 'darwin'" }]
+torchvision = [{ index = "pytorch-cu124", marker = "sys_platform != 'darwin'" }]

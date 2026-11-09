@@ -38,7 +38,7 @@
   const WINDOW_FRAMES = 420;
 
   const grouped = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  const time = (ticks) => (ticks === null ? '—' : `${Math.floor(ticks / 3600)}:${((ticks % 3600) / 60).toFixed(1).padStart(4, '0')}`);
+  const time = (ticks) => (ticks === -1 ? '—' : `${Math.floor(ticks / 3600)}:${((ticks % 3600) / 60).toFixed(1).padStart(4, '0')}`);
   const shift = (letter, by) => String.fromCharCode(A + (letter.charCodeAt(0) - A + by + 26) % 26);
 
   // The race's two events become rows, keyed by what they are: a milestone
@@ -46,6 +46,25 @@
   if (event.type === 'milestone') {
     const d = event.detail;
     const id = `${d.race}:${d.frame}:${d.kind}`;
+    const value = d.detail;
+    const card = (v) => ({ id: v.stageId, num: v.stageNum, name: v.stageName, final: v.fork === null, left: v.fork === null ? '' : v.fork[0], right: v.fork === null ? '' : v.fork[1] });
+    const emptyCard = { id: '', num: 0, name: '', final: false, left: '', right: '' };
+    const result = (d.kind === 'finish' || d.kind === 'time-over') && !value.duel;
+    const finish = d.kind === 'duel-finish';
+    const detail = {
+      stage: card(value), next: d.kind === 'checkpoint' ? card(value.next) : emptyCard, duel: value.duel,
+      hold: result || finish ? value.holdMs : 0,
+      winner: finish && value.winner !== null ? value.winner : -1,
+      goal_a: finish && value.goal[0] !== null ? value.goal[0] : -1,
+      goal_b: finish && value.goal[1] !== null ? value.goal[1] : -1,
+      outcome: result ? value.entry.outcome : '', score: result ? value.entry.score : 0,
+      entry_stage: result ? value.entry.stage : 0, run_ms: result ? value.entry.run_ms : 0,
+      final_stage: result ? value.finalStage : 0, metres: result ? value.metres : 0,
+      close_passes: result ? value.closePasses : 0, per_close_pass: result ? value.perClosePass : 0,
+      rivals_beaten: result ? value.rivalsBeaten : 0, per_rival: result ? value.perRival : 0,
+      distance_points: result ? value.lines.distance : 0, close_points: result ? value.lines.closePasses : 0,
+      rival_points: result ? value.lines.rivals : 0, time_points: result ? value.lines.timeBonus : 0,
+    };
     return {
       updates: [{
         op: 'put',
@@ -53,7 +72,7 @@
         id,
         row: {
           id, race: Number(d.race), frame: d.frame, kind: d.kind, checksum: String(d.checksum), from: d.from, width: d.width, inputs: d.inputs,
-          detail: JSON.stringify(d.detail), snapshot: d.snapshot === undefined ? '' : JSON.stringify(d.snapshot),
+          detail_value: detail, snapshot_value: d.snapshot === undefined ? {} : d.snapshot,
         },
       }],
     };
@@ -87,14 +106,14 @@
   let then;
 
   const stage = (card) => ({
-    stage_id: card.stageId,
-    stage_num: card.stageNum,
-    next_num: card.stageNum + 1,
-    stage_name: card.stageName.toUpperCase(),
-    final: card.fork === null ? 'yes' : 'no',
-    fork_left: card.fork === null ? '' : card.fork[0],
-    fork_right: card.fork === null ? '' : card.fork[1],
-    rival_label: run.mode === '' ? `RIVAL · STAGE ${card.stageNum}` : 'OPPONENT · DUEL',
+    stage_id: card.id,
+    stage_num: card.num,
+    next_num: card.num + 1,
+    stage_name: card.name.toUpperCase(),
+    final: card.final ? 'yes' : 'no',
+    fork_left: card.left,
+    fork_right: card.right,
+    rival_label: run.mode === '' ? `RIVAL · STAGE ${card.num}` : 'OPPONENT · DUEL',
   });
   const lines = (pairs) => Object.fromEntries([0, 1, 2, 3].flatMap((i) => [
     [`line${i + 1}_label`, pairs[i]?.[0] ?? ''],
@@ -104,14 +123,14 @@
   // The ending's set piece plays on the race's own clock.
   const arrival = (d) => ({ phase: 'arrival', input: 'menu', racing: 'no', ...d });
   const settle = (d) => {
-    then = { type: 'settled', delay: d.holdMs };
+    then = { type: 'settled', delay: d.hold };
   };
 
   const milestone = {
-    grid: (d) => ({ ...stage(d), route: d.stageId }),
+    grid: (d) => ({ ...stage(d.stage), route: d.stage.id }),
     start: () => ({ racing: 'yes' }),
     landmark: () => ({}),
-    checkpoint: (d) => ({ ...stage(d.next), route: `${run.route} ${d.next.stageId}` }),
+    checkpoint: (d) => ({ ...stage(d.next), route: `${run.route} ${d.next.id}` }),
     // A duel's clock running out is its finish's, which follows.
     'time-over': (d) => {
       if (d.duel) return {};
@@ -127,34 +146,33 @@
       // A duel on one screen is seen from the first seat.
       const mine = run.mode === 'online' ? run.seat : 0;
       return ended({
-        res_title: d.winner === null ? 'DRAW' : d.winner === mine ? 'YOU WIN!' : 'YOU LOSE',
-        res_over: d.winner !== null && d.winner !== mine ? 'yes' : 'no',
-        res_kicker: `DUEL · ${d.stageName.toUpperCase()}`,
-        ...lines([['You', time(d.goal[mine])], ['Opponent', time(d.goal[1 - mine])]]),
+        res_title: d.winner === -1 ? 'DRAW' : d.winner === mine ? 'YOU WIN!' : 'YOU LOSE',
+        res_over: d.winner !== -1 && d.winner !== mine ? 'yes' : 'no',
+        res_kicker: `DUEL · ${d.stage.name.toUpperCase()}`,
+        ...lines([['You', time(mine === 0 ? d.goal_a : d.goal_b)], ['Opponent', time(mine === 0 ? d.goal_b : d.goal_a)]]),
         total: '',
       });
     },
   };
   // The end-of-run card: how the run ended, then its score line by line.
   function result(d, goal) {
-    const { entry, lines: points } = d;
     return {
       res_title: goal ? 'GOAL!' : 'TIME OVER',
       res_over: goal ? 'no' : 'yes',
       res_kicker: goal
-        ? `ALL ${d.finalStage} STAGES CLEARED · ENDING ${entry.outcome} · ${d.stageName.toUpperCase()}`
-        : `REACHED STAGE ${d.stageNum} OF ${d.finalStage} · ${d.stageName.toUpperCase()}`,
+        ? `ALL ${d.final_stage} STAGES CLEARED · ENDING ${d.outcome} · ${d.stage.name.toUpperCase()}`
+        : `REACHED STAGE ${d.stage.num} OF ${d.final_stage} · ${d.stage.name.toUpperCase()}`,
       ...lines([
-        [`Distance · ${(d.metres / 1000).toFixed(1)} km`, grouped(points.distance)],
-        [`Close passes · ${d.closePasses} × ${d.perClosePass}`, grouped(points.closePasses)],
-        [`Rivals beaten · ${d.rivalsBeaten} × ${grouped(d.perRival)}`, grouped(points.rivals)],
-        ...(goal ? [[`Time left · ${(points.timeBonus / 1000).toFixed(1)} s × 1,000`, grouped(points.timeBonus)]] : []),
+        [`Distance · ${(d.metres / 1000).toFixed(1)} km`, grouped(d.distance_points)],
+        [`Close passes · ${d.close_passes} × ${d.per_close_pass}`, grouped(d.close_points)],
+        [`Rivals beaten · ${d.rivals_beaten} × ${grouped(d.per_rival)}`, grouped(d.rival_points)],
+        ...(goal ? [[`Time left · ${(d.time_points / 1000).toFixed(1)} s × 1,000`, grouped(d.time_points)]] : []),
       ]),
-      total: grouped(entry.score),
-      outcome: entry.outcome,
-      score: entry.score,
-      stage: entry.stage,
-      run_ms: entry.run_ms,
+      total: grouped(d.score),
+      outcome: d.outcome,
+      score: d.score,
+      stage: d.entry_stage,
+      run_ms: d.run_ms,
     };
   }
 
@@ -190,7 +208,7 @@
       if (m.kind !== 'landmark' || then === undefined) return [];
       const frames = Math.min(WINDOW_FRAMES, then.frame - m.frame);
       return [{
-        at: { frame: m.frame, kind: m.kind, checksum: Number(m.checksum), from: m.from, width: m.width, inputs: '', snapshot: JSON.parse(m.snapshot) },
+        at: { frame: m.frame, kind: m.kind, checksum: Number(m.checksum), from: m.from, width: m.width, inputs: '', snapshot: m.snapshot_value },
         commands: frames === WINDOW_FRAMES ? then.inputs.slice(0, (WINDOW_FRAMES * then.width / 3) * 4) : then.inputs,
         frames,
       }];
@@ -220,7 +238,7 @@
 
   const lifted = (rows.run_milestone ?? []).filter((m) => m.race === run.race && m.frame > run.lifted).sort((a, b) => a.frame - b.frame);
   for (const m of lifted) {
-    run = { ...run, ...milestone[m.kind](JSON.parse(m.detail)), lifted: m.frame };
+    run = { ...run, ...milestone[m.kind](m.detail_value), lifted: m.frame };
   }
   // Presses in the order they were made, up to one that waits on a draw or a
   // beat; those after it are the next wake's.

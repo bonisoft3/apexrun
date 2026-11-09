@@ -20,8 +20,253 @@
       }
     }
   },
-  "machines": {},
+  "cortexImplementations": {
+    "root": {
+      "actors": {
+        "lobby": {
+          "machine": "apexrun_presence",
+          "handler": "machines/lobby.js",
+          "via": "session"
+        },
+        "race": {
+          "via": "kinetic",
+          "handler": "shell/handlers/run.js",
+          "engine": "apexrun",
+          "sound": "sound",
+          "presenter": "renderer",
+          "bindings": {
+            "up": [
+              "KeyW",
+              "ArrowUp",
+              "gamepad:axis:1:-",
+              "touch:drive"
+            ],
+            "down": [
+              "KeyS",
+              "ArrowDown",
+              "gamepad:axis:1:+",
+              "touch:brake"
+            ],
+            "left": [
+              "KeyA",
+              "ArrowLeft",
+              "KeyH",
+              "gamepad:axis:0:-",
+              "touch:left"
+            ],
+            "right": [
+              "KeyD",
+              "ArrowRight",
+              "KeyL",
+              "gamepad:axis:0:+",
+              "touch:right"
+            ],
+            "drift": [
+              "ShiftLeft",
+              "ShiftRight",
+              "KeyZ",
+              "gamepad:button:4",
+              "gamepad:button:5"
+            ],
+            "nitro": [
+              "Space",
+              "KeyX",
+              "gamepad:button:7",
+              "touch:nitro"
+            ],
+            "enter": [
+              "Enter",
+              "NumpadEnter",
+              "gamepad:button:9"
+            ],
+            "gear": [
+              "KeyG",
+              "gamepad:button:3"
+            ]
+          },
+          "seats": [
+            {
+              "up": [
+                "KeyW",
+                "touch:drive"
+              ],
+              "down": [
+                "KeyS",
+                "touch:brake"
+              ],
+              "left": [
+                "KeyA",
+                "touch:left"
+              ],
+              "right": [
+                "KeyD",
+                "touch:right"
+              ],
+              "drift": [
+                "KeyE"
+              ],
+              "nitro": [
+                "KeyQ",
+                "touch:nitro"
+              ]
+            },
+            {
+              "up": [
+                "ArrowUp",
+                "touch:drive-2"
+              ],
+              "down": [
+                "ArrowDown",
+                "touch:brake-2"
+              ],
+              "left": [
+                "ArrowLeft",
+                "touch:left-2"
+              ],
+              "right": [
+                "ArrowRight",
+                "touch:right-2"
+              ],
+              "drift": [
+                "Slash"
+              ],
+              "nitro": [
+                "ShiftRight",
+                "touch:nitro-2"
+              ]
+            }
+          ],
+          "menu": {
+            "up": [
+              "ArrowUp",
+              "gamepad:axis:1:-",
+              "gamepad:button:12",
+              "touch:menu-up"
+            ],
+            "down": [
+              "ArrowDown",
+              "gamepad:axis:1:+",
+              "gamepad:button:13",
+              "touch:menu-down"
+            ],
+            "left": [
+              "ArrowLeft",
+              "gamepad:axis:0:-",
+              "gamepad:button:14",
+              "touch:menu-left"
+            ],
+            "right": [
+              "ArrowRight",
+              "gamepad:axis:0:+",
+              "gamepad:button:15",
+              "touch:menu-right"
+            ],
+            "back": [
+              "Backspace"
+            ],
+            "confirm": [
+              "Enter",
+              "NumpadEnter",
+              "gamepad:button:0",
+              "gamepad:button:9",
+              "touch:skip"
+            ],
+            "duel": [
+              "Digit2"
+            ],
+            "letter_a": [
+              "KeyA"
+            ],
+            "letter_b": [
+              "KeyB"
+            ],
+            "letter_c": [
+              "KeyC"
+            ],
+            "letter_d": [
+              "KeyD"
+            ],
+            "letter_e": [
+              "KeyE"
+            ],
+            "letter_f": [
+              "KeyF"
+            ],
+            "letter_g": [
+              "KeyG"
+            ],
+            "letter_h": [
+              "KeyH"
+            ],
+            "letter_i": [
+              "KeyI"
+            ],
+            "letter_j": [
+              "KeyJ"
+            ],
+            "letter_k": [
+              "KeyK"
+            ],
+            "letter_l": [
+              "KeyL"
+            ],
+            "letter_m": [
+              "KeyM"
+            ],
+            "letter_n": [
+              "KeyN"
+            ],
+            "letter_o": [
+              "KeyO"
+            ],
+            "letter_p": [
+              "KeyP"
+            ],
+            "letter_q": [
+              "KeyQ"
+            ],
+            "letter_r": [
+              "KeyR"
+            ],
+            "letter_s": [
+              "KeyS"
+            ],
+            "letter_t": [
+              "KeyT"
+            ],
+            "letter_u": [
+              "KeyU"
+            ],
+            "letter_v": [
+              "KeyV"
+            ],
+            "letter_w": [
+              "KeyW"
+            ],
+            "letter_x": [
+              "KeyX"
+            ],
+            "letter_y": [
+              "KeyY"
+            ],
+            "letter_z": [
+              "KeyZ"
+            ]
+          },
+          "pause": [
+            "Escape",
+            "KeyP",
+            "gamepad:button:8",
+            "touch:pause"
+          ]
+        }
+      },
+      "guards": {},
+      "actions": {}
+    }
+  },
   "version": 1,
+  "terminal": true,
   "types": {
     "types": {
       "string": {
@@ -1157,7 +1402,8 @@
           "retired": false,
           "type": "string",
           "pk": false,
-          "required": true
+          "required": true,
+          "cel": "this in ['grid', 'start', 'landmark', 'checkpoint', 'time-over', 'finish', 'duel-finish']"
         },
         {
           "name": "checksum",
@@ -1194,16 +1440,33 @@
         {
           "name": "detail",
           "ordinal": 9,
-          "retired": false,
+          "retired": true,
           "type": "string",
           "pk": false,
-          "required": true
+          "required": false
         },
         {
           "name": "snapshot",
           "ordinal": 10,
-          "retired": false,
+          "retired": true,
           "type": "string",
+          "pk": false,
+          "required": false
+        },
+        {
+          "name": "detail_value",
+          "ordinal": 11,
+          "retired": false,
+          "type": "json",
+          "pk": false,
+          "required": true,
+          "cel": "type(this) == map && size(this) == 21 && has(this.close_passes) && this.close_passes == int(this.close_passes) && this.close_passes >= -2147483648 && this.close_passes <= 2147483647 && has(this.close_points) && this.close_points == int(this.close_points) && this.close_points >= -2147483648 && this.close_points <= 2147483647 && has(this.distance_points) && this.distance_points == int(this.distance_points) && this.distance_points >= -2147483648 && this.distance_points <= 2147483647 && has(this.duel) && type(this.duel) == bool && has(this.entry_stage) && this.entry_stage == int(this.entry_stage) && this.entry_stage >= -2147483648 && this.entry_stage <= 2147483647 && has(this.final_stage) && this.final_stage == int(this.final_stage) && this.final_stage >= -2147483648 && this.final_stage <= 2147483647 && has(this.goal_a) && this.goal_a == int(this.goal_a) && this.goal_a >= -1 && this.goal_a <= 1000000 && has(this.goal_b) && this.goal_b == int(this.goal_b) && this.goal_b >= -1 && this.goal_b <= 1000000 && has(this.hold) && this.hold == int(this.hold) && this.hold >= 0 && this.hold <= 8000 && has(this.metres) && this.metres == int(this.metres) && this.metres >= -2147483648 && this.metres <= 2147483647 && has(this.next) && type(this.next) == map && size(this.next) == 6 && has(this.next.final) && type(this.next.final) == bool && has(this.next.id) && type(this.next.id) == string && this.next.id.size() <= 64 && has(this.next.left) && type(this.next.left) == string && this.next.left.size() <= 64 && has(this.next.name) && type(this.next.name) == string && this.next.name.size() <= 64 && has(this.next.num) && this.next.num == int(this.next.num) && this.next.num >= 0 && this.next.num <= 5 && has(this.next.right) && type(this.next.right) == string && this.next.right.size() <= 64 && has(this.outcome) && type(this.outcome) == string && this.outcome.size() <= 64 && has(this.per_close_pass) && this.per_close_pass == int(this.per_close_pass) && this.per_close_pass >= -2147483648 && this.per_close_pass <= 2147483647 && has(this.per_rival) && this.per_rival == int(this.per_rival) && this.per_rival >= -2147483648 && this.per_rival <= 2147483647 && has(this.rival_points) && this.rival_points == int(this.rival_points) && this.rival_points >= -2147483648 && this.rival_points <= 2147483647 && has(this.rivals_beaten) && this.rivals_beaten == int(this.rivals_beaten) && this.rivals_beaten >= -2147483648 && this.rivals_beaten <= 2147483647 && has(this.run_ms) && this.run_ms == int(this.run_ms) && this.run_ms >= -2147483648 && this.run_ms <= 2147483647 && has(this.score) && this.score == int(this.score) && this.score >= -2147483648 && this.score <= 2147483647 && has(this.stage) && type(this.stage) == map && size(this.stage) == 6 && has(this.stage.final) && type(this.stage.final) == bool && has(this.stage.id) && type(this.stage.id) == string && this.stage.id.size() <= 64 && has(this.stage.left) && type(this.stage.left) == string && this.stage.left.size() <= 64 && has(this.stage.name) && type(this.stage.name) == string && this.stage.name.size() <= 64 && has(this.stage.num) && this.stage.num == int(this.stage.num) && this.stage.num >= 0 && this.stage.num <= 5 && has(this.stage.right) && type(this.stage.right) == string && this.stage.right.size() <= 64 && has(this.time_points) && this.time_points == int(this.time_points) && this.time_points >= -2147483648 && this.time_points <= 2147483647 && has(this.winner) && this.winner == int(this.winner) && this.winner >= -1 && this.winner <= 1"
+        },
+        {
+          "name": "snapshot_value",
+          "ordinal": 12,
+          "retired": false,
+          "type": "json",
           "pk": false,
           "required": true
         }
@@ -1223,8 +1486,174 @@
       ],
       "cel": {
         "checks": {},
-        "enums": {},
-        "bounds": {}
+        "enums": {
+          "kind": [
+            "grid",
+            "start",
+            "landmark",
+            "checkpoint",
+            "time-over",
+            "finish",
+            "duel-finish"
+          ]
+        },
+        "bounds": {
+          "detail_value": {
+            "kind": "object",
+            "fields": {
+              "close_passes": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "close_points": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "distance_points": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "duel": {
+                "kind": "boolean"
+              },
+              "entry_stage": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "final_stage": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "goal_a": {
+                "kind": "integer",
+                "intMin": -1,
+                "intMax": 1000000
+              },
+              "goal_b": {
+                "kind": "integer",
+                "intMin": -1,
+                "intMax": 1000000
+              },
+              "hold": {
+                "kind": "integer",
+                "intMin": 0,
+                "intMax": 8000
+              },
+              "metres": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "next": {
+                "kind": "object",
+                "fields": {
+                  "final": {
+                    "kind": "boolean"
+                  },
+                  "id": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "left": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "name": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "num": {
+                    "kind": "integer",
+                    "intMin": 0,
+                    "intMax": 5
+                  },
+                  "right": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  }
+                }
+              },
+              "outcome": {
+                "kind": "string",
+                "sizeMax": 64
+              },
+              "per_close_pass": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "per_rival": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "rival_points": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "rivals_beaten": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "run_ms": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "score": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "stage": {
+                "kind": "object",
+                "fields": {
+                  "final": {
+                    "kind": "boolean"
+                  },
+                  "id": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "left": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "name": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  },
+                  "num": {
+                    "kind": "integer",
+                    "intMin": 0,
+                    "intMax": 5
+                  },
+                  "right": {
+                    "kind": "string",
+                    "sizeMax": 64
+                  }
+                }
+              },
+              "time_points": {
+                "kind": "integer",
+                "intMin": -2147483648,
+                "intMax": 2147483647
+              },
+              "winner": {
+                "kind": "integer",
+                "intMin": -1,
+                "intMax": 1
+              }
+            }
+          }
+        }
       },
       "uniques": [],
       "validations": {}
@@ -2999,7 +3428,7 @@
       "validations": {}
     }
   },
-  "hybrids": {
+  "reducers": {
     "apexrun_presence": {
       "name": "apexrun_presence",
       "version": 1,
@@ -4491,6 +4920,7 @@
       }
     }
   },
+  "machines": {},
   "hatches": {
     "assets": {
       "ir": "hatch-assets",
@@ -4500,9 +4930,18 @@
   },
   "rawMigrations": [
     {
+      "name": "003_rls.sql",
+      "src": "services/database/baseline/003_rls.txt"
+    },
+    {
+      "name": "016_mecha_actors.sql",
+      "src": "services/database/baseline/016_mecha_actors.sql"
+    },
+    {
       "name": "010_high_score_writes.sql",
       "src": "services/database/sql/010_high_score_writes.sql"
     }
   ],
-  "duckstreams": {}
+  "duckstreams": {},
+  "effects": {}
 }

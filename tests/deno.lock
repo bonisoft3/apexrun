@@ -6,13 +6,7 @@
     "jsr:@std/assert@1.0.19": "1.0.19",
     "jsr:@std/internal@^1.0.12": "1.0.14",
     "jsr:@std/internal@^1.0.5": "1.0.14",
-    "npm:@bufbuild/cel-spec@0.5.0": "0.5.0_@bufbuild+protobuf@2.14.1",
-    "npm:@bufbuild/cel@0.5.0": "0.5.0_@bufbuild+protobuf@2.14.1",
-    "npm:@bufbuild/protobuf@2.14.1": "2.14.1",
-    "npm:acorn-walk@8.3.4": "8.3.4",
-    "npm:acorn@8.14.0": "8.14.0",
     "npm:jose@6.0.11": "6.0.11",
-    "npm:playwright@1.61.1": "1.61.1",
     "npm:postgres@3.4.9": "3.4.9"
   },
   "jsr": {
@@ -33,87 +27,11 @@
     }
   },
   "npm": {
-    "@bufbuild/cel-spec@0.5.0_@bufbuild+protobuf@2.14.1": {
-      "integrity": "sha512-nYqgVUsw+5XmhwxKyWJz/uA1hEBCGd0Bg6o0vFA9C7taFTYMRfCl94ZDxObR6Qen6QMzj0b9Bhnqr9viKkFonw==",
-      "dependencies": [
-        "@bufbuild/protobuf"
-      ]
-    },
-    "@bufbuild/cel@0.5.0_@bufbuild+protobuf@2.14.1": {
-      "integrity": "sha512-LpSZGvGRMrC0FPKXmVIzNltoT/Q9SOuJ1cCWPcpol72AM1O24hv40COigZfwtaL+QEuOLHszqIohhXNxE/HZKg==",
-      "dependencies": [
-        "@bufbuild/cel-spec",
-        "@bufbuild/protobuf"
-      ]
-    },
-    "@bufbuild/protobuf@2.14.1": {
-      "integrity": "sha512-agRJn3+EJDUe8AvxTx/LnHA/GErvLE62pSaSk7+MwFOtOv8eWBu/qCq2qoZjBjVZ3C2aiFJCveuSs17KMkYGOw=="
-    },
-    "acorn-walk@8.3.4": {
-      "integrity": "sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==",
-      "dependencies": [
-        "acorn"
-      ]
-    },
-    "acorn@8.14.0": {
-      "integrity": "sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA==",
-      "bin": true
-    },
-    "fsevents@2.3.2": {
-      "integrity": "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==",
-      "os": ["darwin"],
-      "scripts": true
-    },
     "jose@6.0.11": {
       "integrity": "sha512-QxG7EaliDARm1O1S8BGakqncGT9s25bKL1WSf6/oa17Tkqwi8D2ZNglqCF+DsYF88/rV66Q/Q2mFAy697E1DUg=="
-    },
-    "playwright-core@1.61.1": {
-      "integrity": "sha512-h7Qlt6m4REp25qvIdvbDtVmD4LqVXfpRxhORv9L0jzETM05p4fuPJ3dKyuSXQxDSbXnmS79HAgi9589lGSpLkg==",
-      "bin": true
-    },
-    "playwright@1.61.1": {
-      "integrity": "sha512-DWnY5o3YbLWK4GovuAVwpqL+1VwGNdUGrRr++8j8PtQQzvAVZUIMjKQ90fY689sEJZJBbZVw1rXaOKSTitkzPQ==",
-      "dependencies": [
-        "playwright-core"
-      ],
-      "optionalDependencies": [
-        "fsevents"
-      ],
-      "bin": true
     },
     "postgres@3.4.9": {
       "integrity": "sha512-GD3qdB0x1z9xgFI6cdRD6xu2Sp2WCOEoe3mtnyB5Ee0XrrL5Pe+e4CCnJrRMnL1zYtRDZmQQVbvOttLnKDLnaw=="
     }
-  },
-  "remote": {
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/base-url.ts": "d6ad6934ad0bff27f5778124011d0601cde9c1abae14a59e969454fe3a22029c",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/instrument.ts": "f9ffe792d229fa6b9f31d11322d034f1f6c9aadf71b8b8e18900f06b65baf33e",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/fragment.js": "0b1d67c59eb16938a94d3a58e172232469400675aebdecfb639a6e207ea8bb73",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/jessie.js": "7e860525d029b320ac7a00e1f8898c470c7a649a044c54a4ed1beb0e4e18b4a7",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/kinetic-milestones.js": "4c093f5b4440aa5c23400c9be57761179408c5e272ff55dd714236cd0dab62f0",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/kinetic-mount.js": "9771a4f0e4697e58e188381532c1cfa1561ff3883493fed86dff2de47dc8bef5",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/kinetic-session.js": "aabaf2c9d4ab8d660afc4709faf2860e99771f437fae9cfbfc2b409cdb5152a0",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/kinetic-sound.js": "a5d5337300ea8169e97ae237e53c8a489e8519708a06f1c762322abea8945f4b",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/kinetic.js": "5a0f0f7a39cf9ba4f0dba7bd49111d6166bca7e3482760ec303cad248937550c",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/markup.js": "1d8c1974aa87cee8379e392a2093fc67bea4fcb96b053820712c095d484b3c62",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/prng.js": "afaa2c24f5636bfc3a85f26b603f6b639e266a5c4717ebfd0e86a47969b2e662",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/rtc-channel.js": "a3b7b7f932f58574f81a3509d8416f8cc22e47867112e95b62a45dfe69bc9a19",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/vendor/game-inputs.js": "516b4f6b6a9a6f4071403e4ba5c3678613f3e1c6878bf3685007867ec80e99b4",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/vendor/ggrs/ggrs_wasm.js": "1b6939e69bc1baba277ae92c9e7cffb9bfe007f43ac68f3606bd6b9c4a3cb286",
-    "https://raw.githubusercontent.com/bonisoft3/omnishell/v0.21.7/interpreter/vendor/ses.umd.min.js": "d6a22c7c6dea2a8e9b1ea8613e649c8ae58aec86ad677a7118fdf0e19678a468",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/bounds.ts": "a8d667666098bab99cbe591bbf5cb2becdd4e7049e46040a222f8ede8398195e",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/cel-emit.ts": "0db5b88f59190ff588425f6880eb622030fcb88215fa8a41eb728db6122a3087",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/cel.ts": "532a83d4817a49535337bace8599b75cf6945b11f2ba50fed55d5f884485cd16",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/check-inputs.ts": "3a037ebe358ebe18fb37b878c41cf18af1ce4efd845f51f39db302f2813dae99",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/hybrid-local.ts": "b060da86432da18736ab5e2c3544800572b2db6aa1263b6f5f39aa9c54a45c0d",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/hybrid-runtime.js": "2cb2a044e37799bc1f2591cfd6e241731213cdb14a41e463620cc1171ddbff07",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/hybrid-spec.ts": "08aed20dbad86112ffeb01268f8d3346843dfd89df7a8ff98e989a7152b6c039",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/hybrid.ts": "396e4349966aa62d679a4f8688a2797f4202229f06c8242696c9ec5cd1e3575a",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/jessie.ts": "3f3d8ccd216ba5180226863c59643dd645ebc23ad8d399337222015a026378a1",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/mecha-contracts.ts": "4931868d4f4a8d0de93feb5c01fc8fa167438052fa50071356138facee606fe0",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/mecha-ports.ts": "c2425750bf3f84ff09f82496d6c179b842efbe44fee619a99638d481f75b73f1",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/mecha-reducer.ts": "39f67e8ef72deeb5d8dcf9b999afd86d8881d32f17e4d9e613a0ae58df3b35de",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/mecha-surface.ts": "7923666bbbb652eae638aed05cd7b0ae07dbcd9c8084623229ec21dea2d2f882",
-    "https://raw.githubusercontent.com/bonisoft3/pronto/v1.0.10/portable-types.ts": "0a95de07850b1a6f2397e92b945ab5cfc1ff964f0e47934aef34f9b1d5eb618f"
   }
 }

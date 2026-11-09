@@ -176,7 +176,7 @@ const duelling = (phase: string, revision: number, view: Row = {}) => ({
   view: { stage: "alpine-peaks", seed: 4242, peer: "", described: false, lifted: [], winner: "", goal_a: -1, goal_b: -1, dispute: "", silent: [], deadline: 0, phase, ...view },
 });
 const milestone = (frame: number, kind: string, detail: Row = {}) =>
-  ({ id: `4242:${frame}:${kind}`, race: 4242, frame, kind, checksum: `${frame}77`, from: 0, width: 2, inputs: "AAAA", detail: JSON.stringify(detail) });
+  ({ id: `4242:${frame}:${kind}`, race: 4242, frame, kind, checksum: `${frame}77`, from: 0, width: 2, inputs: "AAAA", detail_value: { winner: detail.winner === null ? -1 : detail.winner, goal_a: (detail.goal as (number | null)[] | undefined)?.[0] ?? -1, goal_b: (detail.goal as (number | null)[] | undefined)?.[1] ?? -1 } });
 
 Deno.test("lobby: the race's description goes to its duel once, at the seat's revision", () => {
   const l = lobbyOf({ apexrun_presence_seat: [seat("visible")], run: [{ id: "run", duel: "d1", race: 4242, mode: "online" }], apexrun_duel_seat: [duelling("signalling", 2)] });

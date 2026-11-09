@@ -6,11 +6,32 @@ import (
 	"encoding/json"
 	"strings"
 
+	bayt "github.com/bonisoft3/bayt/core:bayt"
+	Cargo "github.com/bonisoft3/bayt/stacks/cargo"
+	Gradle "github.com/bonisoft3/bayt/stacks/gradle"
 	pronto "github.com/bonisoft3/pronto"
 	online "github.com/bonisoft3/apexrun/machines:apexmachines"
 )
 
 _designMd: _ @embed(file="DESIGN.md", type=text)
+_xstateEngines: _ @embed(file="services/database/sql/017_xstate_engines.sql", type=text)
+_mechaEngines: _ @embed(file="services/database/sql/018_mecha_engines.sql", type=text)
+
+_milestoneText: {type: "string", maxLength: 64}
+_milestoneInt: {type: "integer", min: -2147483648, max: 2147483647}
+_milestoneCard: {type: "object", fields: {
+    id: _milestoneText, num: {type: "integer", min: 0, max: 5}, name: _milestoneText,
+    final: {type: "boolean"}, left: _milestoneText, right: _milestoneText,
+}}
+_milestoneDetail: {type: "object", fields: {
+    stage: _milestoneCard, next: _milestoneCard, duel: {type: "boolean"},
+    hold: {type: "integer", min: 0, max: 8000}, winner: {type: "integer", min: -1, max: 1},
+    goal_a: {type: "integer", min: -1, max: 1000000}, goal_b: {type: "integer", min: -1, max: 1000000},
+    outcome: _milestoneText, score: _milestoneInt, entry_stage: _milestoneInt, run_ms: _milestoneInt,
+    final_stage: _milestoneInt, metres: _milestoneInt, close_passes: _milestoneInt,
+    per_close_pass: _milestoneInt, rivals_beaten: _milestoneInt, per_rival: _milestoneInt,
+    distance_points: _milestoneInt, close_points: _milestoneInt, rival_points: _milestoneInt, time_points: _milestoneInt,
+}}
 
 // Three arcade letters, less the few a shared public table should not show.
 _initialsCel: "this.matches('^[A-Z]{3}$') && this != 'ASS' && this != 'CUM' && this != 'FAG' && this != 'FCK' && this != 'FUC' && this != 'FUK' && this != 'KKK' && this != 'NIG' && this != 'SEX' && this != 'TIT'"
@@ -685,13 +706,15 @@ code: pronto.#App & {
 					{ordinal: 1, name: "id", type: "string", pk: true},
 					{ordinal: 2, name: "race", type: "int32"},
 					{ordinal: 3, name: "frame", type: "int32"},
-					{ordinal: 4, name: "kind", type: "string"},
+					{ordinal: 4, name: "kind", type: "string", cel: "this in ['grid', 'start', 'landmark', 'checkpoint', 'time-over', 'finish', 'duel-finish']"},
 					{ordinal: 5, name: "checksum", type: "string"},
 					{ordinal: 6, name: "from", type: "int32"},
 					{ordinal: 7, name: "width", type: "int32"},
 					{ordinal: 8, name: "inputs", type: "string"},
-					{ordinal: 9, name: "detail", type: "string"},
-					{ordinal: 10, name: "snapshot", type: "string"},
+					{ordinal: 9, name: "detail", type: "string", retired: true},
+					{ordinal: 10, name: "snapshot", type: "string", retired: true},
+					{ordinal: 11, name: "detail_value", type: "json", cel: (pronto.#ShapeCel & {shape: _milestoneDetail}).out},
+					{ordinal: 12, name: "snapshot_value", type: "json"},
 				]
 			}
 			// This tab's place in the lobby: its presence lease, drawn once, the
@@ -768,7 +791,7 @@ code: pronto.#App & {
 	// record): the terminal steps the engine on the arena's data-kinetic
 	// mount, voices it and paints it, and the run machine (shell/handlers/
 	// run.js) folds what it lifts and what is pressed into the run row.
-	state: hybrids: {
+	state: mecha: reducers: {
 		apexrun_presence: {machine: online.presence, rules: "machines/presence.js"}
 		apexrun_challenge: {machine: online.challenge, rules: "machines/challenge.js"}
 		apexrun_duel: {machine: online.duel, rules: "machines/duel.js"}
@@ -824,7 +847,11 @@ code: pronto.#App & {
 		}
 	}
 
+	state: migrations: "017_xstate_engines": {operations: [{sql: {up: _xstateEngines, onComplete: true}}]}
+	state: migrations: "018_mecha_engines": {operations: [{sql: {up: _mechaEngines, onComplete: true}}]}
 	state: rawMigrations: [
+		{name: "003_rls.sql", src: "services/database/baseline/003_rls.txt"},
+		{name: "016_mecha_actors.sql", src: "services/database/baseline/016_mecha_actors.sql"},
 		{name: "010_high_score_writes.sql", src: "services/database/sql/010_high_score_writes.sql"},
 	]
 
@@ -838,7 +865,7 @@ code: pronto.#App & {
 		// graph it imports, and what it reads through the seat.
 		vendored: renderer: {
 			isolation: "agent"
-			ports: {reads: [], raises: []}
+			ports: {reads: [], raises: {}}
 			scripts: [
 				"https://cdn.jsdelivr.net/npm/babylonjs@9.31.0/babylon.js",
 				"https://cdn.jsdelivr.net/npm/babylonjs-loaders@9.31.0/babylonjs.loaders.min.js",
@@ -959,7 +986,7 @@ loop: (pronto.#DefaultLoop & {"code": code, "cluster": cluster, "terminal": term
 loop: surface: checks: "simulation": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/simulation.test.ts tests/kinetic_engine.test.ts tests/sync.test.ts tests/milestones.test.ts",
+		"\(pronto.#Harness.rule); deno test \(pronto.#Harness.flags) --unstable-raw-imports --allow-read --allow-env tests/simulation.test.ts tests/kinetic_engine.test.ts tests/sync.test.ts tests/milestones.test.ts",
 	]
 	note: "the deterministic 60Hz highway step (drifting, nitro, traffic, forks, the clock), the rollback host's save, load, replay and rewind, its sync test over recorded runs, and the milestones a run lifts and loads back to"
 }
@@ -973,6 +1000,23 @@ cluster: surface: targets: {
 		visibility: "internal"
 		activate:   ""
 		cmd: "builtin": null
+		"process-compose": activate: "mise x --"
+		healthcheck: bayt.healthcheck.#http & {
+			port:         8787
+			path:         "/health"
+			interval:     "2s"
+			timeout:      "5s"
+			retries:      150
+			start_period: "0s"
+		}
+		expose: http: {port: 8787, env: "PORT"}
+		entrypoint: {
+			shell: "nu"
+			do:    "with-env { ASSET_DIR: '.data/assets', ASSET_MANIFEST: 'assets/manifest.json' } { ^deno run --allow-read --allow-write --allow-env --allow-net services/assets/seed.ts }"
+			env: {
+				ASSET_ORIGIN: code.capabilities.seedAssets.origin
+			}
+		}
 		srcs: globs: ["services/assets/seed.ts", "assets/manifest.json"]
 		dockerfile: {
 			from: name: "denoland/deno:debian-2.9.7@sha256:fa335acdf6b72106eda2cb6a8cb5f4187e7630e357467489db4b2e7352d5e432"
@@ -996,6 +1040,7 @@ cluster: surface: targets: {
 		}
 	}
 	launch: compose: depends_on: assets: {condition: "service_healthy"}
+	caddy: entrypoint: env: PRONTO_UPSTREAM_ASSETS: {peer: "assets", port: "http"}
 }
 
 loop: surface: checks: "assets": {
@@ -1009,15 +1054,23 @@ loop: surface: checks: "assets": {
 loop: surface: checks: "scenery": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/scenery.test.ts tests/scatter.test.ts",
+		"\(pronto.#Harness.rule); deno test \(pronto.#Harness.flags) --unstable-raw-imports --allow-read --allow-env tests/scenery.test.ts tests/scatter.test.ts tests/stage_gltf.test.ts",
 	]
-	note: "the generated scenery: noise, ridge shapes per stage, frond cut-outs, wave normals, ground detail, verge scatter"
+	note: "the generated scenery: noise, ridge shapes per stage, frond cut-outs, wave normals, ground detail, verge scatter, and the deterministic stage .glb and C-ABI pose buffer"
+}
+
+loop: surface: checks: "native": {
+	verb: "integrate"
+	cmds: [
+		"use integrate.nu; integrate --bake --no-up --target ci-desktop,ci-android",
+	]
+	note: "native desktop (winio, Bevy presenter, synth audio, GGRS duel rollback) and Android (Filament kinetic presenter, QuickJS engine) host suites"
 }
 
 loop: surface: checks: "renderer": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/renderer.test.ts",
+		"\(pronto.#Harness.rule); deno test \(pronto.#Harness.flags) --unstable-raw-imports --allow-read --allow-env tests/renderer.test.ts",
 	]
 	note: "adaptive resolution scaling, hardware scaling levels, and Babylon.js 3D rendering pipeline"
 }
@@ -1025,7 +1078,7 @@ loop: surface: checks: "renderer": {
 loop: surface: checks: "run": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/run.test.ts",
+		"\(pronto.#Harness.rule); deno test \(pronto.#Harness.flags) --unstable-raw-imports --allow-read --allow-env tests/run.test.ts",
 	]
 	note: "the run machine: its phases from the title to the saved score, the race's milestones as its rows, the initials a key, a gamepad and the touch keypad edit while nothing reaches the car, and the pad and pedals as the car's and each duel seat's bits"
 }
@@ -1033,25 +1086,102 @@ loop: surface: checks: "run": {
 loop: surface: checks: "online_machine": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/online-machine.test.ts tests/lobby.test.ts",
+		"\(pronto.#Harness.rule); deno test \(pronto.#Harness.flags) --unstable-raw-imports --allow-read --allow-env tests/online-machine.test.ts tests/lobby.test.ts",
+		"\((pronto.#Platform & {tree: "mecha"}).rule); deno test --no-config --import-map ($mecha | path join packages mecha-browser cluster.deno.json) --lock ($mecha | path join packages mecha-browser deno.lock) --frozen --allow-read --allow-env tests/retained-edge.test.ts",
 	]
 	note: "the lobby's presence and challenges and the duel machine through their rules: admissions, answers, deadlines, the desync dispute and the result; the lobby's fold over its rows"
+}
+
+loop: surface: checks: "retained_native": {
+	verb: "integrate"
+	cmds: [
+		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env --allow-run=docker tests/retained-native.integration.test.ts",
+	]
+	note: "retained actors, timers and machine behavior survive the engine upgrade"
 }
 
 loop: surface: checks: "audio": {
 	verb: "test"
 	cmds: [
-		"deno test --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-env tests/audio.test.ts",
+		"\(pronto.#Harness.rule); deno test \(pronto.#Harness.flags) --unstable-raw-imports --allow-read --allow-env tests/audio.test.ts",
 	]
 	note: "station sequencer, engine voice and the WebAudio mix built against a recording context, in the terminal's cage"
 }
 
 build: (pronto.#DefaultBuild & {"code": code, "loop": loop, "cluster": cluster, "terminal": terminal}).out
 
+// The native shells' own tests run against omnishell where the app's mise
+// resolves it: the release it pins, or under mise.local.toml the monorepo's
+// tree, which the image's /monorepo carries. Lazybox brings mise to an image
+// that has none.
+_omnishellMise: ["[.]mise.toml", "[m]ise.lock", "[m]ise.local.toml"]
+_omnishellNative: {
+	dockerfile: preamble: [
+		"COPY --from=\(bayt.lock.images.lazybox) /lazybox/ /root/.local/share/lazybox/",
+		"ENV PATH=/root/.local/bin:/root/.local/share/lazybox/bin:$PATH",
+		"ENV MISE_TRUSTED_CONFIG_PATHS=/monorepo",
+	]
+}
+_omnishellWhere: "mise install github:bonisoft3/omnishell && omnishell=\"$(mise where github:bonisoft3/omnishell)\""
+
+build: project: targets: {
+	"ci-desktop": _omnishellNative & {
+		activate: ""
+		taskfile: incremental: false
+		env: {
+			CARGO_HOME:       "/root/.cargo"
+			CARGO_TARGET_DIR: "/cargo-target"
+		}
+		srcs: globs: [
+			"services/assets/seed.ts",
+			"assets/manifest.json",
+			"desktop/Cargo.toml",
+			"desktop/Cargo.lock",
+			"desktop/build.rs",
+			"desktop/src/**/*",
+			"desktop/fixtures/**/*",
+			for g in _omnishellMise {g},
+		]
+		dockerfile: {
+			from: name: "rust:1.94.1-slim@sha256:cf09adf8c3ebaba10779e5c23ff7fe4df4cccdab8a91f199b0c142c53fef3e1a"
+			copy: [
+				{from: {name: bayt.lock.images.deno_bin}, srcs: ["/deno"], dst: "/usr/local/bin/deno"},
+				{from: {name: "workspaceroot-pronto-sources_srcs"}, srcs: ["/monorep[o]"], dst: "/monorepo/"},
+			]
+		}
+		compose: build: additional_contexts: "workspaceroot-pronto-sources_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://\(bayt.lock.images.busybox)}${MONOREPO_COMPOSE_MODE:+:workspaceroot-pronto-sources_srcs}"
+		cmd: "builtin": {
+			shell: "sh"
+			do:    #"\#(_omnishellWhere) && deno eval 'import { seed } from "./services/assets/seed.ts"; const dir = ".seed-assets"; await Deno.mkdir(dir, { recursive: true }); const m = JSON.parse(await Deno.readTextFile("assets/manifest.json")); await seed(m, "https://storage.googleapis.com/trash-362115-supertuxkart-assets", { has: (f) => Deno.stat(`${dir}/${f}`).then(() => true, () => false), put: (f, b) => Deno.writeFile(`${dir}/${f}`, b) });' && cargo test \#(Cargo.lockFlag) --manifest-path "$omnishell/desktop/Cargo.toml" --lib --bins --tests && cargo test \#(Cargo.lockFlag) --manifest-path desktop/Cargo.toml --lib --bins --tests"#
+			dockerfile: mounts: [
+				Cargo.registryMount,
+				Cargo.gitMount,
+				{type: "cache", target: "/cargo-target", scope: "project"},
+				{type: "cache", target: ".seed-assets", scope: "project"},
+			]
+		}
+	}
+	"ci-android": Gradle.test & _omnishellNative & {
+		srcs: globs: _omnishellMise
+		activate: ""
+		taskfile: incremental: false
+		dockerfile: {
+			from: name: "eclipse-temurin:21.0.13_9-jdk-noble@sha256:114cabb73033ca4ce7ceec3deb62396bc1b716282bae051ed3c1d82e38fcab2d"
+			copy: [{from: {name: "workspaceroot-pronto-sources_srcs"}, srcs: ["/monorep[o]"], dst: "/monorepo/"}]
+		}
+		compose: build: additional_contexts: "workspaceroot-pronto-sources_srcs": "${MONOREPO_COMPOSE_MODE:-docker-image://\(bayt.lock.images.busybox)}${MONOREPO_COMPOSE_MODE:+:workspaceroot-pronto-sources_srcs}"
+		cmd: "builtin": {
+			shell: "sh"
+			do:    "\(_omnishellWhere) && cd \"$omnishell/android\" && ./gradlew test --build-cache --no-daemon"
+			windows: do: "mise install github:bonisoft3/omnishell; if ($LASTEXITCODE) { exit $LASTEXITCODE }; Set-Location \"$(mise where github:bonisoft3/omnishell)\\android\"; .\\gradlew.bat test --build-cache --no-daemon"
+		}
+	}
+}
+
 build: checks: "finish": {
 	browser:  true
 	database: true
-	cmds: ["deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/finish.ts ."]
+	cmds: ["\(pronto.#Harness.check); deno run \(pronto.#Harness.flags) --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/finish.ts ."]
 	note: "end of a run in the browser: a goal plays its set piece and Enter skips its road trip, run-ended fills the form, the save reaches a second player's live board, a refused save and denied initials are said on the form"
 }
 
@@ -1059,7 +1189,7 @@ out: pronto.#emit & {"code": code, "cluster": cluster, "terminal": terminal, "lo
 
 build: checks: "boot": {
 	browser: true
-	cmds: ["deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/boot.ts ."]
+	cmds: ["\(pronto.#Harness.check); deno run \(pronto.#Harness.flags) --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/boot.ts ."]
 	note: "the game boots in the browser: the engine module loads, the scene builds and draws frames, no page error"
 }
 
@@ -1072,14 +1202,14 @@ build: checks: "online": {
 build: checks: "duel": {
 	browser:  true
 	database: true
-	cmds: ["deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/duel.ts ."]
+	cmds: ["\(pronto.#Harness.check); deno run \(pronto.#Harness.flags) --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/duel.ts ."]
 	note: "two racers in the lobby, a challenge accepted, the duel raced over a real data channel the duel machine signalled, to an end card both read from its result, with the same milestones and checksums"
 }
 
 build: checks: "touch": {
 	browser:  true
 	database: true
-	cmds: ["deno run --config tests/deno.json --lock tests/deno.lock --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/touch.ts ."]
+	cmds: ["\(pronto.#Harness.check); deno run \(pronto.#Harness.flags) --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/touch.ts ."]
 	note: "Apex Run by touch alone on an emulated phone held flat and upright and a tablet: a run driven on the pad and pedals, paused and resumed, ended, its initials edited on the keypad and saved to the board; a duel on one tablet, each seat on its own cluster; a desktop shows none of it"
 }
 

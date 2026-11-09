@@ -11,6 +11,7 @@ simcade and renamed Apex Run. The kart game's item system, match and kart
 state and handlers are deleted. The racers' internal ids (`tux`, `wilber`,
 `gnu`, `suzanne`) remain from that origin.
 
+- [docs/index.md](docs/index.md): documentation index and decision records.
 - [DESIGN.md](DESIGN.md): the design system and the reasoning behind it.
 - [journal.html](journal.html): turn by turn, what changed and why, with screenshots.
 - [ir.html](ir.html) and [brief.md](brief.md): the engineering and product documents.

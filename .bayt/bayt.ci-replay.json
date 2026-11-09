@@ -2,9 +2,10 @@
   "_generated_from": "bayt.cue (do not edit)",
   "dockerfile": {
     "preamble": [
-      "ENV PATH=/root/.local/bin:/root/.local/share/lazybox/bin:$PATH",
+      "ENV PATH=/root/.local/bin:/root/.local/share/mise/shims:/root/.local/share/lazybox/bin:$PATH",
       "ENV MISE_TRUSTED_CONFIG_PATHS=/monorepo",
-      "ENV CADDY_TLS_HOST_PORT=8443"
+      "ENV CADDY_TLS_HOST_PORT=8443",
+      "RUN printf '#!/bin/sh\\nexit 0\\n' > /usr/local/bin/task && chmod 755 /usr/local/bin/task"
     ],
     "preambleCopyContexts": [],
     "from": {
@@ -50,6 +51,19 @@
           "/monorep[o]"
         ],
         "dst": "/monorepo/",
+        "link": true,
+        "parents": false,
+        "exclude": []
+      },
+      {
+        "from": {
+          "ref": ":migrate",
+          "name": "apexrun-migrate"
+        },
+        "srcs": [
+          "/pgroll"
+        ],
+        "dst": "/pgroll",
         "link": true,
         "parents": false,
         "exclude": []
@@ -123,7 +137,8 @@
       "upClosure": [
         "./.bayt/compose.ci-replay.yaml",
         "./.bayt/compose.database.yaml",
-        "./.bayt/compose.setup.yaml"
+        "./.bayt/compose.setup.yaml",
+        "./.bayt/compose.migrate.yaml"
       ]
     },
     "outs": {
@@ -153,7 +168,8 @@
       "upClosure": [
         "./.bayt/compose.ci-replay.yaml",
         "./.bayt/compose.database.yaml",
-        "./.bayt/compose.setup.yaml"
+        "./.bayt/compose.setup.yaml",
+        "./.bayt/compose.migrate.yaml"
       ]
     },
     "srcs": {
@@ -180,12 +196,15 @@
           "services/database/migrations/006_policies.sql",
           "services/database/migrations/007_txid.sql",
           "services/database/migrations/008_publication.sql",
+          "services/database/migrations/003_rls.sql",
           "services/database/migrations/016_mecha_actors.sql",
           "services/database/migrations/010_high_score_writes.sql",
           "[m]ise.toml",
           "[.]mise.toml",
           "[m]ise.lock",
-          "[.]tool-versions"
+          "[.]tool-versions",
+          "services/database/pgroll/017_xstate_engines.json",
+          "services/database/pgroll/018_mecha_engines.json"
         ],
         "exclude": []
       },
@@ -194,7 +213,8 @@
       "deps": [],
       "transitiveDeps": [
         "database_srcs",
-        "setup_srcs"
+        "setup_srcs",
+        "migrate_srcs"
       ],
       "transitiveCrossDeps": [
         {
@@ -211,6 +231,7 @@
               "services/database/migrations/006_policies.sql",
               "services/database/migrations/007_txid.sql",
               "services/database/migrations/008_publication.sql",
+              "services/database/migrations/003_rls.sql",
               "services/database/migrations/016_mecha_actors.sql",
               "services/database/migrations/010_high_score_writes.sql"
             ],
@@ -230,6 +251,18 @@
             ],
             "exclude": []
           }
+        },
+        {
+          "project": "apexrun",
+          "name": "migrate_srcs",
+          "dir": ".",
+          "outs": {
+            "globs": [
+              "services/database/pgroll/017_xstate_engines.json",
+              "services/database/pgroll/018_mecha_engines.json"
+            ],
+            "exclude": []
+          }
         }
       ],
       "chainedDeps": [],
@@ -241,7 +274,8 @@
       "upClosure": [
         "./.bayt/compose.ci-replay.yaml",
         "./.bayt/compose.database.yaml",
-        "./.bayt/compose.setup.yaml"
+        "./.bayt/compose.setup.yaml",
+        "./.bayt/compose.migrate.yaml"
       ]
     }
   },
@@ -254,21 +288,26 @@
   "emitsSrcs": true,
   "deps": [
     "database",
-    "setup"
+    "setup",
+    "migrate"
   ],
   "sameProjectDeps": [
     "database",
-    "setup"
+    "setup",
+    "migrate"
   ],
   "transitiveDeps": [
     "database",
-    "setup"
+    "setup",
+    "migrate",
+    "database_outs"
   ],
   "transitiveCrossDeps": [],
   "upClosure": [
     "./.bayt/compose.ci-replay.yaml",
     "./.bayt/compose.database.yaml",
-    "./.bayt/compose.setup.yaml"
+    "./.bayt/compose.setup.yaml",
+    "./.bayt/compose.migrate.yaml"
   ],
   "chainedDeps": [
     {
@@ -282,6 +321,24 @@
     },
     {
       "name": "database",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    },
+    {
+      "name": "migrate",
+      "project": "apexrun",
+      "dir": ".",
+      "outs": {
+        "globs": [],
+        "exclude": []
+      }
+    },
+    {
+      "name": "database_outs",
       "project": "apexrun",
       "dir": ".",
       "outs": {

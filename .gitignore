@@ -9,3 +9,9 @@
 # Release secrets
 .*-secret
 .*secret*
+
+# Local seed assets and built app bundles
+/.seed-assets/
+/ApexRun.app/
+/ApexRun-iOS.app/
+/desktop/target/
