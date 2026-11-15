@@ -143,7 +143,7 @@ Deno.test("either racer can release a duel after connection failure, before its 
 });
 
 Deno.test("the retained runtime upgrade contains the current engine for every mecha", async () => {
-  const upgrade = await Deno.readTextFile(new URL("../services/database/sql/018_mecha_engines.sql", import.meta.url));
+  const upgrade = await Deno.readTextFile(new URL("../services/database/sql/019_rule_argument_engines.sql", import.meta.url));
   assert(upgrade.includes("-- tier: container\n"));
   assert(upgrade.endsWith("-- tier: any\n"));
   for (const name of ["challenge", "duel", "presence"]) {

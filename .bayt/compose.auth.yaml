@@ -7,7 +7,7 @@ services:
         apexrun-migrate: service:apexrun-migrate
         apexrun-timer-check: service:apexrun-timer-check
         libraries_mecha-auth-image: >-
-          ${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/mecha-auth:0.22.0@sha256:72326ef949c488a6cb1dfc3c3c35f55f400fed4f0e5ca8e1fe5ca88d7de4f667}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-auth-image}
+          ${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/mecha-auth:0.23.1@sha256:5e9a3b83ec98e747f0f4560afd36ce6ecc3aacc98eb491098aa1b63925ee6212}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-auth-image}
       context: ..
       dockerfile: .bayt/Dockerfile.auth
       target: auth

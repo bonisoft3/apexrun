@@ -34,6 +34,7 @@
     "services/database/migrations/016_mecha_actors.sql",
     "services/database/pgroll/017_xstate_engines.json",
     "services/database/pgroll/018_mecha_engines.json",
+    "services/database/pgroll/019_rule_argument_engines.json",
     "shell/boot.js",
     "shell/design.css",
     "shell/handlers/lobby.js",

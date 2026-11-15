@@ -58,11 +58,11 @@ services:
         apexrun-ci-online_bayt: service:apexrun-ci-online_bayt
         apexrun-ci-touch_bayt: service:apexrun-ci-touch_bayt
         apexrun-integrate_srcs: service:apexrun-integrate_srcs
-        apexrun-database_srcs: service:apexrun-database_srcs
         apexrun-caddy_srcs: service:apexrun-caddy_srcs
-        apexrun-assets_srcs: service:apexrun-assets_srcs
         apexrun-served_srcs: service:apexrun-served_srcs
         apexrun-render_srcs: service:apexrun-render_srcs
+        apexrun-assets_srcs: service:apexrun-assets_srcs
+        apexrun-database_srcs: service:apexrun-database_srcs
         apexrun-migrate_srcs: service:apexrun-migrate_srcs
         apexrun-setup_srcs: service:apexrun-setup_srcs
         apexrun-check-boot_srcs: service:apexrun-check-boot_srcs
@@ -73,7 +73,7 @@ services:
         apexrun-check-online_srcs: service:apexrun-check-online_srcs
         apexrun-check-touch_srcs: service:apexrun-check-touch_srcs
         bayt: >-
-          ${BAYT_RUNTIME:-docker-image://bonitao/bayt-runtime:1.3.0@sha256:c33b9187787fcbd5fa80f1f2f52c661d6e7c38a4822c269b8daff83e70dce22e}
+          ${BAYT_RUNTIME:-docker-image://bonitao/bayt-runtime:1.5.1@sha256:21e3851bcc32a4e56460ef51724385b2ba80999ad73accbf6ae2af53975d9547}
         workspaceroot-pronto-sources_srcs: >-
           ${MONOREPO_COMPOSE_MODE:-docker-image://busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223}${MONOREPO_COMPOSE_MODE:+:workspaceroot-pronto-sources_srcs}
         libraries_mecha-database-image_bayt: >-
@@ -189,11 +189,11 @@ services:
         apexrun-ci-online_bayt: service:apexrun-ci-online_bayt
         apexrun-ci-touch_bayt: service:apexrun-ci-touch_bayt
         apexrun-integrate_bayt: service:apexrun-integrate_bayt
-        apexrun-database_bayt: service:apexrun-database_bayt
         apexrun-caddy_bayt: service:apexrun-caddy_bayt
-        apexrun-assets_bayt: service:apexrun-assets_bayt
         apexrun-served_bayt: service:apexrun-served_bayt
         apexrun-render_bayt: service:apexrun-render_bayt
+        apexrun-assets_bayt: service:apexrun-assets_bayt
+        apexrun-database_bayt: service:apexrun-database_bayt
         apexrun-migrate_bayt: service:apexrun-migrate_bayt
         apexrun-setup_bayt: service:apexrun-setup_bayt
         apexrun-check-boot_bayt: service:apexrun-check-boot_bayt

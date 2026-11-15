@@ -6,9 +6,14 @@
 import { assert, assertEquals } from "jsr:@std/assert@1";
 import { run as evaluateCel } from "npm:@bufbuild/cel@0.5.0";
 import { createKineticHost, canonical, checksum, unpackInputs, ggrsWasm, evaluateEngine, createRollbackHost, loadMilestone, evaluateHandler } from "./platform.ts";
+
+// The assertions below state a leaf's world and its event side by side; the
+// leaf itself takes them as XState's one argument.
+// deno-lint-ignore no-explicit-any
+const positional = (leaf: any) => (state: any, event?: any, ...rest: any[]) => leaf({ context: state, event }, ...rest);
 const caged = await evaluateEngine(JSON.parse(await Deno.readTextFile(new URL("../shell/engines/apexrun.json", import.meta.url))));
 const solo = { width: 2, encode: caged.encodeCommand, decode: caged.decodeCommand, snapshots: caged.milestoneSnapshots };
-const handler = await evaluateHandler(await Deno.readTextFile(new URL("../shell/handlers/run.js", import.meta.url)));
+const handler = positional(await evaluateHandler(await Deno.readTextFile(new URL("../shell/handlers/run.js", import.meta.url))));
 const inputs: { entities: Record<string, { table: string; fields: { name: string; cel: string }[] }> } = JSON.parse(await Deno.readTextFile(new URL("../.pronto/check-inputs.json", import.meta.url)));
 const fields = Object.values(inputs.entities).find((e) => e.table === "run_milestone")!.fields;
 const detailCel = fields.find((f) => f.name === "detail_value")!.cel;

@@ -7,8 +7,13 @@
 import { assert, assertEquals } from "jsr:@std/assert@1";
 import { kineticChild, attachTouch, createKineticInput, canonical, checksum, evaluateEngine, evaluateHandler } from "./platform.ts";
 import { ARCH_LEAD, OUTRUN_STAGES } from "../shell/engine/simulation.js";
+
+// The assertions below state a leaf's world and its event side by side; the
+// leaf itself takes them as XState's one argument.
+// deno-lint-ignore no-explicit-any
+const positional = (leaf: any) => (state: any, event?: any, ...rest: any[]) => leaf({ context: state, event }, ...rest);
 const read = (path: string) => Deno.readTextFile(new URL(path, import.meta.url));
-const run = await evaluateHandler(await read("../shell/handlers/run.js"));
+const run = positional(await evaluateHandler(await read("../shell/handlers/run.js")));
 const engine = await evaluateEngine(JSON.parse(await read("../shell/engines/apexrun.json")));
 const shell = JSON.parse(await read("../shell/shell.json"));
 const program = await read("../program.cue");

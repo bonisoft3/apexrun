@@ -16,6 +16,9 @@ import (
 _designMd: _ @embed(file="DESIGN.md", type=text)
 _xstateEngines: _ @embed(file="services/database/sql/017_xstate_engines.sql", type=text)
 _mechaEngines: _ @embed(file="services/database/sql/018_mecha_engines.sql", type=text)
+// The engines since a rule takes XState's one argument; 018 keeps the bytes a
+// database ran.
+_ruleArgumentEngines: _ @embed(file="services/database/sql/019_rule_argument_engines.sql", type=text)
 
 _milestoneText: {type: "string", maxLength: 64}
 _milestoneInt: {type: "integer", min: -2147483648, max: 2147483647}
@@ -849,6 +852,7 @@ code: pronto.#App & {
 
 	state: migrations: "017_xstate_engines": {operations: [{sql: {up: _xstateEngines, onComplete: true}}]}
 	state: migrations: "018_mecha_engines": {operations: [{sql: {up: _mechaEngines, onComplete: true}}]}
+	state: migrations: "019_rule_argument_engines": {operations: [{sql: {up: _ruleArgumentEngines, onComplete: true}}]}
 	state: rawMigrations: [
 		{name: "003_rls.sql", src: "services/database/baseline/003_rls.txt"},
 		{name: "016_mecha_actors.sql", src: "services/database/baseline/016_mecha_actors.sql"},
@@ -1122,7 +1126,9 @@ _omnishellNative: {
 		"ENV MISE_TRUSTED_CONFIG_PATHS=/monorepo",
 	]
 }
-_omnishellWhere: "mise install github:bonisoft3/omnishell && omnishell=\"$(mise where github:bonisoft3/omnishell)\""
+// `mise x` installs a released pin it lacks and takes a `path:` pin as it is;
+// an explicit `mise install` of a `path:` pin is refused under locked mode.
+_omnishellWhere: "mise x github:bonisoft3/omnishell -- mise --version >/dev/null && omnishell=\"$(mise where github:bonisoft3/omnishell)\""
 
 build: project: targets: {
 	"ci-desktop": _omnishellNative & {
@@ -1173,7 +1179,7 @@ build: project: targets: {
 		cmd: "builtin": {
 			shell: "sh"
 			do:    "\(_omnishellWhere) && cd \"$omnishell/android\" && ./gradlew test --build-cache --no-daemon"
-			windows: do: "mise install github:bonisoft3/omnishell; if ($LASTEXITCODE) { exit $LASTEXITCODE }; Set-Location \"$(mise where github:bonisoft3/omnishell)\\android\"; .\\gradlew.bat test --build-cache --no-daemon"
+			windows: do: "mise x github:bonisoft3/omnishell -- mise --version | Out-Null; if ($LASTEXITCODE) { exit $LASTEXITCODE }; $omnishell = mise where github:bonisoft3/omnishell; if ($LASTEXITCODE) { exit $LASTEXITCODE }; Set-Location \"$omnishell\\android\"; .\\gradlew.bat test --build-cache --no-daemon"
 		}
 	}
 }

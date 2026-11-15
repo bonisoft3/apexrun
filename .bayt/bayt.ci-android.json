@@ -17,7 +17,7 @@
   },
   "dockerfile": {
     "preamble": [
-      "COPY --from=bonitao/lazybox:0.8.5@sha256:091a3b63ba222777000acc3bf8327faebfea4870e23ee07c6eb42431dadb2ac6 /lazybox/ /root/.local/share/lazybox/",
+      "COPY --from=bonitao/lazybox:0.8.6@sha256:0f30c48513fac757f844f02c864802991dec045f9c4189e3db2ae4ac297544df /lazybox/ /root/.local/share/lazybox/",
       "ENV PATH=/root/.local/bin:/root/.local/share/lazybox/bin:$PATH",
       "ENV MISE_TRUSTED_CONFIG_PATHS=/monorepo"
     ],
@@ -213,10 +213,11 @@
         "defaultGlobs": null,
         "defaultExclude": null
       },
+      "name": "builtin",
       "shell": "sh",
-      "do": "mise install github:bonisoft3/omnishell && omnishell=\"$(mise where github:bonisoft3/omnishell)\" && cd \"$omnishell/android\" && ./gradlew test --build-cache --no-daemon",
+      "do": "mise x github:bonisoft3/omnishell -- mise --version >/dev/null && omnishell=\"$(mise where github:bonisoft3/omnishell)\" && cd \"$omnishell/android\" && ./gradlew test --build-cache --no-daemon",
       "windows": {
-        "do": "mise install github:bonisoft3/omnishell; if ($LASTEXITCODE) { exit $LASTEXITCODE }; Set-Location \"$(mise where github:bonisoft3/omnishell)\\android\"; .\\gradlew.bat test --build-cache --no-daemon",
+        "do": "mise x github:bonisoft3/omnishell -- mise --version | Out-Null; if ($LASTEXITCODE) { exit $LASTEXITCODE }; $omnishell = mise where github:bonisoft3/omnishell; if ($LASTEXITCODE) { exit $LASTEXITCODE }; Set-Location \"$omnishell\\android\"; .\\gradlew.bat test --build-cache --no-daemon",
         "shell": "pwsh"
       },
       "dockerfile": {
@@ -235,7 +236,6 @@
           }
         ]
       },
-      "name": "builtin",
       "stop": false
     }
   ],

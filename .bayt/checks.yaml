@@ -133,7 +133,7 @@ say:
             ['--temporary'] }) }
         platform: cloudflare
   self:
-    version: v0.48.0
+    version: v0.49.1
   doctor:
     do: >-
       use tools.nu [run-mise]; run-mise exec -- cue version; run-mise exec -- deno
@@ -165,8 +165,8 @@ say:
       auto-bayt:
         priority: 2
         cmds:
-        - use: ./auto-bayt.nu
-          do: auto-bayt
+        - do: auto-bayt
+          use: ./auto-bayt.nu
   setup:
     rulemap:
       builtin:

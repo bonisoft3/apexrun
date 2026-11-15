@@ -8,13 +8,14 @@ import pronto "github.com/bonisoft3/pronto"
 	"coconut-beach", "desert-canyons", "gateway-pass", "alpine-peaks", "wilderness-run",
 	"tulip-gardens", "sunset-highway", "ancient-ruins", "metropolis-night", "coastal-cliffs",
 ]}
+
 // A race's seed, as the run row holds one (an int32 the engine is handed).
 #Seed: {type: "integer", min: 0, max: 2147483647}
 #Challenge: {
-	inviter: #Identity
-	target:  #Identity
+	inviter:      #Identity
+	target:       #Identity
 	inviter_name: {type: "string", maxLength: 16}
-	target_name: {type: "string", maxLength: 16}
+	target_name:  {type: "string", maxLength: 16}
 	// The challenger's pick, and their draw the duel is raced from.
 	stage:    #Stage
 	seed:     #Seed
@@ -27,10 +28,10 @@ challenge: pronto.#Machine & {
 		initial: "offered"
 		states: {
 			offered: on: {
-				accept: {guard: "mayAccept", target: "accepted", actions: "openDuel"}
-				decline: {guard: "mayAnswer", target: "declined"}
-				cancel: {guard: "mayCancel", target: "cancelled"}
-				expire: {guard: "isDue", target: "expired"}
+				accept:  {guard: "mayAccept", target: "accepted", actions: "openDuel"}
+				decline: {guard: ["isTarget", "inTime"], target: "declined"}
+				cancel:  {guard: ["isInviter", "inTime"], target: "cancelled"}
+				expire:  {guard: "isDue", target: "expired"}
 			}
 			for phase in ["accepted", "declined", "cancelled", "expired"] {
 				(phase): type: "final"
@@ -44,7 +45,7 @@ challenge: pronto.#Machine & {
 		]}]
 		types: {
 			context: {type: "object", fields: #Challenge}
-			view: {type: "object", fields: {#Challenge, phase: {type: "string", maxLength: 9, values: ["offered", "accepted", "declined", "cancelled", "expired"]}}}
+			view:    {type: "object", fields: {#Challenge..., phase: {type: "string", maxLength: 9, values: ["offered", "accepted", "declined", "cancelled", "expired"]}}}
 			events: {
 				for event in ["accept", "decline", "cancel"] {
 					(event): {tier: "omnishell", payload: {type: "object", fields: {}}}
@@ -53,22 +54,25 @@ challenge: pronto.#Machine & {
 			}
 		}
 		guards: {
-			mayAnswer: reads: ["actor", "now"]
-			mayCancel: reads: ["actor", "now"]
-			isDue: reads: ["now"]
+			isTarget:  {reads: ["_origin"], reason: "not_target"}
+			isInviter: {reads: ["_origin"], reason: "not_inviter"}
+			inTime:    {reads: ["_time"], reason: "expired"}
+			isDue:     {reads: ["_time"], reason: "not_due"}
 		}
 		// The target's answer, and both racers still free when it is given.
 		guards: mayAccept: {
-			rules:  "mayAnswer"
-			reads: ["actor", "now"]
+			rules:  ["isTarget", "inTime"]
 			sql:    "hybrid_apexrun_presence.available((game.state->>'inviter')::uuid) AND hybrid_apexrun_presence.available((game.state->>'target')::uuid)"
 			reason: "racer_unavailable"
 		}
 		// The duel the accepted challenge opens, its challenger in seat a.
 		actions: openDuel: [
-			{spawn: {machine: "apexrun_duel", id: {raw: "(game.state->>'duel')::uuid"},
-				input: {stage: {raw: "game.state->>'stage'"}, seed: {raw: "(game.state->>'seed')::bigint"}},
-				members: {a: {raw: "game.state->>'inviter'"}, b: {raw: "game.state->>'target'"}}}},
+			{
+				spawn: {machine: "apexrun_duel"
+					id:      {raw: "(game.state->>'duel')::uuid"}
+					input:   {stage: {raw: "game.state->>'stage'"}, seed: {raw: "(game.state->>'seed')::bigint"}}
+					members: {a: {raw: "game.state->>'inviter'"}, b: {raw: "game.state->>'target'"}}}
+			},
 			{send: {machine: "apexrun_duel", id: {raw: "(game.state->>'duel')::uuid"}, event: "start", payload: seats: ["a", "b"]}},
 		]
 	}

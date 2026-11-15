@@ -247,7 +247,7 @@ _irNotes: {
 _deriving: *false | bool @tag(derive,type=bool)
 
 if !_deriving {
-	code: meta: decisions: [Id=string]: note: _irNotes[Id]
+	code: meta: decisions: [string]~(Id,_): note: _irNotes[Id]
 }
 
 _irAccepts: {
@@ -258,7 +258,7 @@ _irAccepts: {
 }
 
 if !_deriving {
-	code: meta: tests: [Id=string]: accepts: _irAccepts[Id]
+	code: meta: tests: [string]~(Id,_): accepts: _irAccepts[Id]
 }
 
 code: meta: ladder: ["ir/neighbourhood-app.svg","ir/neighbourhood-arena.svg","journal/2026-10-16-stitch-hud-telemetry.png","journal/2026-10-16-stitch-outrun-vision.png","journal/2026-10-23-t40-challenged.jpg","journal/2026-10-23-t40-lobby.jpg","journal/2026-10-23-t40-racing-a.jpg","journal/2026-10-23-t40-racing-b.jpg","journal/2026-10-23-t40-result-a.jpg","journal/2026-10-23-t40-result-b.jpg","journal/2026-10-24-t41-aerodrome-arrival.jpg","journal/2026-10-24-t41-castle-arrival.jpg","journal/2026-10-24-t41-goal.jpg","journal/2026-10-24-t41-oasis-arrival.jpg","journal/2026-10-24-t41-trip-helicopter.jpg","journal/2026-10-24-t41-trip-pull.jpg","journal/2026-10-24-t41-trip-roadside.jpg","journal/2026-10-25-t42-phone-initials.jpg","journal/2026-10-25-t42-phone-race.jpg","journal/2026-10-25-t42-phone-title.jpg","journal/2026-10-25-t42-portrait-race.jpg","journal/2026-10-25-t42-tablet-duel.jpg","journal/2026-10-25-t42-tablet-paused.jpg","journal/2026-10-25-t42-tablet-race.jpg","journal/2026-11-05-t43-car-hero-cockpit.jpg","journal/2026-11-05-t43-horizon-fix.jpg","journal/2026-11-05-t43-landmarks-gouache.jpg","journal/2026-11-05-t43-prop-mega-atlas.jpg","journal/2026-11-05-t43-riders-flagman.jpg","journal/2026-11-05-t43-sky-backdrop-gouache.jpg","journal/2026-11-05-t44-coconut-beach-fork.jpg","journal/2026-11-05-t44-coconut-beach-hood.jpg","journal/2026-11-05-t44-coconut-beach-nitro.jpg","journal/2026-11-05-t44-gateway-pass-hill.jpg","journal/2026-11-05-t44-metropolis-night.jpg","journal/2026-11-05-t44-start-grounded-swoop.jpg","journal/2026-11-05-t44-tulip-gardens.jpg"]

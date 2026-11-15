@@ -6,7 +6,7 @@ services:
         apexrun-database: service:apexrun-database
         apexrun-migrate: service:apexrun-migrate
         libraries_mecha-database-image: >-
-          ${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/mecha-database:0.22.0@sha256:ed58b6be6cd69658fbb4e6daff1f91b8923b333f364905c4dacdec2974a05d82}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image}
+          ${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/mecha-database:0.23.1@sha256:ab98bb1431e05361e30e73583335c01170c17d8dcddbb666b2f57bb837f63f77}${MONOREPO_COMPOSE_MODE:+:libraries_mecha-database-image}
       context: ..
       dockerfile: .bayt/Dockerfile.timer-check
       target: timer-check

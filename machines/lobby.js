@@ -8,8 +8,8 @@
 // tab that closes stops listing you when its lease lapses. A gesture becomes
 // a command or an open row; a challenge is keyed by a draw, since an
 // instance's id is a uuid and a fold has no randomness but the terminal's.
-(state, event, machine, machines) => {
-  const rows = state.rows ?? {};
+({ context, event }, { machine, machines }) => {
+  const rows = context.rows ?? {};
   const txt = value => String(value);
 
   // A uuid from four recorded draws, laid out as the terminal's own keys are,
@@ -137,6 +137,11 @@
     if ((rows.apexrun_duel_seat ?? []).some(d => ["waiting", "signalling", "racing"].includes(d.phase))) {
       return {updates: [{op: "patch", entity: "lobby_tab", id: "the", row: {join: "", note: "racer_unavailable"}}]};
     }
+    // Admission starts the peer's signalling deadline; cold renderer startup
+    // must finish before this tab promises it can answer the peer.
+    const run = (rows.run ?? [])[0];
+    const ready = run !== undefined && (rows.run_milestone ?? []).some(m => m.race === run.race && m.kind === "grid");
+    if (!ready) return {updates: []};
     return {updates: note(""), then: {type: "join", seed: true, with: {duel: joining}}};
   }
   // Who you are among the racers, so the list leaves you out.

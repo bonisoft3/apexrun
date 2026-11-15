@@ -25,8 +25,8 @@
 // in it, once the lobby's challenge opens it, starts the race from its seed
 // and stage, hands the race the peer's description, and says how it ended.
 // The lobby's fold (machines/lobby.js) writes what the race sends it.
-(state, event) => {
-  const rows = state.rows ?? {};
+({ context, event }) => {
+  const rows = context.rows ?? {};
   // The words the shared table refuses (program.cue _initialsCel).
   const DENIED = ['ASS', 'CUM', 'FAG', 'FCK', 'FUC', 'FUK', 'KKK', 'NIG', 'SEX', 'TIT'];
   // shell/engine/sound.js STATIONS, then the radio off.
@@ -99,7 +99,7 @@
   // The fold. The run row is the stored one, or the slot's empty row before
   // it is stored; a wake that sees neither waits for the slot's.
   const stored = (rows.run ?? [])[0];
-  const empty = state.items?.[0]?.phase === undefined ? undefined : state.items[0];
+  const empty = context.items?.[0]?.phase === undefined ? undefined : context.items[0];
   const before = stored ?? empty;
   if (before === undefined) return {};
   let run = { ...before };

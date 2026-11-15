@@ -8,7 +8,8 @@ Deno.test("a retained edge directory carries its baseline and actors through the
   const baseline = await Promise.all(["003_rls.sql", "004_types.sql", "016_mecha_actors.sql"].map(async (name) => ({ name, sql: await Deno.readTextFile(new URL(name, dir)) })));
   assert.equal(await digest(baseline[1].sql), "264ee1fabf9b00574b7ed8b475b2d6cf86e184a38de62ae110663f02e16f9697", "even a comment rename in 004_types.sql invalidates retained directories before forward migrations run");
   const upgrade = { name: "017_xstate_engines", sql: await Deno.readTextFile(new URL("../services/database/sql/017_xstate_engines.sql", import.meta.url)) };
-  const current = { name: "018_mecha_engines", sql: await Deno.readTextFile(new URL("../services/database/sql/018_mecha_engines.sql", import.meta.url)) };
+  const mecha = { name: "018_mecha_engines", sql: await Deno.readTextFile(new URL("../services/database/sql/018_mecha_engines.sql", import.meta.url)) };
+  const current = { name: "019_rule_argument_engines", sql: await Deno.readTextFile(new URL("../services/database/sql/019_rule_argument_engines.sql", import.meta.url)) };
   const db = await PGlite.create();
   try {
     const names: string[] = [];
@@ -24,9 +25,11 @@ Deno.test("a retained edge directory carries its baseline and actors through the
     await assert.rejects(() => applyScripts(db, [baseline[0], { ...baseline[1], sql: baseline[1].sql + "\n" }, baseline[2], upgrade], () => {}), ChangedScript);
     assert.deepEqual(await applyScripts(db, [...baseline, upgrade], () => {}), [upgrade.name]);
     assert.deepEqual((await snapshot()).rows, before);
-    assert.deepEqual(await applyScripts(db, [...baseline, upgrade, current], () => {}), [current.name]);
+    assert.deepEqual(await applyScripts(db, [...baseline, upgrade, mecha], () => {}), [mecha.name]);
     assert.deepEqual((await snapshot()).rows, before);
-    assert.deepEqual(await applyScripts(db, [...baseline, upgrade, current], () => {}), []);
+    assert.deepEqual(await applyScripts(db, [...baseline, upgrade, mecha, current], () => {}), [current.name]);
+    assert.deepEqual((await snapshot()).rows, before);
+    assert.deepEqual(await applyScripts(db, [...baseline, upgrade, mecha, current], () => {}), []);
     assert.deepEqual((await db.query("SELECT to_regprocedure('hybrid_apexrun_presence.engine(jsonb)') AS engine")).rows, [{ engine: null }]);
   } finally { await db.close(); }
 });

@@ -10,8 +10,8 @@ ARG BAYT_DIR
 WORKDIR /monorepo/${BAYT_DIR}
 COPY --parents .bayt/compose.launch.yaml .bayt/Dockerfile.launch .bayt/bayt.launch.json .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/Taskfile.launch.yaml .bayt/compose.launch.closure.yaml .bayt/process-compose.yaml .bayt/compose.*.yaml .bayt/Dockerfile.* .bayt/bayt.*.json .bayt/Taskfile.*.yaml monorepo/${MONOREPO_COMPOSE_MODE:-docker-image}.yaml ./
 COPY --from=apexrun-build_bayt /monorepo /monorepo
-COPY --from=apexrun-assets_bayt /monorepo /monorepo
 COPY --from=apexrun-render_bayt /monorepo /monorepo
+COPY --from=apexrun-assets_bayt /monorepo /monorepo
 COPY --from=apexrun-caddy_bayt /monorepo /monorepo
 COPY --from=apexrun-database_bayt /monorepo /monorepo
 COPY --from=apexrun-crud_bayt /monorepo /monorepo

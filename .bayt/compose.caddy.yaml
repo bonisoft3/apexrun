@@ -220,13 +220,13 @@ services:
     environment:
       PORT: "8080"
       ORIGIN: ${ORIGIN:-https://localhost:${CADDY_TLS_HOST_PORT:-23221}}
+      PRONTO_UPSTREAM_RENDER: render:8090
+      PRONTO_UPSTREAM_ASSETS: assets:8787
       ELECTRIC_SECRET: ${ELECTRIC_SECRET:-dev-electric-secret}
       PRONTO_UPSTREAM_CRUD: crud:3000
       PRONTO_UPSTREAM_ELECTRIC: electric:3000
       PRONTO_UPSTREAM_AUTH: auth:9999
       PRONTO_UPSTREAM_TICKER: ticker:9998
-      PRONTO_UPSTREAM_ASSETS: assets:8787
-      PRONTO_UPSTREAM_RENDER: render:8090
     healthcheck:
       test:
       - CMD

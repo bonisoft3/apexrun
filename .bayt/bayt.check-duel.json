@@ -5,7 +5,7 @@
     "manual": true,
     "build": {
       "additional_contexts": {
-        "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.23.0@sha256:9e7861696845c9de63969944d79722fb75810e338d7850a0dcd872806bea1d37}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
+        "plugins_omnishell-runtime-image": "${MONOREPO_COMPOSE_MODE:-docker-image://bonitao/omnishell:0.24.0@sha256:17daf9f9ed4dd8269b0de24eb7d66289c253b7e26fe47b81e93faccbcd77270c}${MONOREPO_COMPOSE_MODE:+:plugins_omnishell-runtime-image}"
       },
       "secrets": [],
       "args": {}
@@ -18,11 +18,6 @@
       "-c",
       "let omnishell = (^mise where github:bonisoft3/omnishell | str trim); deno run --config ($$omnishell | path join test deno.json) --lock ($$omnishell | path join test deno.lock) --frozen --unstable-raw-imports --allow-read --allow-write --allow-net --allow-env --allow-run --allow-sys --unsafely-ignore-certificate-errors=caddy tests/duel.ts ."
     ],
-    "depends_on": {
-      "apexrun-launch": {
-        "condition": "service_healthy"
-      }
-    },
     "environment": {
       "APP_URL": "https://caddy:8443",
       "DATABASE_URL": "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-apexrun}",
@@ -32,7 +27,12 @@
       "SETTLE_TIMEOUT_MS": "50000"
     },
     "ports": [],
-    "volumes": []
+    "volumes": [],
+    "depends_on": {
+      "apexrun-launch": {
+        "condition": "service_healthy"
+      }
+    }
   },
   "dockerfile": {
     "preamble": [],
@@ -179,21 +179,21 @@
         "./.bayt/compose.check-duel.yaml",
         "./.bayt/compose.browser.yaml",
         "./.bayt/compose.launch.yaml",
-        "./.bayt/compose.build.yaml",
-        "./.bayt/compose.generate.yaml",
-        "./.bayt/compose.setup.yaml",
         "./.bayt/compose.assets.yaml",
-        "./.bayt/compose.render.yaml",
+        "./.bayt/compose.auth.yaml",
+        "./.bayt/compose.build.yaml",
         "./.bayt/compose.caddy.yaml",
+        "./.bayt/compose.clock.yaml",
         "./.bayt/compose.crud.yaml",
         "./.bayt/compose.database.yaml",
-        "./.bayt/compose.migrate.yaml",
-        "./.bayt/compose.timer-check.yaml",
-        "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
-        "./.bayt/compose.auth.yaml",
-        "./.bayt/compose.clock.yaml",
-        "./.bayt/compose.ticker.yaml"
+        "./.bayt/compose.generate.yaml",
+        "./.bayt/compose.migrate.yaml",
+        "./.bayt/compose.render.yaml",
+        "./.bayt/compose.served.yaml",
+        "./.bayt/compose.setup.yaml",
+        "./.bayt/compose.ticker.yaml",
+        "./.bayt/compose.timer-check.yaml"
       ]
     },
     "outs": {
@@ -224,21 +224,21 @@
         "./.bayt/compose.check-duel.yaml",
         "./.bayt/compose.browser.yaml",
         "./.bayt/compose.launch.yaml",
-        "./.bayt/compose.build.yaml",
-        "./.bayt/compose.generate.yaml",
-        "./.bayt/compose.setup.yaml",
         "./.bayt/compose.assets.yaml",
-        "./.bayt/compose.render.yaml",
+        "./.bayt/compose.auth.yaml",
+        "./.bayt/compose.build.yaml",
         "./.bayt/compose.caddy.yaml",
+        "./.bayt/compose.clock.yaml",
         "./.bayt/compose.crud.yaml",
         "./.bayt/compose.database.yaml",
-        "./.bayt/compose.migrate.yaml",
-        "./.bayt/compose.timer-check.yaml",
-        "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
-        "./.bayt/compose.auth.yaml",
-        "./.bayt/compose.clock.yaml",
-        "./.bayt/compose.ticker.yaml"
+        "./.bayt/compose.generate.yaml",
+        "./.bayt/compose.migrate.yaml",
+        "./.bayt/compose.render.yaml",
+        "./.bayt/compose.served.yaml",
+        "./.bayt/compose.setup.yaml",
+        "./.bayt/compose.ticker.yaml",
+        "./.bayt/compose.timer-check.yaml"
       ]
     },
     "srcs": {
@@ -256,7 +256,8 @@
           "[m]ise.toml",
           "[.]mise.toml",
           "[m]ise.lock",
-          "[.]tool-versions"
+          "[.]tool-versions",
+          "[m]ise.local.toml"
         ],
         "exclude": []
       },
@@ -276,7 +277,8 @@
               "[m]ise.toml",
               "[.]mise.toml",
               "[m]ise.lock",
-              "[.]tool-versions"
+              "[.]tool-versions",
+              "[m]ise.local.toml"
             ],
             "exclude": []
           }
@@ -292,21 +294,21 @@
         "./.bayt/compose.check-duel.yaml",
         "./.bayt/compose.browser.yaml",
         "./.bayt/compose.launch.yaml",
-        "./.bayt/compose.build.yaml",
-        "./.bayt/compose.generate.yaml",
-        "./.bayt/compose.setup.yaml",
         "./.bayt/compose.assets.yaml",
-        "./.bayt/compose.render.yaml",
+        "./.bayt/compose.auth.yaml",
+        "./.bayt/compose.build.yaml",
         "./.bayt/compose.caddy.yaml",
+        "./.bayt/compose.clock.yaml",
         "./.bayt/compose.crud.yaml",
         "./.bayt/compose.database.yaml",
-        "./.bayt/compose.migrate.yaml",
-        "./.bayt/compose.timer-check.yaml",
-        "./.bayt/compose.served.yaml",
         "./.bayt/compose.electric.yaml",
-        "./.bayt/compose.auth.yaml",
-        "./.bayt/compose.clock.yaml",
-        "./.bayt/compose.ticker.yaml"
+        "./.bayt/compose.generate.yaml",
+        "./.bayt/compose.migrate.yaml",
+        "./.bayt/compose.render.yaml",
+        "./.bayt/compose.served.yaml",
+        "./.bayt/compose.setup.yaml",
+        "./.bayt/compose.ticker.yaml",
+        "./.bayt/compose.timer-check.yaml"
       ]
     }
   },
@@ -329,21 +331,21 @@
     "./.bayt/compose.check-duel.yaml",
     "./.bayt/compose.browser.yaml",
     "./.bayt/compose.launch.yaml",
-    "./.bayt/compose.build.yaml",
-    "./.bayt/compose.generate.yaml",
-    "./.bayt/compose.setup.yaml",
     "./.bayt/compose.assets.yaml",
-    "./.bayt/compose.render.yaml",
+    "./.bayt/compose.auth.yaml",
+    "./.bayt/compose.build.yaml",
     "./.bayt/compose.caddy.yaml",
+    "./.bayt/compose.clock.yaml",
     "./.bayt/compose.crud.yaml",
     "./.bayt/compose.database.yaml",
-    "./.bayt/compose.migrate.yaml",
-    "./.bayt/compose.timer-check.yaml",
-    "./.bayt/compose.served.yaml",
     "./.bayt/compose.electric.yaml",
-    "./.bayt/compose.auth.yaml",
-    "./.bayt/compose.clock.yaml",
-    "./.bayt/compose.ticker.yaml"
+    "./.bayt/compose.generate.yaml",
+    "./.bayt/compose.migrate.yaml",
+    "./.bayt/compose.render.yaml",
+    "./.bayt/compose.served.yaml",
+    "./.bayt/compose.setup.yaml",
+    "./.bayt/compose.ticker.yaml",
+    "./.bayt/compose.timer-check.yaml"
   ],
   "chainedDeps": [
     {

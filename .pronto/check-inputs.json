@@ -3573,7 +3573,7 @@
       "contracts": {
         "show": {
           "reads": [
-            "payload.name"
+            "name"
           ],
           "writes": [
             "name"
@@ -3581,8 +3581,8 @@
         },
         "touch": {
           "reads": [
-            "now",
-            "payload.session"
+            "_time",
+            "session"
           ],
           "writes": [
             "leases",
@@ -3591,8 +3591,8 @@
         },
         "leave": {
           "reads": [
-            "now",
-            "payload.session"
+            "_time",
+            "session"
           ],
           "writes": [
             "leases",
@@ -3601,24 +3601,31 @@
         },
         "expire": {
           "reads": [
-            "now"
+            "_time"
           ],
           "writes": [
             "leases",
             "until"
           ]
         },
-        "mayShow": {
+        "named": {
           "reads": [
-            "now",
-            "payload.name"
-          ]
+            "name"
+          ],
+          "reason": "name_required"
+        },
+        "connected": {
+          "reads": [
+            "_time"
+          ],
+          "reason": "disconnected"
         },
         "hasCapacity": {
           "reads": [
-            "now",
-            "payload.session"
-          ]
+            "_time",
+            "session"
+          ],
+          "reason": "too_many_tabs"
         }
       },
       "events": {
@@ -3679,14 +3686,19 @@
           "on": {
             "show": {
               "target": "visible",
-              "guard": "mayShow",
+              "guard": [
+                "named",
+                "connected"
+              ],
               "reduce": "show"
             },
             "hide": {
               "target": "hidden"
             },
             "touch": {
-              "guard": "hasCapacity",
+              "guard": [
+                "hasCapacity"
+              ],
               "reduce": "touch"
             },
             "leave": {
@@ -3702,14 +3714,19 @@
           "on": {
             "show": {
               "target": "visible",
-              "guard": "mayShow",
+              "guard": [
+                "named",
+                "connected"
+              ],
               "reduce": "show"
             },
             "hide": {
               "target": "hidden"
             },
             "touch": {
-              "guard": "hasCapacity",
+              "guard": [
+                "hasCapacity"
+              ],
               "reduce": "touch"
             },
             "leave": {
@@ -4034,22 +4051,29 @@
         }
       },
       "contracts": {
-        "mayAnswer": {
+        "isTarget": {
           "reads": [
-            "actor",
-            "now"
-          ]
+            "_origin"
+          ],
+          "reason": "not_target"
         },
-        "mayCancel": {
+        "isInviter": {
           "reads": [
-            "actor",
-            "now"
-          ]
+            "_origin"
+          ],
+          "reason": "not_inviter"
+        },
+        "inTime": {
+          "reads": [
+            "_time"
+          ],
+          "reason": "expired"
         },
         "isDue": {
           "reads": [
-            "now"
-          ]
+            "_time"
+          ],
+          "reason": "not_due"
         }
       },
       "events": {
@@ -4088,7 +4112,10 @@
           "on": {
             "accept": {
               "target": "accepted",
-              "guard": "mayAnswer",
+              "guard": [
+                "isTarget",
+                "inTime"
+              ],
               "requires": [
                 {
                   "sql": "hybrid_apexrun_presence.available((game.state->>'inviter')::uuid) AND hybrid_apexrun_presence.available((game.state->>'target')::uuid)",
@@ -4139,15 +4166,23 @@
             },
             "decline": {
               "target": "declined",
-              "guard": "mayAnswer"
+              "guard": [
+                "isTarget",
+                "inTime"
+              ]
             },
             "cancel": {
               "target": "cancelled",
-              "guard": "mayCancel"
+              "guard": [
+                "isInviter",
+                "inTime"
+              ]
             },
             "expire": {
               "target": "expired",
-              "guard": "isDue"
+              "guard": [
+                "isDue"
+              ]
             }
           }
         },
@@ -4597,7 +4632,7 @@
       "contracts": {
         "start": {
           "reads": [
-            "now"
+            "_time"
           ],
           "writes": [
             "deadline"
@@ -4611,8 +4646,8 @@
         },
         "describe": {
           "reads": [
-            "actor",
-            "payload.description"
+            "_origin",
+            "description"
           ],
           "writes": [
             "offer",
@@ -4621,7 +4656,7 @@
         },
         "race": {
           "reads": [
-            "now"
+            "_time"
           ],
           "writes": [
             "deadline"
@@ -4629,15 +4664,15 @@
         },
         "lift": {
           "reads": [
-            "actor",
-            "now",
-            "payload.frame",
-            "payload.kind",
-            "payload.checksum",
-            "payload.inputs",
-            "payload.winner",
-            "payload.goal_a",
-            "payload.goal_b"
+            "_origin",
+            "_time",
+            "frame",
+            "kind",
+            "checksum",
+            "inputs",
+            "winner",
+            "goal_a",
+            "goal_b"
           ],
           "writes": [
             "lifts",
@@ -4661,27 +4696,43 @@
             "deadline"
           ]
         },
+        "allSeated": {
+          "reads": [
+            "seats"
+          ],
+          "reason": "waiting_for_players"
+        },
         "mayCancel": {
           "reads": [
-            "actor"
-          ]
+            "_origin"
+          ],
+          "reason": "not_inviter"
         },
-        "mayDescribe": {
+        "undescribed": {
           "reads": [
-            "actor"
-          ]
+            "_origin"
+          ],
+          "reason": "described"
         },
-        "mayLift": {
+        "offerStands": {
           "reads": [
-            "actor",
-            "payload.frame",
-            "payload.kind"
-          ]
+            "_origin"
+          ],
+          "reason": "no_offer"
+        },
+        "unlifted": {
+          "reads": [
+            "_origin",
+            "frame",
+            "kind"
+          ],
+          "reason": "lifted"
         },
         "isDue": {
           "reads": [
-            "now"
-          ]
+            "_time"
+          ],
+          "reason": "not_due"
         },
         "connected": {
           "reads": []
@@ -4691,11 +4742,6 @@
         },
         "settled": {
           "reads": []
-        },
-        "ready": {
-          "reads": [
-            "payload.seats"
-          ]
         }
       },
       "events": {
@@ -4804,7 +4850,9 @@
           "on": {
             "start": {
               "target": "signalling",
-              "guard": "ready",
+              "guard": [
+                "allSeated"
+              ],
               "reduce": "start",
               "requires": [
                 {
@@ -4815,12 +4863,16 @@
             },
             "cancel": {
               "target": "abandoned",
-              "guard": "mayCancel",
+              "guard": [
+                "mayCancel"
+              ],
               "reduce": "cancel"
             },
             "timeout": {
               "target": "abandoned",
-              "guard": "isDue",
+              "guard": [
+                "isDue"
+              ],
               "reduce": "timeout"
             }
           }
@@ -4830,23 +4882,32 @@
           "always": [
             {
               "target": "racing",
-              "guard": "connected",
+              "guard": [
+                "connected"
+              ],
               "reduce": "race"
             }
           ],
           "on": {
             "cancel": {
               "target": "abandoned",
-              "guard": "mayCancel",
+              "guard": [
+                "mayCancel"
+              ],
               "reduce": "cancel"
             },
             "describe": {
-              "guard": "mayDescribe",
+              "guard": [
+                "undescribed",
+                "offerStands"
+              ],
               "reduce": "describe"
             },
             "timeout": {
               "target": "abandoned",
-              "guard": "isDue",
+              "guard": [
+                "isDue"
+              ],
               "reduce": "timeout"
             }
           }
@@ -4856,27 +4917,37 @@
           "always": [
             {
               "target": "disputed",
-              "guard": "desynced"
+              "guard": [
+                "desynced"
+              ]
             },
             {
               "target": "finished",
-              "guard": "settled",
+              "guard": [
+                "settled"
+              ],
               "reduce": "decide"
             }
           ],
           "on": {
             "cancel": {
               "target": "abandoned",
-              "guard": "mayCancel",
+              "guard": [
+                "mayCancel"
+              ],
               "reduce": "cancel"
             },
             "lift": {
-              "guard": "mayLift",
+              "guard": [
+                "unlifted"
+              ],
               "reduce": "lift"
             },
             "timeout": {
               "target": "abandoned",
-              "guard": "isDue",
+              "guard": [
+                "isDue"
+              ],
               "reduce": "timeout"
             }
           }

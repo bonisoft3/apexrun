@@ -41,6 +41,9 @@ Deno.test({ name: "retained native actors and engine behavior survive the runtim
     await sql(await Deno.readTextFile(new URL("../services/database/sql/018_mecha_engines.sql", import.meta.url)));
     assertEquals(await snapshot(), before);
     assertEquals(await step(), oldAnswer);
+    await sql(await Deno.readTextFile(new URL("../services/database/sql/019_rule_argument_engines.sql", import.meta.url)));
+    assertEquals(await snapshot(), before);
+    assertEquals(await step(), oldAnswer);
   } finally {
     const stopped = await run("docker", ["stop", container]);
     if (!stopped.ok) throw new Error(stopped.err);

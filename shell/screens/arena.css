@@ -1519,7 +1519,7 @@ canvas.stk-layer-over {
 
 /* Players are anonymous guests with nothing to sign out of: the strip keeps
    to the routes, so the guest's session box stays out of it. */
-html body > nav .shell-me { display: none; }
+body > nav .shell-me { display: none; }
 
 /* On a phone only the race's own readouts stay: time, rival, speed. */
 @media (max-width: 720px), (max-height: 480px) {

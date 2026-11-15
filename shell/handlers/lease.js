@@ -2,9 +2,9 @@
 // seat is held through its waits, so the renewal sits on its own: the lobby's
 // fold never waits a beat for it. A renewal carries the beat it was armed at,
 // so one armed twice renews once.
-(state, event) => {
+({ context, event }) => {
   const RENEW = 10000;
-  const [lease] = state.items ?? [];
+  const [lease] = context.items ?? [];
   if (lease === undefined) return {updates: []};
   if (event.type === "renew") {
     if (Number(lease.beat) !== event.with.beat) return {updates: []};

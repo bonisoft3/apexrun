@@ -20,17 +20,13 @@ include:
   required: false
 - path: .././.bayt/compose.launch.yaml
   required: false
-- path: .././.bayt/compose.assets.yaml
-  required: false
 - path: .././.bayt/compose.render.yaml
+  required: false
+- path: .././.bayt/compose.assets.yaml
   required: false
 - path: .././.bayt/compose.caddy.yaml
   required: false
 - path: .././.bayt/compose.crud.yaml
-  required: false
-- path: .././.bayt/compose.timer-check.yaml
-  required: false
-- path: .././.bayt/compose.served.yaml
   required: false
 - path: .././.bayt/compose.electric.yaml
   required: false
@@ -38,7 +34,11 @@ include:
   required: false
 - path: .././.bayt/compose.clock.yaml
   required: false
+- path: .././.bayt/compose.served.yaml
+  required: false
 - path: .././.bayt/compose.ticker.yaml
+  required: false
+- path: .././.bayt/compose.timer-check.yaml
   required: false
 - path: .././.bayt/compose.integrate.yaml
   required: false

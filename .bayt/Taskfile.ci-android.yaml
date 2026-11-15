@@ -1,24 +1,25 @@
 # generated from bayt.cue — do not edit
 tasks:
   default:
-    run: once
     cmds:
     - cmd: >-
-        pwsh -c "mise install github:bonisoft3/omnishell; if (\$LASTEXITCODE) { exit
-        \$LASTEXITCODE }; Set-Location \"\$(mise where
-        github:bonisoft3/omnishell)\\android\"; .\\gradlew.bat test --build-cache --no-daemon"
+        pwsh -c "mise x github:bonisoft3/omnishell -- mise --version | Out-Null; if
+        (\$LASTEXITCODE) { exit \$LASTEXITCODE }; \$omnishell = mise where
+        github:bonisoft3/omnishell; if (\$LASTEXITCODE) { exit \$LASTEXITCODE }; Set-Location
+        \"\$omnishell\\android\"; .\\gradlew.bat test --build-cache --no-daemon"
       platforms:
       - windows
     - cmd: >-
-        sh -c "mise install github:bonisoft3/omnishell && omnishell=\"\$(mise where
-        github:bonisoft3/omnishell)\" && cd \"\$omnishell/android\" && ./gradlew test
-        --build-cache --no-daemon"
+        sh -c "mise x github:bonisoft3/omnishell -- mise --version >/dev/null &&
+        omnishell=\"\$(mise where github:bonisoft3/omnishell)\" && cd \"\$omnishell/android\"
+        && ./gradlew test --build-cache --no-daemon"
       platforms:
       - linux
     - cmd: >-
-        sh -c "mise install github:bonisoft3/omnishell && omnishell=\"\$(mise where
-        github:bonisoft3/omnishell)\" && cd \"\$omnishell/android\" && ./gradlew test
-        --build-cache --no-daemon"
+        sh -c "mise x github:bonisoft3/omnishell -- mise --version >/dev/null &&
+        omnishell=\"\$(mise where github:bonisoft3/omnishell)\" && cd \"\$omnishell/android\"
+        && ./gradlew test --build-cache --no-daemon"
       platforms:
       - darwin
+    run: once
 version: "3"

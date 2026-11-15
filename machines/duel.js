@@ -11,8 +11,8 @@ const finish = state => state.lifts.find(lift => lift.kind === "duel-finish" && 
 // What two rows of one milestone must agree on to be one fact.
 const AGREED = ["checksum", "inputs", "winner", "goal_a", "goal_b"];
 return {
-  initial: (input, context) => ({
-    ...input, phase: "waiting", seats: SEATS, offer: "", answer: "", deadline: context.now + WAITING_MS,
+  initial: ({input: {_time, ...input}}) => ({
+    ...input, phase: "waiting", seats: SEATS, offer: "", answer: "", deadline: _time + WAITING_MS,
     lifts: [], winner: "", goal_a: -1, goal_b: -1, dispute: "", silent: [],
   }),
   invariant: state => state.lifts.every((lift, i) => state.lifts.findIndex(other => key(other) === key(lift)) === i && lift.by.length > 0)
@@ -25,38 +25,38 @@ return {
     lifted: state.lifts.map(({frame, kind, by}) => ({frame, kind, by})),
     winner: state.winner, goal_a: state.goal_a, goal_b: state.goal_b, dispute: state.dispute, silent: state.silent, phase: state.phase,
   }),
-  ready: (_state, event) => SEATS.every(seat => event.payload.seats.includes(seat)) ? true : "waiting_for_players",
-  start: (state, _event, context) => ({...state, deadline: context.now + SIGNAL_MS}),
-  mayCancel: (state, _event, context) => context.actor === "a" || (state.phase !== "waiting" && context.actor === "b") ? true : "not_inviter",
-  cancel: state => ({...state, deadline: 0}),
+  allSeated: ({event}) => SEATS.every(seat => event.seats.includes(seat)),
+  start: ({context: state, event}) => ({...state, deadline: event._time + SIGNAL_MS}),
+  mayCancel: ({context: state, event}) => event._origin === "a" || (state.phase !== "waiting" && event._origin === "b"),
+  cancel: ({context: state}) => ({...state, deadline: 0}),
   // The challenger offers first; the target answers the offer.
-  mayDescribe: (state, _event, context) => (context.actor === "a" ? state.offer : state.answer) !== "" ? "described"
-    : context.actor === "b" && state.offer === "" ? "no_offer" : true,
-  describe: (state, event, context) => ({...state, [context.actor === "a" ? "offer" : "answer"]: event.payload.description}),
-  connected: state => state.offer !== "" && state.answer !== "",
-  race: (state, _event, context) => ({...state, deadline: context.now + RACE_MS}),
-  mayLift: (state, event, context) => state.lifts.some(lift => key(lift) === key(event.payload) && lift.by.includes(context.actor)) ? "lifted" : true,
+  undescribed: ({context: state, event}) => (event._origin === "a" ? state.offer : state.answer) === "",
+  offerStands: ({context: state, event}) => event._origin !== "b" || state.offer !== "",
+  describe: ({context: state, event}) => ({...state, [event._origin === "a" ? "offer" : "answer"]: event.description}),
+  connected: ({context: state}) => state.offer !== "" && state.answer !== "",
+  race: ({context: state, event}) => ({...state, deadline: event._time + RACE_MS}),
+  unlifted: ({context: state, event}) => !state.lifts.some(lift => key(lift) === key(event) && lift.by.includes(event._origin)),
   // The first row of a milestone is held; the second joins it if it agrees,
   // and is the duel's dispute if it does not.
-  lift: (state, event, context) => {
-    const row = event.payload;
+  lift: ({context: state, event}) => {
+    const {type: _type, _origin, _time, ...row} = event;
     const held = state.lifts.find(lift => key(lift) === key(row));
     if (held === undefined) {
-      const due = row.kind === "duel-finish" ? Math.min(state.deadline, context.now + FINISH_MS) : state.deadline;
-      return {...state, lifts: [...state.lifts, {...row, by: [context.actor]}], deadline: due};
+      const due = row.kind === "duel-finish" ? Math.min(state.deadline, event._time + FINISH_MS) : state.deadline;
+      return {...state, lifts: [...state.lifts, {...row, by: [event._origin]}], deadline: due};
     }
     if (AGREED.some(field => held[field] !== row[field])) return {...state, dispute: key(row)};
-    return {...state, lifts: state.lifts.map(lift => lift === held ? {...lift, by: SEATS.filter(seat => lift.by.includes(seat) || seat === context.actor)} : lift)};
+    return {...state, lifts: state.lifts.map(lift => lift === held ? {...lift, by: SEATS.filter(seat => lift.by.includes(seat) || seat === event._origin)} : lift)};
   },
-  desynced: state => state.dispute !== "",
-  settled: state => finish(state) !== undefined,
-  decide: state => {
+  desynced: ({context: state}) => state.dispute !== "",
+  settled: ({context: state}) => finish(state) !== undefined,
+  decide: ({context: state}) => {
     const {winner, goal_a, goal_b} = finish(state);
     return {...state, winner, goal_a, goal_b, deadline: 0};
   },
-  isDue: (state, _event, context) => context.now >= state.deadline ? true : "not_due",
+  isDue: ({context: state, event}) => event._time >= state.deadline,
   // Who had not answered when the clock ran out: a description, or the finish.
-  timeout: state => ({...state, deadline: 0, silent: state.phase === "waiting" ? [] : SEATS.filter(seat => state.phase === "signalling"
+  timeout: ({context: state}) => ({...state, deadline: 0, silent: state.phase === "waiting" ? [] : SEATS.filter(seat => state.phase === "signalling"
     ? (seat === "a" ? state.offer : state.answer) === ""
     : !state.lifts.some(lift => lift.kind === "duel-finish" && lift.by.includes(seat)))}),
 };

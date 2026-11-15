@@ -4,8 +4,13 @@
 // the answers, each a row the machines' surface takes.
 import { assert, assertEquals } from "jsr:@std/assert@1";
 import { evaluateHandler } from "./platform.ts";
+
+// The assertions below state a leaf's world and its event side by side; the
+// leaf itself takes them as XState's one argument.
+// deno-lint-ignore no-explicit-any
+const positional = (leaf: any) => (state: any, event?: any, ...rest: any[]) => leaf({ context: state, event }, ...rest);
 const read = (path: string) => Deno.readTextFile(new URL(path, import.meta.url));
-const lobby = await evaluateHandler(await read("../shell/handlers/lobby.js"));
+const lobby = positional(await evaluateHandler(await read("../shell/handlers/lobby.js")));
 const html = await read("../shell/screens/arena.html");
 const empty = JSON.parse(/class="stk-modal-card stk-lobby-card"[^>]*data-empty-row='([^']*)'/.exec(html)![1]);
 
@@ -158,7 +163,7 @@ Deno.test("lobby: a challenge link opens a waiting duel on the picked stage, can
   l.raise({ type: "click", from: `cancel-duel-${waiting.id}`, id: waiting.id });
   assertEquals(l.store.apexrun_duel_command.map((c) => [c.id, (c.request as Row).event]), [[`${created.id}/1/a/cancel`, { kind: "cancel", payload: {} }]]);
   // Another racer pasting the link writes a join row, and a cluster refusal is shown.
-  const b = lobbyOf({ apexrun_presence_seat: [seat("hidden")] });
+  const b = lobbyOf({ apexrun_presence_seat: [seat("hidden")], run: [{id: "run", race: 7}], run_milestone: [{id: "7:1:grid", race: 7, kind: "grid"}] });
   b.raise({ type: "mutation" });
   b.store.lobby_tab[0].join = `https://apexrun.bonisoft3.com/?challenge=${created.id}`;
   b.raise({ type: "mutation" });
@@ -230,4 +235,24 @@ Deno.test("lobby: the race's milestones go to its duel oldest first, one a revis
   l.store.apexrun_duel_seat[0] = duelling("racing", 7, { described: true, lifted: [{ frame: 1, kind: "grid", by: ["a", "b"] }] });
   l.raise({ type: "mutation" });
   assertEquals(sent().at(-1), ["d1/7/b/lift", { frame: 4100, kind: "duel-finish", checksum: "410077", inputs: "AAAA", winner: "b", goal_a: -1, goal_b: 3790 }]);
+});
+
+Deno.test("lobby: cold challenge admission waits for this run's grid before starting the peer deadline", () => {
+  const l = lobbyOf({ run: [{ id: "run", race: 7 }] });
+  l.raise({ type: "mutation" });
+  const challenge = "00000000-0000-4000-8000-000000000099";
+  l.tab.join = `?challenge=${challenge}`;
+  l.raise({ type: "mutation" });
+  assertEquals(l.store.apexrun_duel_open, []);
+  assertEquals(l.tab.join, `?challenge=${challenge}`);
+  l.store.run_milestone.push({ id: "6:1:grid", race: 6, kind: "grid" });
+  l.raise({ type: "mutation" });
+  assertEquals(l.store.apexrun_duel_open, []);
+  l.store.run_milestone.push({ id: "7:1:grid", race: 7, kind: "grid" });
+  l.raise({ type: "mutation" });
+  assertEquals(l.store.apexrun_duel_open.length, 1);
+  assertEquals(l.store.apexrun_duel_open[0].instance_id, challenge);
+  assertEquals(l.tab.join, "");
+  l.raise({ type: "mutation" });
+  assertEquals(l.store.apexrun_duel_open.length, 1);
 });

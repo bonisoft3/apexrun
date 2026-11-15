@@ -2,12 +2,12 @@
 FROM eclipse-temurin:21.0.13_9-jdk-noble@sha256:114cabb73033ca4ce7ceec3deb62396bc1b716282bae051ed3c1d82e38fcab2d AS ci-android
 ARG BAYT_DIR
 WORKDIR /monorepo/${BAYT_DIR}
-COPY --from=bonitao/lazybox:0.8.5@sha256:091a3b63ba222777000acc3bf8327faebfea4870e23ee07c6eb42431dadb2ac6 /lazybox/ /root/.local/share/lazybox/
+COPY --from=bonitao/lazybox:0.8.6@sha256:0f30c48513fac757f844f02c864802991dec045f9c4189e3db2ae4ac297544df /lazybox/ /root/.local/share/lazybox/
 ENV PATH=/root/.local/bin:/root/.local/share/lazybox/bin:$PATH
 ENV MISE_TRUSTED_CONFIG_PATHS=/monorepo
 COPY --from=workspaceroot-pronto-sources_srcs /monorep[o] /monorepo/
 COPY --parents src/test/**/*.java src/test/**/*.kt src/test/resources/**/* src/test/**/*.sql [.]mise.toml [m]ise.lock [m]ise.local.toml ./
-RUN --mount=type=cache,target=/root/.gradle,id=apexrun:/root/.gradle,sharing=locked --mount=type=cache,target=.gradle/configuration-cache,id=apexrun-ci-android:.gradle/configuration-cache,sharing=locked mise install github:bonisoft3/omnishell && omnishell="$(mise where github:bonisoft3/omnishell)" && cd "$omnishell/android" && ./gradlew test --build-cache --no-daemon
+RUN --mount=type=cache,target=/root/.gradle,id=apexrun:/root/.gradle,sharing=locked --mount=type=cache,target=.gradle/configuration-cache,id=apexrun-ci-android:.gradle/configuration-cache,sharing=locked mise x github:bonisoft3/omnishell -- mise --version >/dev/null && omnishell="$(mise where github:bonisoft3/omnishell)" && cd "$omnishell/android" && ./gradlew test --build-cache --no-daemon
 COPY .bayt/Taskfile.yml .bayt/Taskfile.bayt.yml .bayt/Taskfile.ci-android.yaml .bayt/bayt.ci-android.json ./.bayt/
 
 FROM busybox:musl@sha256:03db190ed4c1ceb1c55d179a0940e2d71d42130636a780272629735893292223 AS ci-android_ctxs

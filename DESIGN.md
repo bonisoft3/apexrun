@@ -1,5 +1,4 @@
 ---
-preset: press
 colors:
   neutral: "#FFF8EE"
   surface: "#FFFFFF"
@@ -20,6 +19,8 @@ dark:
   accent: "#FFB347"
   danger: "#FF4D4D"
   attention: "#2BD9A8"
+shell:
+  nav: "topbar"
 ---
 
 # Apex Out Run — Coast 2 Coast Design System
