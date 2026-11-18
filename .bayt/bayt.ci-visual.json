@@ -53,8 +53,7 @@
       "ARG MONOREPO_COMPOSE_MODE",
       "ENV MONOREPO_COMPOSE_MODE=$MONOREPO_COMPOSE_MODE",
       "ARG BAYT_RUNTIME",
-      "ENV BAYT_RUNTIME=$BAYT_RUNTIME",
-      "ENV FELDERA_COMPILATION_PROFILE=unoptimized"
+      "ENV BAYT_RUNTIME=$BAYT_RUNTIME"
     ],
     "preambleCopyContexts": [
       {
@@ -798,11 +797,11 @@
           "services/database/migrations/001_roles.sql",
           "services/database/migrations/002_grants.sql",
           "services/database/migrations/004_types.sql",
-          "services/database/migrations/005_create_tables.sql",
           "services/database/migrations/006_policies.sql",
           "services/database/migrations/007_txid.sql",
           "services/database/migrations/008_publication.sql",
           "services/database/migrations/003_rls.sql",
+          "services/database/migrations/005_create_tables.sql",
           "services/database/migrations/016_mecha_actors.sql",
           "services/database/migrations/010_high_score_writes.sql"
         ],

@@ -49,8 +49,11 @@ const app = // lobby — the title card's online lobby: your presence among the 
   // The lease is drawn once per tab, and names the racer: a callsign from it.
   if (event.type === "lease") {
     const id = uuidOf(draws);
+    const name = `RACER ${id.slice(0, 4).toUpperCase()}`;
     return {updates: [
-      {op: "put", entity: "lobby_tab", id: "the", row: {id: "the", lease: id, me: "", note: "", shown: tab?.shown ?? "", open: tab?.open ?? "no", offer: "", link: "", join: tab?.join ?? "", stage: tab?.stage ?? "coconut-beach", name: `RACER ${id.slice(0, 4).toUpperCase()}`}},
+      tab !== undefined
+        ? {op: "patch", entity: "lobby_tab", id: "the", row: {lease: id, name}}
+        : {op: "put", entity: "lobby_tab", id: "the", row: {id: "the", lease: id, me: "", note: "", shown: "", open: "no", offer: "", link: "", join: "", stage: "coconut-beach", name}},
       {op: "put", entity: "apexrun_presence_lease", id, row: {id, beat: 0}},
     ]};
   }

@@ -65,12 +65,12 @@ async function fingers(page: Page) {
     },
     async tap(selector: string) {
       const id = 90;
+      // Short landscape viewports scroll .stk-modal-scrim (arena.css max-height: 540px);
+      // without scrolling first, CDP touchPoints land below the viewport bottom.
+      await page.locator(selector).first().scrollIntoViewIfNeeded();
       await this.down(id, selector);
       await page.waitForTimeout(80);
       await this.up(id);
-      if (selector.startsWith("#stk-btn-") || selector.startsWith("#btn-") || selector === "#arena-finish-save") {
-        await page.locator(selector).first().dispatchEvent("click");
-      }
     },
   };
 }

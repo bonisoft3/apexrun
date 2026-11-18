@@ -5005,6 +5005,10 @@
       "src": "services/database/baseline/003_rls.txt"
     },
     {
+      "name": "005_create_tables.sql",
+      "src": "services/database/baseline/005_create_tables.sql"
+    },
+    {
       "name": "016_mecha_actors.sql",
       "src": "services/database/baseline/016_mecha_actors.sql"
     },

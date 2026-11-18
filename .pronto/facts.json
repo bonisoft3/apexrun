@@ -999,7 +999,7 @@
     {"path":"shell/screens/arena.css","token":"--duel-pedal"}
   ],
   "artifact": [
-    {"path":"program.cue","sha256":"d3bf4d7720ffca2973f94bd8a6adeabb6f48c95c71f1df0f0bca0acd1f21d3bf","derived":false},
+    {"path":"program.cue","sha256":"c42810659729c9cdde2bec245c24e0ecead35bfee066361a587e107918260a9d","derived":false},
     {"path":"DESIGN.md","sha256":"f311042d190648f29d45db3db640bb1fe71e3c1ad70c5bb68f12c7ff37f41723","derived":false},
     {"path":"ir.html","sha256":"ab9cef1691608b628af2605bcd30302fe6d576abad8d3ce9134221dc1ab0029b","derived":false},
     {"path":"acceptance.md","sha256":"0e126bc9793c506f6696c23d2d12bd83d93994cf32e86776666d6a82c14dc35c","derived":false},

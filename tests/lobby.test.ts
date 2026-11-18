@@ -256,3 +256,19 @@ Deno.test("lobby: cold challenge admission waits for this run's grid before star
   l.raise({ type: "mutation" });
   assertEquals(l.store.apexrun_duel_open.length, 1);
 });
+
+// Regression: the 4-step lease chain could read tab.open="yes" before a close
+// gesture patched open="no", then overwrite open back to "yes" via a full put.
+Deno.test("lobby: a lease landing on an existing tab patches lease and name without clobbering open", () => {
+  const stale = { ...empty, open: "yes", shown: "show" };
+  const result = lobby(
+    { items: [stale], rows: { lobby_tab: [stale] } },
+    { type: "lease", seed: 4, with: { draws: [1, 2, 3] } },
+  );
+  assertEquals(result.updates[0], {
+    op: "patch",
+    entity: "lobby_tab",
+    id: "the",
+    row: { lease: "00000001-0000-4002-8000-000300000004", name: "RACER 0000" },
+  });
+});
